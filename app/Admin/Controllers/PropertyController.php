@@ -77,7 +77,14 @@ class PropertyController extends AdminController
     {
         $form = new Form(new Property);
 
-        $form->number('project_id', __('Project id'));
+        $form->select('project_id')->options(function ($id) {
+            $project = \App\Project::find($id);
+        
+            if ($project) {
+                return [$project->id => $project->name . '['.$project->short_name.']'];
+            }
+        })->ajax(url('/admin/projects'));
+
         $form->number('phase_id', __('Phase id'));
         $form->number('block_id', __('Block id'));
         $form->number('property_type_id', __('Property type id'));
