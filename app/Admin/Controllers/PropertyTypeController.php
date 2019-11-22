@@ -15,7 +15,7 @@ class PropertyTypeController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\PropertyType';
+    protected $title = 'Property Types';
 
     /**
      * Make a grid builder.
@@ -26,7 +26,6 @@ class PropertyTypeController extends AdminController
     {
         $grid = new Grid(new PropertyType);
 
-        $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
         $grid->column('short_name', __('Short name'));
         
@@ -59,8 +58,8 @@ class PropertyTypeController extends AdminController
     {
         $form = new Form(new PropertyType);
 
-        $form->text('name', __('Name'));
-        $form->text('short_name', __('Short name'));
+        $form->text('name', __('Name'))->rules('required|min:2');
+        $form->text('short_name', __('Short name'))->rules('required|min:2');
         
         return $form;
     }

@@ -15,7 +15,7 @@ class ProjectController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Project';
+    protected $title = 'Projects';
 
     /**
      * Make a grid builder.
@@ -56,8 +56,8 @@ class ProjectController extends AdminController
     {
         $form = new Form(new Project);
 
-        $form->text('name', 'Project Name');
-        $form->text('short_name', 'Project Short Name');
+        $form->text('name', 'Project Name')->rules('required|min:2');
+        $form->text('short_name', 'Project Short Name')->rules('required|min:2');
 
         return $form;
     }

@@ -27,6 +27,7 @@ class CreatePropertiesTable extends Migration
             $table->boolean("is_on_boulevard");
             $table->decimal("cash_price");
             $table->decimal("installment_price");
+            $table->enum('property_status', ['Available', 'Allotted', 'Possession'])->default('Available');
 
             CommonMigrations::five($table);
         });

@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Helpers\SelectHelper;
 
 class PropertyController extends AdminController
 {
@@ -15,7 +16,7 @@ class PropertyController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Property';
+    protected $title = 'Properties';
 
     /**
      * Make a grid builder.
@@ -38,6 +39,7 @@ class PropertyController extends AdminController
         $grid->column('is_on_boulevard', __('Is on boulevard'));
         $grid->column('cash_price', __('Cash price'));
         $grid->column('installment_price', __('Installment price'));
+        $grid->column('property_status', __('Property Status'));
         
         return $grid;
     }
@@ -77,13 +79,16 @@ class PropertyController extends AdminController
     {
         $form = new Form(new Property);
 
-        $form->select('project_id')->options(function ($id) {
+        $form->select('project_id', 'Project')
+        ->addVariables(['show_add_button' => true])
+        ->options(function ($id) {
             $project = \App\Project::find($id);
         
             if ($project) {
                 return [$project->id => $project->name . '['.$project->short_name.']'];
             }
-        })->ajax(url('/admin/projects'));
+        })
+        ->ajax(url('select-data?model=' . urlencode('\App\Project') . '|name,short_name|name:Name,short_name:Short Name'));
 
         $form->number('phase_id', __('Phase id'));
         $form->number('block_id', __('Block id'));
