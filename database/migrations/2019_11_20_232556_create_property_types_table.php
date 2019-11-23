@@ -17,7 +17,7 @@ class CreatePropertyTypesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('short_name')->unique();
-            CommonMigrations::five($table);
+            CommonMigrations::commonColumns($table);
         });
     }
 

@@ -19,5 +19,6 @@ Route::group([
     $router->resource('properties', PropertyController::class);
     $router->resource('people', PersonController::class);
     $router->resource('bookings', BookingController::class);
+    $router->resource('booking-cancellations', BookingCancellationController::class);
 
 });

@@ -8,7 +8,7 @@
 
         <input type="hidden" name="{{$name}}"/>
 
-        @if(isset($show_add_button) && $show_add_button == true)
+        @if(isset($add_button_url) && $add_button_url != '')
         <div class="input-group">
         @endif
             <select class="form-control {{$class}}" style="width: 100%;" name="{{$name}}" {!! $attributes !!} >
@@ -27,14 +27,14 @@
                     @endforeach
                 @endif
             </select>
-            @if(isset($show_add_button) && $show_add_button == true)    
+            @if(isset($add_button_url) && $add_button_url != '')    
             <span class="input-group-btn">
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary add_new_button" onClick="loadUrlInModal('{{url($add_button_url)}}')" type="button">
                     <i class="fa fa-plus-circle"></i>
                 </button>
             </span>
             @endif
-        @if(isset($show_add_button) && $show_add_button == true)
+        @if(isset($add_button_url) && $add_button_url != '')
         </div>
         @endif
 

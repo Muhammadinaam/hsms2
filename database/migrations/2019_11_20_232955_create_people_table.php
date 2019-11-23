@@ -17,20 +17,20 @@ class CreatePeopleTable extends Migration
             $table->bigIncrements('id');
 
             $table->string("name");
-            $table->string("father_name");
-            $table->string("husband_name");
+            $table->string("father_name")->nullable();
+            $table->string("husband_name")->nullable();
             $table->string("cnic");
             $table->string("address");
             $table->string("phone");
             $table->enum("person_type", ['Agent', 'Customer', 'Supplier', 'Employee']);
-            $table->string("kin_name");
-            $table->string("kin_father_name");
-            $table->string("kin_husband_name");
-            $table->string("kin_cnic");
-            $table->string("kin_address");
-            $table->string("kin_phone");
+            $table->string("kin_name")->nullable();
+            $table->string("kin_father_name")->nullable();
+            $table->string("kin_husband_name")->nullable();
+            $table->string("kin_cnic")->nullable();
+            $table->string("kin_address")->nullable();
+            $table->string("kin_phone")->nullable();
 
-            CommonMigrations::five($table);
+            CommonMigrations::commonColumns($table);
         });
     }
 

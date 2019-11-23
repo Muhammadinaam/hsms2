@@ -29,7 +29,7 @@ class CreatePropertiesTable extends Migration
             $table->decimal("installment_price");
             $table->enum('property_status', ['Available', 'Allotted', 'Possession'])->default('Available');
 
-            CommonMigrations::five($table);
+            CommonMigrations::commonColumns($table);
         });
     }
 

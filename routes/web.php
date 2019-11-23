@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('select-data', 'SelectDataController@selectData');
+Route::get('select-data-model', 'SelectDataController@selectDataModel');

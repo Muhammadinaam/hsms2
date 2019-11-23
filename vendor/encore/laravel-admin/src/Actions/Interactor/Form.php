@@ -467,6 +467,7 @@ SCRIPT;
         $this->addModalHtml();
 
         return <<<SCRIPT
+            alert('abc');
             var process = new Promise(function (resolve,reject) {
                 Object.assign(data, {
                     _token: $.admin.token,

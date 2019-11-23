@@ -55,9 +55,14 @@ class ProjectController extends AdminController
     protected function form()
     {
         $form = new Form(new Project);
-
-        $form->text('name', 'Project Name')->rules('required|min:2');
-        $form->text('short_name', 'Project Short Name')->rules('required|min:2');
+        
+        $id = null;
+        $form->editing(function ($form) {
+            $id = $form->model()->id;
+        });
+        
+        $form->text('name', 'Project Name')->rules('required|min:2|unique:projects,name,'.$id);
+        $form->text('short_name', 'Project Short Name')->rules('required|min:2|unique:projects,short_name,'.$id);
 
         return $form;
     }

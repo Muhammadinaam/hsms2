@@ -2,9 +2,9 @@
 
 class CommonMigrations
 {
-    public static function five($table)
+    public static function commonColumns($table)
     {
-        $table->boolean('status')->default(true)->nullable();
+        //$table->boolean('status')->default(true)->nullable();
         $table->bigInteger('created_by')->nullable();
         $table->bigInteger('updated_by')->nullable();
         $table->timestamps();

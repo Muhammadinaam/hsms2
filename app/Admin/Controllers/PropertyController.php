@@ -27,19 +27,22 @@ class PropertyController extends AdminController
     {
         $grid = new Grid(new Property);
 
-        $grid->column('id', __('Id'));
-        $grid->column('project_id', __('Project id'));
-        $grid->column('phase_id', __('Phase id'));
-        $grid->column('block_id', __('Block id'));
-        $grid->column('property_type_id', __('Property type id'));
+        $grid->column('project.name', __('Project'));
+        $grid->column('phase.name', __('Phase'));
+        $grid->column('block.name', __('Block'));
+        $grid->column('propertyType.name', __('Property Type'));
         $grid->column('name', __('Name'));
         $grid->column('marlas', __('Marlas'));
-        $grid->column('is_corner', __('Is corner'));
-        $grid->column('is_facing_park', __('Is facing park'));
-        $grid->column('is_on_boulevard', __('Is on boulevard'));
+        $grid->column('is_corner', __('Corner'))->bool();
+        $grid->column('is_facing_park', __('Facing Park'))->bool();
+        $grid->column('is_on_boulevard', __('On Boulevard'))->bool();
         $grid->column('cash_price', __('Cash price'));
         $grid->column('installment_price', __('Installment price'));
         $grid->column('property_status', __('Property Status'));
+
+        $grid->actions(function ($actions) {
+            $actions->disableView();
+        });
         
         return $grid;
     }
@@ -54,8 +57,7 @@ class PropertyController extends AdminController
     {
         $show = new Show(Property::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('project_id', __('Project id'));
+        $show->field('project.name', __('Project id'));
         $show->field('phase_id', __('Phase id'));
         $show->field('block_id', __('Block id'));
         $show->field('property_type_id', __('Property type id'));
@@ -80,19 +82,33 @@ class PropertyController extends AdminController
         $form = new Form(new Property);
 
         $form->select('project_id', 'Project')
-        ->addVariables(['show_add_button' => true])
+        ->addVariables(['add_button_url' => 'admin/projects/create'])
         ->options(function ($id) {
-            $project = \App\Project::find($id);
-        
-            if ($project) {
-                return [$project->id => $project->name . '['.$project->short_name.']'];
-            }
+            return \App\Helpers\SelectHelper::selectedOptionData('\App\Project', $id);
         })
-        ->ajax(url('select-data?model=' . urlencode('\App\Project') . '|name,short_name|name:Name,short_name:Short Name'));
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Project'), 'id', 'text_for_select');
 
-        $form->number('phase_id', __('Phase id'));
-        $form->number('block_id', __('Block id'));
-        $form->number('property_type_id', __('Property type id'));
+        $form->select('phase_id', __('Phase'))
+        ->addVariables(['add_button_url' => 'admin/phases/create'])
+        ->options(function ($id) {
+            return \App\Helpers\SelectHelper::selectedOptionData('\App\Phase', $id);
+        })
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Phase'), 'id', 'text_for_select');
+
+        $form->select('block_id', __('Block'))
+        ->addVariables(['add_button_url' => 'admin/blocks/create'])
+        ->options(function ($id) {
+            return \App\Helpers\SelectHelper::selectedOptionData('\App\Block', $id);
+        })
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Block'), 'id', 'text_for_select');
+        
+        $form->select('property_type_id', __('Property type'))
+        ->addVariables(['add_button_url' => 'admin/property-types/create'])
+        ->options(function ($id) {
+            return \App\Helpers\SelectHelper::selectedOptionData('\App\PropertyType', $id);
+        })
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\PropertyType'), 'id', 'text_for_select');
+
         $form->text('name', __('Name'));
         $form->decimal('marlas', __('Marlas'));
         $form->switch('is_corner', __('Is corner'));
