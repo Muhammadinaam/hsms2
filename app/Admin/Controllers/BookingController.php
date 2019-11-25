@@ -26,7 +26,7 @@ class BookingController extends AdminController
     {
         $grid = new Grid(new Booking);
 
-        $grid->column('id', __('Id'));
+        $grid->column('booking_number', __('Booking Number'));
         $grid->column('date_of_booking', __('Date of booking'))->date('d-M-Y');
         $grid->column('project.name', __('Project'));
         $grid->column('phase.name', __('Phase'));
@@ -74,7 +74,22 @@ class BookingController extends AdminController
     {
         $form = new Form(new Booking);
 
+        $form->saving(function (Form $form) {
+            
+            $id = $form->id;
+            
+            if($id == null)
+            {
+                // get previous id
+                $previous_booking = \App\Booking::orderBy('booking_sequence_number', 'desc')->first();
+                $previous_number = $previous_booking == null ? 0 :$previous_booking->booking_sequence_number; 
+
+                $form->model()->booking_sequence_number = $previous_number + 1;
+            }
+        });
+
         $form->date('date_of_booking', __('Date of booking'))->default(date('Y-m-d H:i:s'));
+        $form->display('booking_number', __('Booking Number (Auto)'));
         $form->select('customer_id', __('Customer'))
         ->addVariables(['add_button_url' => 'admin/people/create'])
         ->options(function ($id) {
@@ -95,6 +110,13 @@ class BookingController extends AdminController
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Phase', $id);
         })
         ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Phase'), 'id', 'text_for_select');
+
+        $form->select('property_type_id', __('Property Type'))
+        ->addVariables(['add_button_url' => 'admin/property-types/create'])
+        ->options(function ($id) {
+            return \App\Helpers\SelectHelper::selectedOptionData('\App\PropertyType', $id);
+        })
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\PropertyType'), 'id', 'text_for_select');
 
         $form->decimal('booking_for_marlas', __('Booking For Marlas'));
         $form->switch('is_corner', __('Is corner'));

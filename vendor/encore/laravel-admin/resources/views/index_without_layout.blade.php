@@ -1,1 +1,2 @@
 @yield('content')
+{!! Admin::script() !!}

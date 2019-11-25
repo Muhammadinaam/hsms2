@@ -10,7 +10,7 @@ class Person extends CommonModel
     {
         $data = parent::searchForSelect($search_term, $where_clauses)
             ->where(function($query) use ($search_term) {
-                $queryorWhere('name', 'like', '%'.$search_term.'%')
+                $query->orWhere('name', 'like', '%'.$search_term.'%')
                 ->orWhere('cnic', 'like', '%'.$search_term.'%')
                 ->orWhere('phone', 'like', '%'.$search_term.'%');
             });

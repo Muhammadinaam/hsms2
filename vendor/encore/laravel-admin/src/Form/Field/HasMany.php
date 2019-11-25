@@ -425,6 +425,7 @@ class HasMany extends Field
                     ->fill($data);
             }
         } else {
+            $this->value = $relation->get()->toArray();
             if (empty($this->value)) {
                 return [];
             }

@@ -7,6 +7,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Helpers\BookingStatusConstants;
+use Illuminate\Support\MessageBag;
 
 class BookingCancellationController extends AdminController
 {
@@ -28,7 +30,7 @@ class BookingCancellationController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('date_of_cancellation', __('Date of cancellation'));
-        $grid->column('booking_id', __('Booking id'));
+        $grid->column('booking.booking_number', __('Booking Number'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
         $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
         $grid->column('agent_commission_to_be_returned', __('Agent commission to be returned'));
@@ -68,17 +70,49 @@ class BookingCancellationController extends AdminController
     protected function form()
     {
         $form = new Form(new BookingCancellation);
+        $id = isset(request()->route()->parameters()['booking_cancellation']) ? 
+            request()->route()->parameters()['booking_cancellation'] : null;
+        $booking_cancellation = \App\BookingCancellation::find($id);
 
-        $id = null;
-        $form->editing(function ($form) {
-            $id = $form->model()->id;
+        $form->saving(function (Form $form) use ($id, $booking_cancellation) {
+            
+            $booking_id = $form->booking_id;
+            $booking = \App\Booking::find($booking_id);
+
+            if($booking->booking_status != BookingStatusConstants::$booked 
+                && $booking->booking_status != BookingStatusConstants::$cancelled ) 
+            {
+                $error = new MessageBag([
+                    'title'   => 'Error',
+                    'message' => 'Status of this booking is ' . $booking->booking_status . '. This cannot be changed now',
+                ]);
+            
+                return back()->with(compact('error'));    
+            } 
+
+            if($booking_cancellation != null) 
+            {
+                $previous_cancelled_booking_id = $booking_cancellation->booking_id;
+                if($id != null && $previous_cancelled_booking_id != $booking->id) 
+                {
+                    //revert previous booking if editing cancellation form
+                    $previous_cancelled_booking = \App\Booking::find($previous_cancelled_booking_id);
+                    $previous_cancelled_booking->booking_status = BookingStatusConstants::$booked;
+                    $previous_cancelled_booking->save();
+                }
+            }
+
+            $booking->booking_status = BookingStatusConstants::$cancelled;
+            $booking->save();
+
         });
 
-        $booking_where = 'booking_status = \'Booking\'';
-        $booking_where =  $id != null ? 'bookings.id = ' . $id : '';
+
+        $booking_where = 'booking_status = \''. BookingStatusConstants::$booked .'\'';
+        $booking_where .=  $id != null ? ' OR bookings.id = ' . $booking_cancellation->booking_id : '';
 
         $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d H:i:s'));
-        $form->select('booking_id', __('Booking id'))
+        $form->select('booking_id', __('Booking'))
         ->addVariables(['add_button_url' => ''])
         ->options(function ($id) {
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Booking', $id);

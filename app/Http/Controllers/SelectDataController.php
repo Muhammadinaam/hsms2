@@ -11,7 +11,7 @@ class SelectDataController extends Controller
     public function selectDataModel()
     {
         $q = request()->get('q');
-        $where_clauses = request()->get('$where_clauses');
+        $where_clauses = request()->get('where_clauses');
         $model = request()->model;
         $model = new $model();
 

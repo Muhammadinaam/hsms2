@@ -1,7 +1,7 @@
-@extends( request()->has('without_layout') && request()->without_layout == true ? 'admin::index_without_layout' : 'admin::index', ['header' => $header])
+@extends( request()->has('without_layout') && request()->without_layout == 'true' ? 'admin::index_without_layout' : 'admin::index', ['header' => $header])
 
 @section('content')
-    @if( !request()->has('without_layout') || request()->without_layout == false )
+    @if( request()->without_layout == null || request()->without_layout == false )
     <section class="content-header">
         <h1>
             {{ $header ?: trans('admin.title') }}

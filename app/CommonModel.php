@@ -16,7 +16,7 @@ class CommonModel extends Model
         }
 
         $data = $this
-            ->where(function($query) use ($search_term) {
+            ->where(function($query) use ($search_term, $where_clauses) {
                 $query->whereRaw($where_clauses);
             });
 

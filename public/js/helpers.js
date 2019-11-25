@@ -1,6 +1,14 @@
+function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    )
+}
+
 function loadUrlInModal(url) {
+    var uniqueId = uuidv4();
+    var modalId = "urlModal_" + uniqueId;
     var modal = 
-    `<div id="urlModal" class="modal fade" role="dialog">
+    `<div id="`+modalId+`" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
     
         <!-- Modal content-->
@@ -21,23 +29,25 @@ function loadUrlInModal(url) {
     </div>`;
 
     $('body').append(modal);
-    $('#urlModal').modal('show');
-    $( "#urlModal .modal-body" ).load( url + "?without_layout=true", function() {
-        $("#urlModal form").removeAttr('pjax-container');
-        $("#urlModal form").addClass('form-in-modal');
+    $('#'+modalId).modal('show');
+    $( "#" + modalId + " .modal-body" ).load( url + "?without_layout=true", function() {
+        $("#" + modalId + " form").removeAttr('pjax-container');
+        $("#" + modalId + " form").addClass('form-in-modal');
     });
 
-    $("#urlModal").on('hidden.bs.modal', function(){
-        $("#urlModal").modal('hide');
-        $("#urlModal").remove();
+    $("#" + modalId + "").on('hidden.bs.modal', function(){
+        $("#" + modalId + "").modal('hide');
+        $("#" + modalId + "").remove();
     });
 
 }
 
 $(document).on('submit', '.form-in-modal', function(e){
     
+    var modalId = $(this).closest('.modal').attr('id');
+
     paramObj = {
-        formId: "#urlModal form",
+        formId: "#" + modalId + " form",
     };
 
     e.preventDefault();

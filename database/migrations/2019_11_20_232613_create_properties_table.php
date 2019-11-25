@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Helpers\PropertyStatusConstants;
 
 class CreatePropertiesTable extends Migration
 {
@@ -27,7 +28,8 @@ class CreatePropertiesTable extends Migration
             $table->boolean("is_on_boulevard");
             $table->decimal("cash_price");
             $table->decimal("installment_price");
-            $table->enum('property_status', ['Available', 'Allotted', 'Possession'])->default('Available');
+            $table->enum('property_status', [PropertyStatusConstants::$available, 
+                PropertyStatusConstants::$allotted, PropertyStatusConstants::$possessed])->default(PropertyStatusConstants::$available);
 
             CommonMigrations::commonColumns($table);
         });

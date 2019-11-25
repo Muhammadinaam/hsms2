@@ -20,5 +20,6 @@ Route::group([
     $router->resource('people', PersonController::class);
     $router->resource('bookings', BookingController::class);
     $router->resource('booking-cancellations', BookingCancellationController::class);
+    $router->resource('allotments', AllotmentController::class);
 
 });

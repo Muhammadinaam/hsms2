@@ -2,7 +2,7 @@
     <div class="box-header with-border">
         <h3 class="box-title">{{ $form->title() }}</h3>
 
-        @if( !request()->has('without_layout') || request()->without_layout == false )
+        @if( request()->without_layout == null || request()->without_layout == false )
         <div class="box-tools">
             {!! $form->renderTools() !!}
         </div>
