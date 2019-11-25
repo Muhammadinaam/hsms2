@@ -190,7 +190,7 @@ class AllotmentController extends AdminController
             $form->decimal('amount', "Amount");
             $form->number('number_of_payments', 'Number of Payments');
             $form->number('days_between_payments', 'Days between payments');
-        });
+        })->mode('table');
 
         return $form;
     }
