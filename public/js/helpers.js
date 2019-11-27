@@ -17,7 +17,7 @@ function loadUrlInModal(url) {
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Add New</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 80vh; overflow: auto;">
                 <p class="text-center">Loading...</p>
             </div>
             <div class="modal-footer">

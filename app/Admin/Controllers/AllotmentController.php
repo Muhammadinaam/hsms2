@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\BookingStatusConstants;
+use App\Helpers\UpdateStatus;
 use Illuminate\Support\MessageBag;
 use App\Helpers\PropertyStatusConstants;
 
@@ -60,10 +61,6 @@ class AllotmentController extends AdminController
         $show->field('amount_received_account_id', __('Amount received account id'));
         $show->field('agent_id', __('Agent id'));
         $show->field('agent_commission_amount', __('Agent commission amount'));
-        $show->field('created_by', __('Created by'));
-        $show->field('updated_by', __('Updated by'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
 
         return $show;
     }
@@ -83,66 +80,47 @@ class AllotmentController extends AdminController
 
         $form->saving(function (Form $form) use ($id, $allotment) {
             
-            $booking_id = $form->booking_id;
-            $booking = \App\Booking::find($booking_id);
+            $booking = \App\Booking::find($form->booking_id);
+            $ret = UpdateStatus::UpdateStatusLogic(
+                'Booking',
+                $booking, 
+                \App\Booking::class,
+                'booking_status',
+                $booking->booking_status != BookingStatusConstants::$booked 
+                && $booking->booking_status != BookingStatusConstants::$allotted,
+                $allotment,
+                'booking_id',
+                BookingStatusConstants::$booked,
+                BookingStatusConstants::$allotted);
 
-            if($booking->booking_status != BookingStatusConstants::$booked 
-                && $booking->booking_status != BookingStatusConstants::$allotted )
-            {
-                $error = new MessageBag([
-                    'title'   => 'Error',
-                    'message' => 'Status of this booking is ' . $booking->booking_status . '. This cannot be changed now',
-                ]);
-            
-                return back()->with(compact('error'));    
-            } 
-
-            if($allotment != null)
-            {
-                $previous_allotted_booking_id = $allotment->booking_id;
-                if($id != null && $previous_allotted_booking_id != $booking->id) 
-                {
-                    //revert previous booking if editing cancellation form
-                    $previous_allotted_booking = \App\Booking::find($previous_allotted_booking_id);
-                    $previous_allotted_booking->booking_status = BookingStatusConstants::$booked;
-                    $previous_allotted_booking->save();
-                }
+            if($ret !== true) {
+                return $ret;
             }
 
-            $booking->booking_status = BookingStatusConstants::$allotted;
-            $booking->save();
+            $property = \App\Property::find($form->property_id);
+            $ret = UpdateStatus::UpdateStatusLogic(
+                'Property',
+                $property, 
+                \App\Property::class,
+                'property_status',
+                $property->property_status != PropertyStatusConstants::$available 
+                && $property->property_status != PropertyStatusConstants::$allotted,
+                $allotment,
+                'property_id',
+                PropertyStatusConstants::$available,
+                PropertyStatusConstants::$allotted);
 
-
-
-            $property_id = $form->property_id;
-            $property = \App\Property::find($property_id);
-
-            if($property->property_status != PropertyStatusConstants::$available
-                && $property->property_status != PropertyStatusConstants::$allotted )
-            {
-                $error = new MessageBag([
-                    'title'   => 'Error',
-                    'message' => 'Status of this property is ' . $property->property_status . '. This cannot be changed now',
-                ]);
-            
-                return back()->with(compact('error'));    
-            } 
-
-            if($allotment != null)
-            {
-                $previous_allotted_property_id = $allotment->property_id;
-                if($id != null && $previous_allotted_property_id != $property->id) 
-                {
-                    //revert previous property if editing cancellation form
-                    $previous_allotted_property = \App\Booking::find($previous_allotted_property_id);
-                    $previous_allotted_property->property_status = PropertyStatusConstants::$available;
-                    $previous_allotted_property->save();
-                }
+            if($ret !== true) {
+                return $ret;
             }
 
-            $property->property_status = PropertyStatusConstants::$allotted;
-            $property->save();
-
+            $booking_and_property_match = $this->bookingAndPropertyMatch($booking, $property);
+            if( $booking_and_property_match !== true )
+            {
+                $error = $booking_and_property_match;
+            
+                return back()->with(compact('error')); 
+            }
         });
 
 
@@ -193,5 +171,36 @@ class AllotmentController extends AdminController
         })->mode('table');
 
         return $form;
+    }
+
+    private function bookingAndPropertyMatch($booking, $property)
+    {
+        $attributes = [
+            [ 'title' => 'Project', 'booking_db_field' => 'project_id', 'property_db_field' => 'project_id' ],
+            [ 'title' => 'Phase', 'booking_db_field' => 'phase_id', 'property_db_field' => 'phase_id' ],
+            [ 'title' => 'Marlas', 'booking_db_field' => 'booking_for_marlas', 'property_db_field' => 'marlas' ],
+            [ 'title' => 'Is Corner', 'booking_db_field' => 'is_corner', 'property_db_field' => 'is_corner' ],
+            [ 'title' => 'Is Facing Park', 'booking_db_field' => 'is_facing_park', 'property_db_field' => 'is_facing_park' ],
+            [ 'title' => 'Is On Boulevard', 'booking_db_field' => 'is_on_boulevard', 'property_db_field' => 'is_on_boulevard' ],
+        ];
+
+        $error_message = '';
+
+        $ret = true;
+        foreach($attributes as $attribute)
+        {
+            if($booking->{$attribute['booking_db_field']} != $property->{$attribute['property_db_field']})
+            {
+                $error_message .= 'Value of [' . $attribute['title'] . '] in Booking is ' . $booking->{$attribute['booking_db_field']}
+                    . ' while value of [' . $attribute['title'] . '] in Property is ' . $property->{$attribute['property_db_field']} . '. ';
+                
+                $ret = new MessageBag([
+                    'title'   => 'Error',
+                    'message' => $error_message,
+                ]);
+            }
+        }
+
+        return $ret;
     }
 }

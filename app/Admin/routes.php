@@ -21,5 +21,6 @@ Route::group([
     $router->resource('bookings', BookingController::class);
     $router->resource('booking-cancellations', BookingCancellationController::class);
     $router->resource('allotments', AllotmentController::class);
+    $router->resource('allotment-cancellations', AllotmentCancellationController::class);
 
 });

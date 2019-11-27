@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Helpers\AllotmentStatusConstants;
 
 class CreateAllotmentsTable extends Migration
 {
@@ -24,6 +25,9 @@ class CreateAllotmentsTable extends Migration
             $table->bigInteger("amount_received_account_id");
             $table->bigInteger("agent_id")->nullable();
             $table->decimal("agent_commission_amount")->nullable();
+            $table->enum('allotment_status', [
+                AllotmentStatusConstants::$allotted, 
+                AllotmentStatusConstants::$cancelled])->default(AllotmentStatusConstants::$allotted);
 
             CommonMigrations::commonColumns($table);
         });
