@@ -27,7 +27,8 @@ class CreateAllotmentsTable extends Migration
             $table->decimal("agent_commission_amount")->nullable();
             $table->enum('allotment_status', [
                 AllotmentStatusConstants::$allotted, 
-                AllotmentStatusConstants::$cancelled])->default(AllotmentStatusConstants::$allotted);
+                AllotmentStatusConstants::$cancelled,
+                AllotmentStatusConstants::$possessed])->default(AllotmentStatusConstants::$allotted);
 
             CommonMigrations::commonColumns($table);
         });

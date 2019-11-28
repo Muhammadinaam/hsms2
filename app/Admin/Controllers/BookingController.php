@@ -7,6 +7,9 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Helpers\UpdateHelpers;
+use Illuminate\Support\MessageBag;
+use App\Helpers\BookingStatusConstants;
 
 class BookingController extends AdminController
 {
@@ -73,10 +76,17 @@ class BookingController extends AdminController
     protected function form()
     {
         $form = new Form(new Booking);
+        $id = isset(request()->route()->parameters()['booking']) ? 
+            request()->route()->parameters()['booking'] : null;
+        $booking = \App\Booking::find($id);
 
-        $form->saving(function (Form $form) {
+        $form->saving(function (Form $form) use ($booking) {
             
-            $id = $form->id;
+            $ret = UpdateHelpers::isUpdateAllowed('Booking', $booking, 'booking_status', BookingStatusConstants::$booked);
+            if($ret !== true)
+            {
+                return $ret;
+            }
             
             if($id == null)
             {

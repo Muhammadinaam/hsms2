@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\AllotmentStatusConstants;
+use App\Helpers\PropertyStatusConstants;
 
 class AllotmentCancellationController extends AdminController
 {
@@ -29,7 +30,7 @@ class AllotmentCancellationController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('date_of_cancellation', __('Date of cancellation'))->date('d-M-Y');
-        $grid->column('date_of_cancellation', __('Date of cancellation'));
+        $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('allotment_id', __('Allotment id'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
         $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
@@ -69,6 +70,66 @@ class AllotmentCancellationController extends AdminController
         $id = isset(request()->route()->parameters()['allotment_cancellation']) ? 
             request()->route()->parameters()['allotment_cancellation'] : null;
         $allotment_cancellation = \App\AllotmentCancellation::find($id);
+
+        $form->saving(function (Form $form) use ($id, $allotment_cancellation) {
+            
+            $allotment = \App\Allotment::find($form->allotment_id);
+            $ret = UpdateHelpers::UpdateStatusLogic(
+                'Allotment',
+                $allotment, 
+                \App\Allotment::class,
+                'allotment_status',
+                $allotment->allotment_status != AllotmentStatusConstants::$allotted 
+                && $allotment->allotment_status != AllotmentStatusConstants::$cancelled,
+                $allotment_cancellation,
+                'allotment_id',
+                AllotmentStatusConstants::$allotted,
+                AllotmentStatusConstants::$cancelled);
+
+            if($ret !== true) {
+                return $ret;
+            }
+
+            // In case of Editing Allotment Cancellation. We will check that If allotment is changed, then property specified
+            // in previous allotment should have status 'Allotted'. Otherwise we will throw error
+            if($allotment_cancellation != null)
+            {
+                $old_allotment = $allotment_cancellation->allotment;
+                if($old_allotment != null)
+                {
+                    $old_property = \App\Property::find($old_allotment->property_id);
+                    if($old_property != null && $old_property->property_status != PropertyStatusConstants::$allotted)
+                    {
+                        $error = new MessageBag([
+                            'title'   => 'Error',
+                            'message' => 'Status of property of previous allotment is ['.$old_property->property_status.']. It cannot be changed now.',
+                        ]);
+                        return back()->with(compact('error'));
+                    }
+                    else
+                    {
+                        $old_property->property_status = PropertyStatusConstants::$available;
+                    }
+                }
+            }
+
+            // Property specified in allotment to be cancelled should have status 'Allotted'. Otherwise throw error
+            $new_property = \App\Allotment::find($form->allotment_id)->property;
+            if($new_property != null && $new_property->property_status != PropertyStatusConstants::$allotted)
+            {
+                $error = new MessageBag([
+                    'title'   => 'Error',
+                    'message' => 'Status of property of allotment is ['.$new_property->property_status.']. It cannot be changed now.',
+                ]);
+                return back()->with(compact('error'));
+            }
+            else
+            {
+                // set new status
+                $new_property->property_status = PropertyStatusConstants::$allotted;
+            }
+
+        });
 
         $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d'));
         $form->text('cancellation_reason', __('Cancellation Reason'));

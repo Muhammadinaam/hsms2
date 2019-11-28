@@ -78,10 +78,16 @@ class AllotmentController extends AdminController
             request()->route()->parameters()['booking_cancellation'] : null;
         $allotment = \App\Allotment::find($id);
 
+        $ret = UpdateHelpers::isUpdateAllowed('Allotment', $allotment, 'allotment_status', AllotmentStatusConstants::$allotted);
+        if($ret !== true)
+        {
+            return $ret;
+        }
+
         $form->saving(function (Form $form) use ($id, $allotment) {
             
             $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateStatus::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatusLogic(
                 'Booking',
                 $booking, 
                 \App\Booking::class,
@@ -98,16 +104,16 @@ class AllotmentController extends AdminController
             }
 
             $property = \App\Property::find($form->property_id);
-            $ret = UpdateStatus::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatusLogic(
                 'Property',
                 $property, 
                 \App\Property::class,
                 'property_status',
-                $property->property_status != PropertyStatusConstants::$available 
+                $property->property_status != PropertyStatusConstants::$booked 
                 && $property->property_status != PropertyStatusConstants::$allotted,
                 $allotment,
                 'property_id',
-                PropertyStatusConstants::$available,
+                PropertyStatusConstants::$booked,
                 PropertyStatusConstants::$allotted);
 
             if($ret !== true) {

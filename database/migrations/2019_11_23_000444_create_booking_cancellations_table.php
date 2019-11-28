@@ -17,6 +17,7 @@ class CreateBookingCancellationsTable extends Migration
             $table->bigIncrements('id');
 
             $table->datetime('date_of_cancellation');
+            $table->string('cancellation_reason');
             $table->bigInteger('booking_id');
             $table->decimal('customer_amount_returned');
             $table->bigInteger('customer_amount_returned_account_id');

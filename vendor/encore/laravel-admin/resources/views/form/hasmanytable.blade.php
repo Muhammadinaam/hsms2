@@ -7,7 +7,7 @@
 <div class="row">
     <div class="{{$viewClass['label']}}"><h4 class="pull-right">{{ $label }}</h4></div>
     <div class="col-sm-12">
-        <div id="has-many-{{$column}}" style="margin-top: 15px; min-height: 500px;" class="table-responsive">
+        <div id="has-many-{{$column}}" style="margin-top: 15px;" class="table-responsive">
             <table class="table table-has-many has-many-{{$column}}">
                 <thead>
                 <tr>

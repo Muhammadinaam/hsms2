@@ -6,4 +6,5 @@ class AllotmentStatusConstants
 {
     public static $allotted = 'Allotted';
     public static $cancelled = 'Allotment Cancelled';
+    public static $possessed = 'Property Possessed';
 }

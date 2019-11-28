@@ -30,7 +30,7 @@ class BookingCancellationController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('date_of_cancellation', __('Date of cancellation'));
-        $grid->column('cancellation_reason', );
+        $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('booking.booking_number', __('Booking Number'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
         $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
@@ -78,7 +78,7 @@ class BookingCancellationController extends AdminController
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
             
             $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateStatus::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatusLogic(
                 'Booking',
                 $booking, 
                 \App\Booking::class,
