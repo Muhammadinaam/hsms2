@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\BookingStatusConstants;
+use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
 
 class BookingCancellationController extends AdminController
@@ -78,7 +79,7 @@ class BookingCancellationController extends AdminController
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
             
             $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateHelpers::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatus(
                 'Booking',
                 $booking, 
                 \App\Booking::class,

@@ -78,7 +78,7 @@ class PersonController extends AdminController
     protected function form()
     {
         $form = new Form(new Person);
-        
+
         $form->column(1/2, function ($form) {
 
             $form->divider('Person Information');
@@ -87,10 +87,10 @@ class PersonController extends AdminController
             ->rules('required')
             ->options(
                 [
-                    1 => 'Agent',
-                    2 => 'Customer',
-                    3 => 'Supplier',
-                    4 => 'Employee',
+                    'Agent' => 'Agent',
+                    'Customer' => 'Customer',
+                    'Supplier' => 'Supplier',
+                    'Employee' => 'Employee',
                 ]
             );
 

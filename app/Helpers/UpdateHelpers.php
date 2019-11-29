@@ -10,18 +10,13 @@ class UpdateHelpers
     {
         if($entity != null && $entity->{$status_field_name} != $status_which_allows_update)
         {
-            $error = new MessageBag([
-                'title'   => 'Error',
-                'message' => 'Status of ' . $entity_title . ' is ['.$entity->{$status_field_name}.']. It cannot be edited now.',
-            ]);
-        
-            return back()->with(compact('error'));
+            return false;
         }
 
         return true;
     }
 
-    public static function UpdateStatusLogic(
+    public static function UpdateStatus(
         $entity_title,
         $entity, 
         $entity_model_class,

@@ -10,6 +10,7 @@ use Encore\Admin\Show;
 use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
 use App\Helpers\BookingStatusConstants;
+use App\Helpers\GeneralHelpers;
 
 class BookingController extends AdminController
 {
@@ -80,12 +81,12 @@ class BookingController extends AdminController
             request()->route()->parameters()['booking'] : null;
         $booking = \App\Booking::find($id);
 
-        $form->saving(function (Form $form) use ($booking) {
+        $form->saving(function (Form $form) use ($id, $booking) {
             
             $ret = UpdateHelpers::isUpdateAllowed('Booking', $booking, 'booking_status', BookingStatusConstants::$booked);
             if($ret !== true)
             {
-                return $ret;
+                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Booking is ['.$booking->booking_status.']. It cannot be changed now.');
             }
             
             if($id == null)

@@ -42,25 +42,22 @@ function loadUrlInModal(url) {
 
 }
 
-$(document).on('submit', '.form-in-modal', function(e){
+$(document).on('submit', '.form-in-modal, form', function(e){
     
     var modalId = $(this).closest('.modal').attr('id');
-
-    paramObj = {
-        formId: "#" + modalId + " form",
-    };
+    var form = $(this);
 
     e.preventDefault();
     
-    var formData = new FormData(document.querySelector(paramObj.formId))
+    var formData = new FormData(form[0])
     if(formData == null) {
         return;
     }
     
-    $(paramObj.formId + " [type='submit']").prop('disabled', true);
+    $(form).find("[type='submit']").prop('disabled', true);
     
     $.ajax({
-        url: $(paramObj.formId).attr('action'),
+        url: $(form).attr('action'),
         type: 'post',
         data: formData,
         processData: false,
@@ -72,8 +69,8 @@ $(document).on('submit', '.form-in-modal', function(e){
                 data.message,
                 'success'
             )
-            console.log($(paramObj.formId).closest('.modal'));
-            $(paramObj.formId).closest('.modal').modal('hide');
+            console.log($(form).closest('.modal'));
+            $(form).closest('.modal').modal('hide');
             
         } else {
             Swal.fire(
@@ -85,7 +82,7 @@ $(document).on('submit', '.form-in-modal', function(e){
     }).fail(function(error){
         ajaxErrorSweetAlert(error);
     }).always(function() {
-        $(paramObj.formId + " [type='submit']").prop('disabled', false);
+        $(form).find("[type='submit']").prop('disabled', false);
     });
 });
 

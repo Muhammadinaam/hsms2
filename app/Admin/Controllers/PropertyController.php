@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\SelectHelper;
+use App\Helpers\PropertyStatusConstants;
 
 class PropertyController extends AdminController
 {
@@ -80,6 +81,18 @@ class PropertyController extends AdminController
     protected function form()
     {
         $form = new Form(new Property);
+        $id = isset(request()->route()->parameters()['property']) ? 
+            request()->route()->parameters()['property'] : null;
+        $property = \App\Property::find($id);
+
+        $form->saving(function (Form $form) use ($property) {
+            
+            $ret = UpdateHelpers::isUpdateAllowed('Property', $property, 'property_status', PropertyStatusConstants::$available);
+            if($ret !== true)
+            {
+                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Property is ['.$property->property_status.']. It cannot be changed now.');
+            }
+        });
 
         $form->select('project_id', 'Project')
         ->addVariables(['add_button_url' => 'admin/projects/create'])

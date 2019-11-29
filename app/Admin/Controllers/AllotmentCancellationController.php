@@ -74,7 +74,7 @@ class AllotmentCancellationController extends AdminController
         $form->saving(function (Form $form) use ($id, $allotment_cancellation) {
             
             $allotment = \App\Allotment::find($form->allotment_id);
-            $ret = UpdateHelpers::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatus(
                 'Allotment',
                 $allotment, 
                 \App\Allotment::class,
@@ -90,15 +90,14 @@ class AllotmentCancellationController extends AdminController
                 return $ret;
             }
 
-            // In case of Editing Allotment Cancellation. We will check that If allotment is changed, then property specified
-            // in previous allotment should have status 'Allotted'. Otherwise we will throw error
+            // In case of Edit of AllotmentCancellation, we will restore status of property of Old Allotment to allotted
             if($allotment_cancellation != null)
             {
                 $old_allotment = $allotment_cancellation->allotment;
                 if($old_allotment != null)
                 {
                     $old_property = \App\Property::find($old_allotment->property_id);
-                    if($old_property != null && $old_property->property_status != PropertyStatusConstants::$allotted)
+                    if($old_property != null && $old_property->property_status != PropertyStatusConstants::$available)  //allotment cancellation sets property status = available
                     {
                         $error = new MessageBag([
                             'title'   => 'Error',
@@ -108,7 +107,8 @@ class AllotmentCancellationController extends AdminController
                     }
                     else
                     {
-                        $old_property->property_status = PropertyStatusConstants::$available;
+                        //restore old property status
+                        $old_property->property_status = PropertyStatusConstants::$allotted;
                     }
                 }
             }
@@ -126,7 +126,7 @@ class AllotmentCancellationController extends AdminController
             else
             {
                 // set new status
-                $new_property->property_status = PropertyStatusConstants::$allotted;
+                $new_property->property_status = PropertyStatusConstants::$available;
             }
 
         });

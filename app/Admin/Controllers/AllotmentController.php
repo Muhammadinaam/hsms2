@@ -8,7 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\BookingStatusConstants;
-use App\Helpers\UpdateStatus;
+//use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
 use App\Helpers\PropertyStatusConstants;
 
@@ -78,16 +78,16 @@ class AllotmentController extends AdminController
             request()->route()->parameters()['booking_cancellation'] : null;
         $allotment = \App\Allotment::find($id);
 
-        $ret = UpdateHelpers::isUpdateAllowed('Allotment', $allotment, 'allotment_status', AllotmentStatusConstants::$allotted);
-        if($ret !== true)
-        {
-            return $ret;
-        }
-
         $form->saving(function (Form $form) use ($id, $allotment) {
+
+            $ret = UpdateHelpers::isUpdateAllowed('Allotment', $allotment, 'allotment_status', AllotmentStatusConstants::$allotted);
+            if($ret !== true)
+            {
+                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Allotment is ['.$allotment->allotment_status.']. It cannot be changed now.');
+            }
             
             $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateHelpers::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatus(
                 'Booking',
                 $booking, 
                 \App\Booking::class,
@@ -104,7 +104,7 @@ class AllotmentController extends AdminController
             }
 
             $property = \App\Property::find($form->property_id);
-            $ret = UpdateHelpers::UpdateStatusLogic(
+            $ret = UpdateHelpers::UpdateStatus(
                 'Property',
                 $property, 
                 \App\Property::class,

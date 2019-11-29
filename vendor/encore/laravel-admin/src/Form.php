@@ -615,7 +615,7 @@ class Form implements Renderable
 
         // Handle validation errors.
         if ($validationMessages = $this->validationMessages($data)) {
-            if (!$isEditable) {
+            if (!$isEditable && !\request()->ajax()) {
                 return back()->withInput()->withErrors($validationMessages);
             }
 

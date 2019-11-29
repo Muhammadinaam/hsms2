@@ -431,7 +431,7 @@ EOT;
             'options' => $this->options,
             'groups'  => $this->groups,
         ]);
-
+        
         $this->attribute('data-value', implode(',', (array) $this->value()));
 
         return parent::render();
