@@ -371,6 +371,7 @@ class Form implements Renderable
      */
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
             if (($ret = $this->callDeleting($id)) instanceof Response) {
                 return $ret;
@@ -404,7 +405,9 @@ class Form implements Renderable
                 'status'  => true,
                 'message' => trans('admin.delete_succeeded'),
             ];
+            DB::commit();
         } catch (\Exception $exception) {
+            DB::rollBack();
             $response = [
                 'status'  => false,
                 'message' => $exception->getMessage() ?: trans('admin.delete_failed'),
@@ -452,11 +455,13 @@ class Form implements Renderable
             return $this->responseValidationError($validationMessages);
         }
 
-        if (($response = $this->prepare($data)) instanceof Response) {
-            return $response;
-        }
+        DB::beginTransaction();
+        try
+        {
+            if (($response = $this->prepare($data)) instanceof Response) {
+                return $response;
+            }
 
-        DB::transaction(function () {
             $inserts = $this->prepareInsert($this->updates);
 
             foreach ($inserts as $column => $value) {
@@ -466,13 +471,21 @@ class Form implements Renderable
             $this->model->save();
 
             $this->updateRelation($this->relations);
-        });
 
-        if (($response = $this->callSaved()) instanceof Response) {
-            return $response;
+            if (($response = $this->callSaved()) instanceof Response) {
+                return $response;
+            }
+
+            DB::commit();
         }
+        catch(\Exception $ex)
+        {
+            DB::rollBack();
+            throw $ex;
+        }
+        
 
-        if ($response = $this->ajaxResponse(trans('admin.save_succeeded'))) {
+        if ($response = $this->ajaxResponse(trans('admin.save_succeeded'), 1)) {
             return $response;
         }
 
@@ -504,16 +517,22 @@ class Form implements Renderable
      *
      * @return bool|\Illuminate\Http\JsonResponse
      */
-    protected function ajaxResponse($message)
+    protected function ajaxResponse($message, $key = null)
     {
         $request = Request::capture();
 
         // ajax but not pjax
         if ($request->ajax() && !$request->pjax()) {
-            return response()->json([
+
+            $resourcesPath = $this->resource(-1);
+
+            $resp_array = [
                 'status'  => true,
                 'message' => $message,
-            ]);
+                'redirect_url' => $key == null ? null : $this->redirectAfterSavingUrl($resourcesPath, $key)
+            ];
+
+            return response()->json($resp_array);
         }
 
         return false;
@@ -622,11 +641,13 @@ class Form implements Renderable
             return response()->json(['errors' => Arr::dot($validationMessages->getMessages())], 422);
         }
 
-        if (($response = $this->prepare($data)) instanceof Response) {
-            return $response;
-        }
+        DB::beginTransaction();
+        try
+        {
+            if (($response = $this->prepare($data)) instanceof Response) {
+                return $response;
+            }
 
-        DB::transaction(function () {
             $updates = $this->prepareUpdate($this->updates);
 
             foreach ($updates as $column => $value) {
@@ -637,13 +658,20 @@ class Form implements Renderable
             $this->model->save();
 
             $this->updateRelation($this->relations);
-        });
 
-        if (($result = $this->callSaved()) instanceof Response) {
-            return $result;
+            if (($result = $this->callSaved()) instanceof Response) {
+                return $result;
+            }
+
+            DB::commit();
+        }
+        catch(\Exception $ex)
+        {
+            DB::rollBack();
+            throw $ex;
         }
 
-        if ($response = $this->ajaxResponse(trans('admin.update_succeeded'))) {
+        if ($response = $this->ajaxResponse(trans('admin.update_succeeded'), $id)) {
             return $response;
         }
 
@@ -688,6 +716,15 @@ class Form implements Renderable
      */
     protected function redirectAfterSaving($resourcesPath, $key)
     {
+        $url = $this->redirectAfterSavingUrl($resourcesPath, $key);
+
+        admin_toastr(trans('admin.save_succeeded'));
+
+        return redirect($url);
+    }
+
+    protected function redirectAfterSavingUrl($resourcesPath, $key)
+    {
         if (request('after-save') == 1) {
             // continue editing
             $url = rtrim($resourcesPath, '/')."/{$key}/edit";
@@ -701,9 +738,7 @@ class Form implements Renderable
             $url = request(Builder::PREVIOUS_URL_KEY) ?: $resourcesPath;
         }
 
-        admin_toastr(trans('admin.save_succeeded'));
-
-        return redirect($url);
+        return $url;
     }
 
     /**

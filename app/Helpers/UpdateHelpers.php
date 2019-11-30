@@ -29,12 +29,7 @@ class UpdateHelpers
     {
         if($status_editable_condition )
         {
-            $error = new MessageBag([
-                'title'   => 'Error',
-                'message' => 'Status of this '.$entity_title.' is ' . $entity->{$status_field_name} . '. This cannot be changed now',
-            ]);
-        
-            return back()->with(compact('error'));    
+            return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Error', 'Status of this '.$entity_title.' is ' . $entity->{$status_field_name} . '. This cannot be changed now'); 
         } 
 
         if($current_model != null)

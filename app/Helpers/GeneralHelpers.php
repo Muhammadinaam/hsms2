@@ -15,4 +15,15 @@ class GeneralHelpers
     
         return back()->with(compact('error'));
     }
+
+    public static function ReturnJsonErrorResponse($error_title, $error_message)
+    {
+        $response = [
+            'status'  => false,
+            'title' => $error_title,
+            'message' => $error_message,
+        ];
+
+        return response()->json($response);
+    }
 }

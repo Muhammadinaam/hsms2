@@ -86,7 +86,7 @@ class BookingController extends AdminController
             $ret = UpdateHelpers::isUpdateAllowed('Booking', $booking, 'booking_status', BookingStatusConstants::$booked);
             if($ret !== true)
             {
-                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Booking is ['.$booking->booking_status.']. It cannot be changed now.');
+                return GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is ['.$booking->booking_status.']. It cannot be changed now.');
             }
             
             if($id == null)

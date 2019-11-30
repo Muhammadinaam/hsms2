@@ -8,9 +8,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\BookingStatusConstants;
-//use App\Helpers\UpdateHelpers;
+use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
 use App\Helpers\PropertyStatusConstants;
+use App\Helpers\AllotmentStatusConstants;
 
 class AllotmentController extends AdminController
 {
@@ -38,6 +39,7 @@ class AllotmentController extends AdminController
         $grid->column('amount_received_account_id', __('Amount received account id'));
         $grid->column('agent_id', __('Agent id'));
         $grid->column('agent_commission_amount', __('Agent commission amount'));
+        $grid->column('allotment_status', __('Allotment Status'));
 
         return $grid;
     }
@@ -74,8 +76,8 @@ class AllotmentController extends AdminController
     {
         $form = new Form(new Allotment);
 
-        $id = isset(request()->route()->parameters()['booking_cancellation']) ? 
-            request()->route()->parameters()['booking_cancellation'] : null;
+        $id = isset(request()->route()->parameters()['allotment']) ? 
+            request()->route()->parameters()['allotment'] : null;
         $allotment = \App\Allotment::find($id);
 
         $form->saving(function (Form $form) use ($id, $allotment) {
@@ -83,7 +85,7 @@ class AllotmentController extends AdminController
             $ret = UpdateHelpers::isUpdateAllowed('Allotment', $allotment, 'allotment_status', AllotmentStatusConstants::$allotted);
             if($ret !== true)
             {
-                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Allotment is ['.$allotment->allotment_status.']. It cannot be changed now.');
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Error', 'Status of Allotment is ['.$allotment->allotment_status.']. It cannot be changed now.');
             }
             
             $booking = \App\Booking::find($form->booking_id);
@@ -109,11 +111,11 @@ class AllotmentController extends AdminController
                 $property, 
                 \App\Property::class,
                 'property_status',
-                $property->property_status != PropertyStatusConstants::$booked 
+                $property->property_status != PropertyStatusConstants::$available 
                 && $property->property_status != PropertyStatusConstants::$allotted,
                 $allotment,
                 'property_id',
-                PropertyStatusConstants::$booked,
+                PropertyStatusConstants::$available,
                 PropertyStatusConstants::$allotted);
 
             if($ret !== true) {

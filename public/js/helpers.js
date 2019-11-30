@@ -43,10 +43,7 @@ function loadUrlInModal(url) {
 }
 
 $(document).on('submit', '.form-in-modal, form', function(e){
-    
-    var modalId = $(this).closest('.modal').attr('id');
     var form = $(this);
-
     e.preventDefault();
     
     var formData = new FormData(form[0])
@@ -64,17 +61,34 @@ $(document).on('submit', '.form-in-modal, form', function(e){
         contentType: false,
     }).done(function(data){
         if(data.status == true) {
-            Swal.fire(
-                'Success',
-                data.message,
-                'success'
-            )
             console.log($(form).closest('.modal'));
-            $(form).closest('.modal').modal('hide');
+            var modal = $(form).closest('.modal')
+            if(modal.length > 0) 
+            {
+                Swal.fire(
+                    'Success',
+                    data.message,
+                    'success'
+                ).then(function(){
+                    $(modal).modal('hide');
+                });
+            } else 
+            {
+                if(data.redirect_url) 
+                {
+                    Swal.fire(
+                        'Success',
+                        data.message,
+                        'success'
+                    ).then(function(){
+                        window.location.replace(data.redirect_url);
+                    });
+                }
+            }
             
         } else {
             Swal.fire(
-                'Error',
+                data.title ? data.title : 'Error',
                 data.message,
                 'error'
             )
@@ -97,7 +111,7 @@ function ajaxErrorSweetAlert(jqXhr) {
         errorsHtml = '<div class="alert alert-danger text-left"><ul>';
 
         $.each( errors, function( key, value ) {
-            errorsHtml += '<li>' + value[0] + '</li>'; //showing only the first error.
+            errorsHtml += '<li>' + value + '</li>'; //showing only the first error.
         });
         errorsHtml += '</ul></di>';
         

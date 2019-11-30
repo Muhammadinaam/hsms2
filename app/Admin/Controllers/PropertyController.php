@@ -9,6 +9,8 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\SelectHelper;
 use App\Helpers\PropertyStatusConstants;
+use App\Helpers\UpdateHelpers;
+use App\Helpers\GeneralHelpers;
 
 class PropertyController extends AdminController
 {
@@ -90,7 +92,7 @@ class PropertyController extends AdminController
             $ret = UpdateHelpers::isUpdateAllowed('Property', $property, 'property_status', PropertyStatusConstants::$available);
             if($ret !== true)
             {
-                return GeneralHelpers::RedirectBackResponseWithError('Error', 'Status of Property is ['.$property->property_status.']. It cannot be changed now.');
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Property is ['.$property->property_status.']. It cannot be changed now.');
             }
         });
 

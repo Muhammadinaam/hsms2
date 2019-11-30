@@ -10,6 +10,7 @@ use Encore\Admin\Show;
 use App\Helpers\BookingStatusConstants;
 use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class BookingCancellationController extends AdminController
 {
@@ -78,20 +79,15 @@ class BookingCancellationController extends AdminController
 
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
             
-            $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateHelpers::UpdateStatus(
-                'Booking',
-                $booking, 
-                \App\Booking::class,
-                'booking_status',
-                $booking->booking_status != BookingStatusConstants::$booked 
-                && $booking->booking_status != BookingStatusConstants::$cancelled,
-                $booking_cancellation,
-                'booking_id',
-                BookingStatusConstants::$booked,
-                BookingStatusConstants::$cancelled);
+            $old_booking = $booking_cancellation->booking;
+            $ret = $old_booking->setBooked();
+            if ($ret instanceof Response) {
+                return $ret;
+            }
 
-            if($ret !== true) {
+            $new_booking = \App\Booking::find($form->booking_id);
+            $ret = $new_booking->setCancelled();
+            if ($ret instanceof Response) {
                 return $ret;
             }
 

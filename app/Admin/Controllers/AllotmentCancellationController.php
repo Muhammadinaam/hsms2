@@ -9,6 +9,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Helpers\AllotmentStatusConstants;
 use App\Helpers\PropertyStatusConstants;
+use App\Helpers\UpdateHelpers;
 
 class AllotmentCancellationController extends AdminController
 {
@@ -99,34 +100,29 @@ class AllotmentCancellationController extends AdminController
                     $old_property = \App\Property::find($old_allotment->property_id);
                     if($old_property != null && $old_property->property_status != PropertyStatusConstants::$available)  //allotment cancellation sets property status = available
                     {
-                        $error = new MessageBag([
-                            'title'   => 'Error',
-                            'message' => 'Status of property of previous allotment is ['.$old_property->property_status.']. It cannot be changed now.',
-                        ]);
-                        return back()->with(compact('error'));
+                        return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Error', 'Status of property of previous allotment is ['.$old_property->property_status.']. It cannot be changed now.');
                     }
                     else
                     {
                         //restore old property status
                         $old_property->property_status = PropertyStatusConstants::$allotted;
+                        $old_property->save();
                     }
                 }
             }
 
             // Property specified in allotment to be cancelled should have status 'Allotted'. Otherwise throw error
             $new_property = \App\Allotment::find($form->allotment_id)->property;
-            if($new_property != null && $new_property->property_status != PropertyStatusConstants::$allotted)
+            if($new_property != null && 
+                $new_property->property_status != PropertyStatusConstants::$allotted)
             {
-                $error = new MessageBag([
-                    'title'   => 'Error',
-                    'message' => 'Status of property of allotment is ['.$new_property->property_status.']. It cannot be changed now.',
-                ]);
-                return back()->with(compact('error'));
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Error', 'Status of property of allotment is ['.$new_property->property_status.']. It cannot be changed now.');
             }
             else
             {
                 // set new status
                 $new_property->property_status = PropertyStatusConstants::$available;
+                $new_property->save();
             }
 
         });
@@ -135,7 +131,7 @@ class AllotmentCancellationController extends AdminController
         $form->text('cancellation_reason', __('Cancellation Reason'));
         
         $allotment_where = 'allotment_status = \''. AllotmentStatusConstants::$allotted .'\'';
-        $allotment_where .=  $id != null ? ' OR allotments.id = ' . $allotment_cancellation->booking_id : '';
+        $allotment_where .=  $id != null ? ' OR allotments.id = ' . $allotment_cancellation->allotment_id : '';
         $form->select('allotment_id', __('Allotment'))
         ->addVariables(['add_button_url' => ''])
         ->options(function ($id) {
