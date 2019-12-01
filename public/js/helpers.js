@@ -43,7 +43,12 @@ function loadUrlInModal(url) {
 }
 
 $(document).on('submit', '.form-in-modal, form', function(e){
+    
     var form = $(this);
+    if($(form).attr('method') == undefined) // get forms i.e filter and menu forms
+    {
+        return;
+    }
     e.preventDefault();
     
     var formData = new FormData(form[0])

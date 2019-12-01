@@ -28,7 +28,6 @@ class AddMenus extends Migration
         CommonMigrations::addMenu($setup_menu_id, 19, 'Possessions', 'fa-book', 'possessions', 'possessions_list');
         CommonMigrations::addMenu($setup_menu_id, 20, 'Possession Cancellations', 'fa-times-rectangle', 'possession-cancellations', 'possession_cancellations_list');
         CommonMigrations::addMenu($setup_menu_id, 21, 'Transfers', 'fa-book', 'transfers', 'transfers_list');
-        CommonMigrations::addMenu($setup_menu_id, 22, 'Transfer Cancellations', 'fa-times-rectangle', 'transfer-cancellations', 'transfer_cancellations_list');
 
 
         $setup_menu_id = CommonMigrations::addMenu(0, 23, 'Accounting Setup', 'fa-briefcase', '', null);

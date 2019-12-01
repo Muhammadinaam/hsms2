@@ -42,7 +42,12 @@ class BookingController extends AdminController
         $grid->column('customer_amount_received', __('Amount received'));
         $grid->column('agent.text_for_select', __('Agent id'));
         $grid->column('agent_commission_amount', __('Agent commission amount'));
-        $grid->column('booking_status', __('Booking Status'));
+        $grid->column('status', __('Booking Status'))->display(function($status){
+            return \App\Helpers\StatusesHelper::statusTitle($status);
+        })->filter([
+            \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
+            \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
+        ]);
         
         return $grid;
     }
@@ -83,10 +88,9 @@ class BookingController extends AdminController
 
         $form->saving(function (Form $form) use ($id, $booking) {
             
-            $ret = UpdateHelpers::isUpdateAllowed('Booking', $booking, 'booking_status', BookingStatusConstants::$booked);
-            if($ret !== true)
+            if($booking != null && !$booking->isEditableOrCancellable())
             {
-                return GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is ['.$booking->booking_status.']. It cannot be changed now.');
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is [' . \App\Helpers\StatusesHelper::statusTitle($booking->status) . ']. It cannot be changed now.');
             }
             
             if($id == null)

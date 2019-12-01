@@ -22,5 +22,8 @@ Route::group([
     $router->resource('booking-cancellations', BookingCancellationController::class);
     $router->resource('allotments', AllotmentController::class);
     $router->resource('allotment-cancellations', AllotmentCancellationController::class);
+    $router->resource('possessions', PossessionController::class);
+    $router->resource('possession-cancellations', PossessionCancellationController::class);
+    $router->resource('transfers', TransferController::class);
 
 });

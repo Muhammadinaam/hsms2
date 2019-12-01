@@ -7,7 +7,6 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Helpers\BookingStatusConstants;
 use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,14 +78,17 @@ class BookingCancellationController extends AdminController
 
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
             
-            $old_booking = $booking_cancellation->booking;
-            $ret = $old_booking->setBooked();
-            if ($ret instanceof Response) {
-                return $ret;
+            if($booking_cancellation != null && $booking_cancellation->booking != null)
+            {
+                $old_booking = $booking_cancellation->booking;
+                $ret = $old_booking->unsetCancelledStatus();
+                if ($ret instanceof Response) {
+                    return $ret;
+                }
             }
 
             $new_booking = \App\Booking::find($form->booking_id);
-            $ret = $new_booking->setCancelled();
+            $ret = $new_booking->setCancelledStatus();
             if ($ret instanceof Response) {
                 return $ret;
             }
@@ -94,7 +96,7 @@ class BookingCancellationController extends AdminController
         });
 
 
-        $booking_where = 'booking_status = \''. BookingStatusConstants::$booked .'\'';
+        $booking_where = 'status = \''. \App\Helpers\StatusesHelper::BOOKED .'\'';
         $booking_where .=  $id != null ? ' OR bookings.id = ' . $booking_cancellation->booking_id : '';
 
         $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d H:i:s'));

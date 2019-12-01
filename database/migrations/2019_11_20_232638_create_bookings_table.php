@@ -32,10 +32,7 @@ class CreateBookingsTable extends Migration
             $table->bigInteger("customer_amount_received_account_id");
             $table->bigInteger("agent_id")->nullable();
             $table->decimal("agent_commission_amount")->nullable();
-            $table->enum('booking_status', [
-                BookingStatusConstants::$booked, 
-                BookingStatusConstants::$cancelled, 
-                BookingStatusConstants::$allotted])->default(BookingStatusConstants::$booked);
+            $table->string('status');
 
             CommonMigrations::commonColumns($table);
         });

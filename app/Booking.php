@@ -4,9 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends CommonModel
+class Booking extends CommonModelWithStatuses
 {
     protected $appends = ['text_for_select', 'booking_number'];
+
+    public $all_statuses = [
+        \App\Helpers\StatusesHelper::BOOKED,
+        \App\Helpers\StatusesHelper::ALLOTTED,
+        \App\Helpers\StatusesHelper::POSSESSED
+    ];
 
     public function searchForSelect($search_term, $where_clauses)
     {

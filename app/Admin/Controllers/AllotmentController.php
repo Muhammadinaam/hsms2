@@ -7,11 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Helpers\BookingStatusConstants;
-use App\Helpers\UpdateHelpers;
 use Illuminate\Support\MessageBag;
-use App\Helpers\PropertyStatusConstants;
-use App\Helpers\AllotmentStatusConstants;
 
 class AllotmentController extends AdminController
 {
@@ -31,6 +27,7 @@ class AllotmentController extends AdminController
     {
         $grid = new Grid(new Allotment);
 
+        $grid->column('id', __('Id'));
         $grid->column('date_of_allotment', __('Date of allotment'));
         $grid->column('booking_id', __('Booking id'));
         $grid->column('property_id', __('Property id'));
@@ -39,7 +36,7 @@ class AllotmentController extends AdminController
         $grid->column('amount_received_account_id', __('Amount received account id'));
         $grid->column('agent_id', __('Agent id'));
         $grid->column('agent_commission_amount', __('Agent commission amount'));
-        $grid->column('allotment_status', __('Allotment Status'));
+        $grid->column('status', __('Allotment Status'));
 
         return $grid;
     }
@@ -82,47 +79,14 @@ class AllotmentController extends AdminController
 
         $form->saving(function (Form $form) use ($id, $allotment) {
 
-            $ret = UpdateHelpers::isUpdateAllowed('Allotment', $allotment, 'allotment_status', AllotmentStatusConstants::$allotted);
-            if($ret !== true)
+            if($allotment != null && !$allotment->isEditableOrCancellable())
             {
-                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Error', 'Status of Allotment is ['.$allotment->allotment_status.']. It cannot be changed now.');
-            }
-            
-            $booking = \App\Booking::find($form->booking_id);
-            $ret = UpdateHelpers::UpdateStatus(
-                'Booking',
-                $booking, 
-                \App\Booking::class,
-                'booking_status',
-                $booking->booking_status != BookingStatusConstants::$booked 
-                && $booking->booking_status != BookingStatusConstants::$allotted,
-                $allotment,
-                'booking_id',
-                BookingStatusConstants::$booked,
-                BookingStatusConstants::$allotted);
-
-            if($ret !== true) {
-                return $ret;
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Allotment is [' . \App\Helpers\StatusesHelper::statusTitle($allotment->status) . ']. It cannot be changed now.');
             }
 
-            $property = \App\Property::find($form->property_id);
-            $ret = UpdateHelpers::UpdateStatus(
-                'Property',
-                $property, 
-                \App\Property::class,
-                'property_status',
-                $property->property_status != PropertyStatusConstants::$available 
-                && $property->property_status != PropertyStatusConstants::$allotted,
-                $allotment,
-                'property_id',
-                PropertyStatusConstants::$available,
-                PropertyStatusConstants::$allotted);
-
-            if($ret !== true) {
-                return $ret;
-            }
-
-            $booking_and_property_match = $this->bookingAndPropertyMatch($booking, $property);
+            $new_booking = \App\Booking::find($form->booking_id);
+            $new_property = \App\Property::find($form->property_id);
+            $booking_and_property_match = $this->bookingAndPropertyMatch($new_booking, $new_property);
             if( $booking_and_property_match !== true )
             {
                 $error = $booking_and_property_match;
@@ -132,10 +96,10 @@ class AllotmentController extends AdminController
         });
 
 
-        $booking_where = 'booking_status = \''. BookingStatusConstants::$booked .'\'';
+        $booking_where = 'status = \''. \App\Helpers\StatusesHelper::BOOKED .'\'';
         $booking_where .=  $id != null ? ' OR bookings.id = ' . $allotment->booking_id : '';
 
-        $property_where = 'property_status = \''. PropertyStatusConstants::$available .'\'';
+        $property_where = 'status = \''. \App\Helpers\StatusesHelper::AVAILABLE .'\'';
         $property_where .=  $id != null ? ' OR properties.id = ' . $allotment->property_id : '';
 
 

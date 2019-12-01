@@ -28,8 +28,8 @@ class CreatePropertiesTable extends Migration
             $table->boolean("is_on_boulevard");
             $table->decimal("cash_price");
             $table->decimal("installment_price");
-            $table->enum('property_status', [PropertyStatusConstants::$available, 
-                PropertyStatusConstants::$allotted, PropertyStatusConstants::$possessed])->default(PropertyStatusConstants::$available);
+            $table->bigInteger("holder_id")->nullable();
+            $table->string('status');
 
             CommonMigrations::commonColumns($table);
         });

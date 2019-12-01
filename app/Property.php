@@ -4,8 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Property extends CommonModel
+class Property extends CommonModelWithStatuses
 {
+    public $all_statuses = [
+        \App\Helpers\StatusesHelper::AVAILABLE,
+        \App\Helpers\StatusesHelper::ALLOTTED,
+        \App\Helpers\StatusesHelper::POSSESSED
+    ];
+
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)
@@ -59,5 +65,10 @@ class Property extends CommonModel
     public function propertyType()
     {
         return $this->belongsTo('\App\PropertyType');
+    }
+
+    public function holder()
+    {
+        return $this->belongsTo('\App\Person', 'holder_id');
     }
 }

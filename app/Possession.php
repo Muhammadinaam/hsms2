@@ -4,39 +4,38 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Allotment extends CommonModelWithStatuses
+class Possession extends CommonModelWithStatuses
 {
     public $all_statuses = [
-        \App\Helpers\StatusesHelper::ALLOTTED,
         \App\Helpers\StatusesHelper::POSSESSED
     ];
-    public $effected_relations = ['property', 'booking'];
+    public $effected_relations = ['allotment'];
 
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)
             ->where(function($query) use ($search_term) {
 
-                $query->orWhereHas('property', function($query) use ($search_term) {
+                $query->orWhereHas('allotment.property', function($query) use ($search_term) {
                     $query->orWhere('properties.name', 'like', '%'.$search_term.'%');
                 });
 
-                $query->orWhereHas('property.project', function($query) use ($search_term) {
+                $query->orWhereHas('allotment.property.project', function($query) use ($search_term) {
                     $query->orWhere('projects.name', 'like', '%'.$search_term.'%')
                         ->orWhere('projects.short_name', 'like', '%'.$search_term.'%');
                 });
 
-                $query->orWhereHas('property.phase', function($query) use ($search_term) {
+                $query->orWhereHas('allotment.property.phase', function($query) use ($search_term) {
                     $query->orWhere('phases.name', 'like', '%'.$search_term.'%')
                         ->orWhere('phases.short_name', 'like', '%'.$search_term.'%');
                 });
 
-                $query->orWhereHas('property.block', function($query) use ($search_term) {
+                $query->orWhereHas('allotment.property.block', function($query) use ($search_term) {
                     $query->orWhere('blocks.name', 'like', '%'.$search_term.'%')
                         ->orWhere('blocks.short_name', 'like', '%'.$search_term.'%');
                 });
 
-                $query->orWhereHas('booking.customer', function($query) use ($search_term) {
+                $query->orWhereHas('allotment.booking.customer', function($query) use ($search_term) {
                     $query->orWhere('name', 'like', '%'.$search_term.'%');
                 });
             });
@@ -48,24 +47,15 @@ class Allotment extends CommonModelWithStatuses
     public function getTextForSelectAttribute()
     {
         return 
-            'Allotment Id: ' . $this->id . ', ' .
-            'Booking: ' . $this->booking->booking_number . ', ' .
-            'Cust. Name: ' . $this->booking->customer->name . ', ' .
-            'CNIC: ' . $this->booking->customer->cnic;
+            'Possession: ' . $this->id . ', ' .
+            'Allotment: ' . $this->id . ', ' .
+            'Booking: ' . $this->allotment->booking->booking_number . ', ' .
+            'Cust. Name: ' . $this->allotment->booking->customer->name . ', ' .
+            'CNIC: ' . $this->allotment->booking->customer->cnic;
     }
 
-    public function paymentPlans()
+    public function allotment()
     {
-        return $this->hasMany('\App\PaymentPlan');
-    }
-
-    public function property()
-    {
-        return $this->belongsTo('\App\Property');
-    }
-
-    public function booking()
-    {
-        return $this->belongsTo('\App\Booking');
+        return $this->belongsTo('\App\Allotment');
     }
 }

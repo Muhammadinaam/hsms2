@@ -33,6 +33,7 @@ class PropertyController extends AdminController
         $grid->column('project.name', __('Project'));
         $grid->column('phase.name', __('Phase'));
         $grid->column('block.name', __('Block'));
+        $grid->column('holder.text_for_select', __('Holder'));
         $grid->column('propertyType.name', __('Property Type'));
         $grid->column('name', __('Name'));
         $grid->column('marlas', __('Marlas'));
@@ -41,7 +42,12 @@ class PropertyController extends AdminController
         $grid->column('is_on_boulevard', __('On Boulevard'))->bool();
         $grid->column('cash_price', __('Cash price'));
         $grid->column('installment_price', __('Installment price'));
-        $grid->column('property_status', __('Property Status'));
+        $grid->column('status', __('Property Status'))->display(function($status){
+            return \App\Helpers\StatusesHelper::statusTitle($status);
+        })->filter([
+            \App\Helpers\StatusesHelper::AVAILABLE => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::AVAILABLE),
+            \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
+        ]);
 
         $grid->actions(function ($actions) {
             $actions->disableView();
@@ -89,10 +95,9 @@ class PropertyController extends AdminController
 
         $form->saving(function (Form $form) use ($property) {
             
-            $ret = UpdateHelpers::isUpdateAllowed('Property', $property, 'property_status', PropertyStatusConstants::$available);
-            if($ret !== true)
+            if($property != null && !$property->isEditableOrCancellable())
             {
-                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Property is ['.$property->property_status.']. It cannot be changed now.');
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Property is [' . \App\Helpers\StatusesHelper::statusTitle($property->status) . ']. It cannot be changed now.');
             }
         });
 
@@ -124,7 +129,7 @@ class PropertyController extends AdminController
         })
         ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\PropertyType'), 'id', 'text_for_select');
 
-        $form->text('name', __('Name'));
+        $form->text('name', __('Name'))->placeholder('Plot Number (1, 2 etc)');
         $form->decimal('marlas', __('Marlas'));
         $form->switch('is_corner', __('Is corner'));
         $form->switch('is_facing_park', __('Is facing park'));
