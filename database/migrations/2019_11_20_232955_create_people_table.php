@@ -22,7 +22,7 @@ class CreatePeopleTable extends Migration
             $table->string("cnic");
             $table->string("address");
             $table->string("phone");
-            $table->enum("person_type", ['Agent', 'Customer', 'Supplier', 'Employee']);
+            $table->enum("person_type", ['Dealer', 'Customer', 'Supplier', 'Employee']);
             $table->string("kin_name")->nullable();
             $table->string("kin_father_name")->nullable();
             $table->string("kin_husband_name")->nullable();

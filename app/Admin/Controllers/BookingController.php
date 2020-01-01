@@ -40,8 +40,8 @@ class BookingController extends AdminController
         $grid->column('is_facing_park', __('Is facing park'))->bool();
         $grid->column('is_on_boulevard', __('Is on boulevard'))->bool();
         $grid->column('customer_amount_received', __('Amount received'));
-        $grid->column('agent.text_for_select', __('Agent id'));
-        $grid->column('agent_commission_amount', __('Agent commission amount'));
+        $grid->column('dealer.text_for_select', __('Dealer id'));
+        $grid->column('dealer_commission_amount', __('Dealer commission amount'));
         $grid->column('status', __('Booking Status'))->display(function($status){
             return \App\Helpers\StatusesHelper::statusTitle($status);
         })->filter([
@@ -68,8 +68,8 @@ class BookingController extends AdminController
         $show->field('is_facing_park', __('Is facing park'));
         $show->field('is_on_boulevard', __('Is on boulevard'));
         $show->field('customer_amount_received', __('Amount received'));
-        $show->field('agent_id', __('Agent id'));
-        $show->field('agent_commission_amount', __('Agent commission amount'));
+        $show->field('dealer_id', __('Dealer id'));
+        $show->field('dealer_commission_amount', __('Dealer commission amount'));
         
         return $show;
     }
@@ -140,14 +140,14 @@ class BookingController extends AdminController
         $form->decimal('customer_amount_received', __('Amount received'));
         $form->number('customer_amount_received_account_id', __('Customer Amount Received Account ID'));
         
-        $form->select('agent_id', __('Agent id'))
+        $form->select('dealer_id', __('Dealer id'))
         ->addVariables(['add_button_url' => 'admin/people/create'])
         ->options(function ($id) {
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
         })
         ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
 
-        $form->decimal('agent_commission_amount', __('Agent commission amount'));
+        $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
         
         return $form;
     }

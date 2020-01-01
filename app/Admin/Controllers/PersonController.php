@@ -87,7 +87,7 @@ class PersonController extends AdminController
             ->rules('required')
             ->options(
                 [
-                    'Agent' => 'Agent',
+                    'Dealer' => 'Dealer',
                     'Customer' => 'Customer',
                     'Supplier' => 'Supplier',
                     'Employee' => 'Employee',

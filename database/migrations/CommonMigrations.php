@@ -32,4 +32,12 @@ class CommonMigrations
             ->where('title', $title)
             ->delete();
     }
+
+    public static function removeMenuByOrderRange($order_from, $order_to)
+    {
+        DB::table('admin_menu')
+            ->whereBetween('order', [$order_from, $order_to])
+            ->delete();
+
+    }
 }

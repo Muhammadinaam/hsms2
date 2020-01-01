@@ -52,7 +52,7 @@ class Booking extends CommonModelWithStatuses
             'CNIC: ' . $this->customer->cnic . ', ' .
             'Phone: ' . $this->customer->phone . ', ' .
             'Cust. Amount: ' . $this->customer_amount_received . ', ' .
-            'Agent Comm: ' . $this->agent_commission_amount;
+            'Dealer Comm: ' . $this->dealer_commission_amount;
     }
 
     public function project()
@@ -75,9 +75,9 @@ class Booking extends CommonModelWithStatuses
         return $this->belongsTo('\App\person', 'customer_id');
     }
 
-    public function agent()
+    public function dealer()
     {
-        return $this->belongsTo('\App\person', 'agent_id');
+        return $this->belongsTo('\App\person', 'dealer_id');
     }
 
     public function getBookingNumberAttribute ()

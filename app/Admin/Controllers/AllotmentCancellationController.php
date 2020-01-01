@@ -32,7 +32,7 @@ class AllotmentCancellationController extends AdminController
         $grid->column('allotment_id', __('Allotment id'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
         $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $grid->column('agent_commission_to_be_returned', __('Agent commission to be returned'));
+        $grid->column('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $grid;
     }
@@ -52,7 +52,7 @@ class AllotmentCancellationController extends AdminController
         $show->field('allotment_id', __('Allotment id'));
         $show->field('customer_amount_returned', __('Customer amount returned'));
         $show->field('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $show->field('agent_commission_to_be_returned', __('Agent commission to be returned'));
+        $show->field('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $show;
     }
@@ -102,7 +102,7 @@ class AllotmentCancellationController extends AdminController
         
         $form->decimal('customer_amount_returned', __('Customer amount returned'));
         $form->number('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $form->decimal('agent_commission_to_be_returned', __('Agent commission to be returned'));
+        $form->decimal('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $form;
     }

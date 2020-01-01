@@ -34,8 +34,8 @@ class AllotmentController extends AdminController
         $grid->column('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
         $grid->column('amount_received_date', __('Amount received date'));
         $grid->column('amount_received_account_id', __('Amount received account id'));
-        $grid->column('agent_id', __('Agent id'));
-        $grid->column('agent_commission_amount', __('Agent commission amount'));
+        $grid->column('dealer_id', __('Dealer id'));
+        $grid->column('dealer_commission_amount', __('Dealer commission amount'));
         $grid->column('status', __('Allotment Status'));
 
         return $grid;
@@ -58,8 +58,8 @@ class AllotmentController extends AdminController
         $show->field('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
         $show->field('amount_received_date', __('Amount received date'));
         $show->field('amount_received_account_id', __('Amount received account id'));
-        $show->field('agent_id', __('Agent id'));
-        $show->field('agent_commission_amount', __('Agent commission amount'));
+        $show->field('dealer_id', __('Dealer id'));
+        $show->field('dealer_commission_amount', __('Dealer commission amount'));
 
         return $show;
     }
@@ -126,14 +126,14 @@ class AllotmentController extends AdminController
         $form->date('amount_received_date', __('Amount received date'))->default(date('Y-m-d'));
         $form->number('amount_received_account_id', __('Amount received account id'));
         
-        $form->select('agent_id', __('Agent id'))
+        $form->select('dealer_id', __('Dealer id'))
         ->addVariables(['add_button_url' => 'admin/people/create'])
         ->options(function ($id) {
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
         })
         ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
         
-        $form->decimal('agent_commission_amount', __('Agent commission amount'));
+        $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
 
         $form->hasMany('paymentPlans', function (Form\NestedForm $form) {
             $form->date('starting_date')->default(date('Y-m-d'));

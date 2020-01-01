@@ -30,8 +30,8 @@ class CreateBookingsTable extends Migration
             $table->boolean("is_on_boulevard");
             $table->decimal("customer_amount_received");
             $table->bigInteger("customer_amount_received_account_id");
-            $table->bigInteger("agent_id")->nullable();
-            $table->decimal("agent_commission_amount")->nullable();
+            $table->bigInteger("dealer_id")->nullable();
+            $table->decimal("dealer_commission_amount")->nullable();
             $table->string('status');
 
             CommonMigrations::commonColumns($table);
