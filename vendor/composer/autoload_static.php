@@ -428,6 +428,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
     public static $classMap = array (
         'AddMenus' => __DIR__ . '/../..' . '/database/migrations/2019_11_20_221825_add_menus.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',
+        'App\\Admin\\Controllers\\AccountHeadController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AccountHeadController.php',
         'App\\Admin\\Controllers\\AllotmentCancellationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AllotmentCancellationController.php',
         'App\\Admin\\Controllers\\AllotmentController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AllotmentController.php',
         'App\\Admin\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AuthController.php',
@@ -477,6 +478,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Ledger' => __DIR__ . '/../..' . '/app/Ledger.php',
         'App\\PaymentPlan' => __DIR__ . '/../..' . '/app/PaymentPlan.php',
         'App\\Person' => __DIR__ . '/../..' . '/app/Person.php',
         'App\\Phase' => __DIR__ . '/../..' . '/app/Phase.php',
@@ -539,6 +541,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'CreateDealerFileBookingsTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_01_150134_create_dealer_file_bookings_table.php',
         'CreateFailedJobsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_19_000000_create_failed_jobs_table.php',
         'CreateFilesTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_01_114857_create_files_table.php',
+        'CreateLedgersTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_02_170333_create_ledgers_table.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreatePaymentPlansTable' => __DIR__ . '/../..' . '/database/migrations/2019_11_25_003808_create_payment_plans_table.php',
         'CreatePeopleTable' => __DIR__ . '/../..' . '/database/migrations/2019_11_20_232955_create_people_table.php',

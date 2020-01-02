@@ -31,10 +31,10 @@ class FileController extends AdminController
         
         $grid->column('file_number', __('File number'));
         $grid->column('marlas', __('Marlas'));
-        $grid->column('property_id', __('Property id'));
-        $grid->column('dealer_id', __('Dealer id'));
-        $grid->column('holder_id', __('Holder id'));
-        $grid->column('status', __('Status'));
+        $grid->column('property.text_for_select', __('Property'));
+        $grid->column('dealer.text_for_select', __('Dealer'));
+        $grid->column('holder.text_for_select', __('Holder'));
+        //$grid->column('status', __('Status'));
 
         return $grid;
     }

@@ -97,9 +97,9 @@ class PersonController extends AdminController
             $form->text('name', __('Name'));
             $form->text('father_name', __('Father name'));
             $form->text('husband_name', __('Husband name'));
-            $form->text('cnic', __('Cnic'));
-            $form->text('address', __('Address'));
-            $form->mobile('phone', __('Phone'));
+            $form->text('cnic', __('Cnic'))->rules('required');
+            $form->text('address', __('Address'))->rules('required');
+            $form->mobile('phone', __('Phone'))->rules('required');
         });
 
         $form->column(1/2, function ($form) {

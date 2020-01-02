@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'AddMenus' => $baseDir . '/database/migrations/2019_11_20_221825_add_menus.php',
     'App\\AccountHead' => $baseDir . '/app/AccountHead.php',
+    'App\\Admin\\Controllers\\AccountHeadController' => $baseDir . '/app/Admin/Controllers/AccountHeadController.php',
     'App\\Admin\\Controllers\\AllotmentCancellationController' => $baseDir . '/app/Admin/Controllers/AllotmentCancellationController.php',
     'App\\Admin\\Controllers\\AllotmentController' => $baseDir . '/app/Admin/Controllers/AllotmentController.php',
     'App\\Admin\\Controllers\\AuthController' => $baseDir . '/app/Admin/Controllers/AuthController.php',
@@ -57,6 +58,7 @@ return array(
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Ledger' => $baseDir . '/app/Ledger.php',
     'App\\PaymentPlan' => $baseDir . '/app/PaymentPlan.php',
     'App\\Person' => $baseDir . '/app/Person.php',
     'App\\Phase' => $baseDir . '/app/Phase.php',
@@ -119,6 +121,7 @@ return array(
     'CreateDealerFileBookingsTable' => $baseDir . '/database/migrations/2020_01_01_150134_create_dealer_file_bookings_table.php',
     'CreateFailedJobsTable' => $baseDir . '/database/migrations/2019_08_19_000000_create_failed_jobs_table.php',
     'CreateFilesTable' => $baseDir . '/database/migrations/2020_01_01_114857_create_files_table.php',
+    'CreateLedgersTable' => $baseDir . '/database/migrations/2020_01_02_170333_create_ledgers_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePaymentPlansTable' => $baseDir . '/database/migrations/2019_11_25_003808_create_payment_plans_table.php',
     'CreatePeopleTable' => $baseDir . '/database/migrations/2019_11_20_232955_create_people_table.php',

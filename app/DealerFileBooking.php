@@ -10,4 +10,9 @@ class DealerFileBooking extends Model
     {
         return $this->hasMany('\App\DealerFileBookingDetail');
     }
+
+    public function dealerAmountReceivedAccount()
+    {
+        return $this->belongsTo('\App\AccountHead', 'dealer_amount_received_account_id');
+    }
 }
