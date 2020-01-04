@@ -127,7 +127,15 @@ function ajaxErrorSweetAlert(jqXhr) {
         })
 
         
+    }
+    if(jqXhr.status === 500) {
+        Swal.fire({
+            title: '<strong>Error</strong>',
+            type: 'error',
+            text: jqXhr.responseJSON.message,
+        })
     } else {
+        console.log(jqXhr);
         Swal.fire({
             title: '<strong>Error</strong>',
             type: 'error',

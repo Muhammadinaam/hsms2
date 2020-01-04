@@ -18,4 +18,23 @@ class SelectHelper
         $where_clauses = $where_clauses != '' ? '&where_clauses=' . $where_clauses : '';  
         return url('select-data-model?model=' . urlencode($model_name)) . $where_clauses;
     }
+
+    public static function buildAjaxSelect(
+        $form, 
+        $column, 
+        $title, 
+        $add_button_url, 
+        $model_class, 
+        $where_clauses = '',
+        $display_attribute = 'text_for_select')
+    {
+        $ret = $form->select($column, $title)
+        ->addVariables(['add_button_url' => $add_button_url])
+        ->options(function ($id) use ($model_class) {
+            return \App\Helpers\SelectHelper::selectedOptionData($model_class, $id);
+        })
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl($model_class, $where_clauses), 'id', $display_attribute);
+
+        return $ret;
+    }
 }

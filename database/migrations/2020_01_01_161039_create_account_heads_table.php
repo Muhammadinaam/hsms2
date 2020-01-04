@@ -15,25 +15,27 @@ class CreateAccountHeadsTable extends Migration
     {
         Schema::create('account_heads', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('idt')->nullable();
+            $table->string('idt')->unique()->nullable();
             $table->string('name');
-            $table->enum('type', ['Income', 'Expense', 'Asset', 'Liability']);
+
+            $table->enum('type', \App\AccountHead::ACCOUNT_TYPES);
+
             $table->boolean('is_reserved')->default(false);
             CommonMigrations::commonColumns($table);
         });
 
         DB::table('account_heads')
             ->insert([
-                'idt' => 'account-receivable-payable',
+                'idt' => \App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE,
                 'name' => 'Account Receivable / Payable', 
-                'type' => 'Asset', 
+                'type' => 'Receivable / Payable', 
                 'is_reserved' => true
             ]);
 
         DB::table('account_heads')
             ->insert([
                 'name' => 'Cash', 
-                'type' => 'Asset', 
+                'type' => 'Cash / Bank', 
                 'is_reserved' => false
             ]);
     }

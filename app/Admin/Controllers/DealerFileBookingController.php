@@ -26,7 +26,7 @@ class DealerFileBookingController extends AdminController
     {
         $grid = new Grid(new DealerFileBooking);
 
-        $grid->column('date', __('Date'));
+        $grid->column('date', __('Date'))->date('d-M-Y');
         $grid->column('dealer_id', __('Dealer id'));
         $grid->column('dealer_amount_received', __('Dealer amount received'));
         $grid->column('dealerAmountReceivedAccount.text_for_select', __('Dealer amount received account'));
@@ -81,25 +81,32 @@ class DealerFileBookingController extends AdminController
                     $file->save();
                 }
             }
+
+            \App\Ledger::postDealerFileBooking($form->model());
         });
 
         $form->date('date', __('Date'))->default(date('Y-m-d'));
         
-        $form->select('dealer_id', __('Dealer'))
-        ->addVariables(['add_button_url' => 'admin/people/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'dealer_id', 
+            __('Dealer'), 
+            'admin/people/create', 
+            '\App\Person')
+            ->rules('required');
         
-        $form->decimal('dealer_amount_received', __('Dealer amount received'));
-        $form->select('dealer_amount_received_account_id', __('Dealer amount received account'))
-            ->addVariables(['add_button_url' => 'admin/account-heads/create'])
-            ->options(function ($id) {
-                return \App\Helpers\SelectHelper::selectedOptionData('\App\AccountHead', $id);
-            })
-            ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\AccountHead'), 'id', 'text_for_select')
-            ->help('Account Head in which amount received will be debited');
+        $form->decimal('dealer_amount_received', __('Dealer amount received'))
+            ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'dealer_amount_received_account_id', 
+            __('Dealer amount received account'), 
+            'admin/account-heads/create', 
+            '\App\AccountHead',
+            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            ->help('Account Head in which amount received will be debited')
+            ->rules('required');
 
         $form->hasMany('dealerFileBookingDetails', __('Files'), function (Form\NestedForm $form) use ($dealer_file_booking) {
             
@@ -115,12 +122,14 @@ class DealerFileBookingController extends AdminController
                 }
             }
 
-            $form->select('file_id', 'File')
-            ->addVariables(['add_button_url' => ''])
-            ->options(function ($id) {
-                return \App\Helpers\SelectHelper::selectedOptionData('\App\File', $id);
-            })
-            ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\File', $file_where), 'id', 'text_for_select');
+            \App\Helpers\SelectHelper::buildAjaxSelect(
+                $form, 
+                'file_id', 
+                __('File'), 
+                '', 
+                '\App\File',
+                $file_where)
+                ->rules('required');
 
         })->mode('table');
 

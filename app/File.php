@@ -28,8 +28,10 @@ class File extends CommonModelWithStatuses
 
     public function getTextForSelectAttribute()
     {
-        return 'File Number: ' . $this->file_number . 
-        ', Marlas: ' . $this->marlas;
+        return 'File : ' . $this->file_number . 
+        ', Marlas: ' . $this->marlas . 
+        ', Project: ' . $this->project->name . 
+        ', Phase: ' . $this->phase->name;
     }
 
     public function project()

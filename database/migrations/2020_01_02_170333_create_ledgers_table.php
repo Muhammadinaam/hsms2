@@ -20,12 +20,9 @@ class CreateLedgersTable extends Migration
             $table->dateTime('date');
             $table->string('entry_type');
             $table->string('entry_id');
-            $table->bigInteger('account_head_id');
-            $table->bigInteger('person_id')->nullable();
-            $table->bigInteger('file_id')->nullable();
-            $table->string('description');
-            $table->decimal('amount');
-            CommonMigrations::commomColumns($table);
+            CommonMigrations::commonColumns($table);
+
+            $table->unique(["entry_type", "entry_id"], 'uq_columns');
         });
     }
 

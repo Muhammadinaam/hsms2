@@ -21,7 +21,7 @@ class AddMenus extends Migration
 
         $parent_menu_id = CommonMigrations::addMenu(0, 101, 'Properties Management', 'fa-briefcase', '', null);
         CommonMigrations::addMenu($parent_menu_id, 102, 'Files', 'fa-file', 'files', 'files_list');
-        CommonMigrations::addMenu($parent_menu_id, 103, 'Dealer Filer Bookings', 'fa-book', 'dealer-file-bookings', 'dealer_file_bookings_list');
+        CommonMigrations::addMenu($parent_menu_id, 103, 'Dealer File Bookings', 'fa-book', 'dealer-file-bookings', 'dealer_file_bookings_list');
         CommonMigrations::addMenu($parent_menu_id, 104, 'Properties', 'fa-home', 'properties', 'properties_list');
         CommonMigrations::addMenu($parent_menu_id, 105, 'Bookings', 'fa-book', 'bookings', 'bookings_list');
         CommonMigrations::addMenu($parent_menu_id, 106, 'Booking Cancellations', 'fa-times-rectangle', 'booking-cancellations', 'booking_cancellations_list');

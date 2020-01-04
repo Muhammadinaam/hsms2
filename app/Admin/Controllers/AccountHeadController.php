@@ -69,12 +69,12 @@ class AccountHeadController extends AdminController
         }
 
         $form->text('name', __('Name'));
-        $form->select('type', __('Type'))->options([
-            'Income' => 'Income',
-            'Expense' => 'Expense',
-            'Asset' => 'Asset',
-            'Liability' => 'Liability',
-        ]);
+
+        $account_types = [];
+        foreach(\App\AccountHead::ACCOUNT_TYPES as $type){
+            $account_types[$type] = $type;
+        }
+        $form->select('type', __('Type'))->options($account_types);
 
         return $form;
     }

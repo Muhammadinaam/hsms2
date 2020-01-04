@@ -80,17 +80,23 @@ class FileController extends AdminController
         ->options(function ($id) {
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Project', $id);
         })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Project'), 'id', 'text_for_select');
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Project'), 'id', 'text_for_select')
+        ->rules('required');
 
         $form->select('phase_id', __('Phase'))
         ->addVariables(['add_button_url' => 'admin/phases/create'])
         ->options(function ($id) {
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Phase', $id);
         })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Phase'), 'id', 'text_for_select');
+        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Phase'), 'id', 'text_for_select')
+        ->rules('required');
 
-        $form->text('file_number', __('File number'));
-        $form->decimal('marlas', __('Marlas'));
+        $form->text('file_number', __('File number'))
+            ->creationRules(['required', "unique:files"])
+            ->updateRules(['required', "unique:files,file_number,{{id}}"]);
+
+        $form->decimal('marlas', __('Marlas'))
+        ->rules('required');
 
         return $form;
     }
