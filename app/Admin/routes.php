@@ -16,8 +16,11 @@ Route::group([
     $router->resource('phases', PhaseController::class);
     $router->resource('blocks', BlockController::class);
     $router->resource('property-types', PropertyTypeController::class);
-    $router->resource('files', FileController::class);
-    $router->resource('dealer-file-bookings', DealerFileBookingController::class);
+    
+    $router->resource('property-files', PropertyFileController::class);
+    $router->resource('dealer-bookings', DealerBookingController::class);
+    $router->resource('dealer-booking-returns', DealerBookingReturnController::class);
+
     $router->resource('properties', PropertyController::class);
     $router->resource('people', PersonController::class);
     $router->resource('bookings', BookingController::class);

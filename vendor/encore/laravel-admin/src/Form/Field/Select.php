@@ -313,11 +313,17 @@ EOT;
         $configs = json_encode($configs);
         $configs = substr($configs, 1, strlen($configs) - 2);
 
+        $url_option = 'url: "' . $url . '"';
+        if( strpos($url, 'function(') !== false )
+        {
+            $url_option = 'url: ' . $url;
+        }
+
         $this->script = <<<EOT
 
 $("{$this->getElementClassSelector()}").select2({
   ajax: {
-    url: "$url",
+    $url_option,
     dataType: 'json',
     delay: 250,
     data: function (params) {

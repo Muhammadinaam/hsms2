@@ -20,16 +20,17 @@ class AddMenus extends Migration
         CommonMigrations::addMenu($parent_menu_id, 12, 'Property Types', 'fa-list', 'property-types', 'property_types_list');
 
         $parent_menu_id = CommonMigrations::addMenu(0, 101, 'Properties Management', 'fa-briefcase', '', null);
-        CommonMigrations::addMenu($parent_menu_id, 102, 'Files', 'fa-file', 'files', 'files_list');
-        CommonMigrations::addMenu($parent_menu_id, 103, 'Dealer File Bookings', 'fa-book', 'dealer-file-bookings', 'dealer_file_bookings_list');
-        CommonMigrations::addMenu($parent_menu_id, 104, 'Properties', 'fa-home', 'properties', 'properties_list');
-        CommonMigrations::addMenu($parent_menu_id, 105, 'Bookings', 'fa-book', 'bookings', 'bookings_list');
-        CommonMigrations::addMenu($parent_menu_id, 106, 'Booking Cancellations', 'fa-times-rectangle', 'booking-cancellations', 'booking_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 107, 'Allotments', 'fa-book', 'allotments', 'allotments_list');
-        CommonMigrations::addMenu($parent_menu_id, 108, 'Allotment Cancellations', 'fa-times-rectangle', 'allotment-cancellations', 'allotment_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 109, 'Possessions', 'fa-book', 'possessions', 'possessions_list');
-        CommonMigrations::addMenu($parent_menu_id, 110, 'Possession Cancellations', 'fa-times-rectangle', 'possession-cancellations', 'possession_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 111, 'Transfers', 'fa-book', 'transfers', 'transfers_list');
+        CommonMigrations::addMenu($parent_menu_id, 102, 'Property Files', 'fa-file', 'property-files', 'property_files_list');
+        CommonMigrations::addMenu($parent_menu_id, 103, 'Dealer Bookings', 'fa-book', 'dealer-bookings', 'dealer_bookings_list');
+        CommonMigrations::addMenu($parent_menu_id, 104, 'Dealer Booking Returns', 'fa-book', 'dealer-booking-returns', 'dealer_booking_returns_list');
+        CommonMigrations::addMenu($parent_menu_id, 105, 'Properties', 'fa-home', 'properties', 'properties_list');
+        CommonMigrations::addMenu($parent_menu_id, 106, 'Bookings', 'fa-book', 'bookings', 'bookings_list');
+        CommonMigrations::addMenu($parent_menu_id, 107, 'Booking Cancellations', 'fa-times-rectangle', 'booking-cancellations', 'booking_cancellations_list');
+        CommonMigrations::addMenu($parent_menu_id, 108, 'Allotments', 'fa-book', 'allotments', 'allotments_list');
+        CommonMigrations::addMenu($parent_menu_id, 109, 'Allotment Cancellations', 'fa-times-rectangle', 'allotment-cancellations', 'allotment_cancellations_list');
+        CommonMigrations::addMenu($parent_menu_id, 110, 'Possessions', 'fa-book', 'possessions', 'possessions_list');
+        CommonMigrations::addMenu($parent_menu_id, 111, 'Possession Cancellations', 'fa-times-rectangle', 'possession-cancellations', 'possession_cancellations_list');
+        CommonMigrations::addMenu($parent_menu_id, 112, 'Transfers', 'fa-book', 'transfers', 'transfers_list');
 
         $parent_menu_id = CommonMigrations::addMenu(0, 201, 'Accounting Setup', 'fa-briefcase', '', null);
         CommonMigrations::addMenu($parent_menu_id, 202, 'Account Heads', 'fa-cubes', 'account-heads', 'account_heads_list');

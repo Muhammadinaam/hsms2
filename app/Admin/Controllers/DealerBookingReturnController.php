@@ -1,0 +1,122 @@
+<?php
+
+namespace App\Admin\Controllers;
+
+use App\DealerBookingReturn;
+use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Form;
+use Encore\Admin\Grid;
+use Encore\Admin\Show;
+
+class DealerBookingReturnController extends AdminController
+{
+    /**
+     * Title for current resource.
+     *
+     * @var string
+     */
+    protected $title = 'Dealer Booking Returns';
+
+    /**
+     * Make a grid builder.
+     *
+     * @return Grid
+     */
+    protected function grid()
+    {
+        $grid = new Grid(new DealerBookingReturn);
+
+        $grid->column('date', __('Date'));
+        $grid->column('dealer.text_for_select', __('Dealer'));
+        $grid->column('dealer_amount_returned', __('Dealer amount returned'));
+        $grid->column('dealerAmountReturnedAccount.text_for_select', __('Dealer amount returned account'));
+
+        return $grid;
+    }
+
+    /**
+     * Make a show builder.
+     *
+     * @param mixed $id
+     * @return Show
+     */
+    protected function detail($id)
+    {
+        $show = new Show(DealerBookingReturn::findOrFail($id));
+
+        $show->field('id', __('Id'));
+        $show->field('date', __('Date'));
+        $show->field('dealer_id', __('Dealer id'));
+        $show->field('dealer_amount_returned', __('Dealer amount returned'));
+        $show->field('dealer_amount_returned_account_id', __('Dealer amount returned account id'));
+        $show->field('created_by', __('Created by'));
+        $show->field('updated_by', __('Updated by'));
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
+
+        return $show;
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
+    {
+        $form = new Form(new DealerBookingReturn);
+        $id = isset(request()->route()->parameters()['dealer_booking_return']) ? 
+            request()->route()->parameters()['dealer_booking_return'] : null;
+        $dealer_booking_return = \App\DealerBookingReturn::find($id);
+
+        $form->date('date', __('Date'))->default(date('Y-m-d'));
+        
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'dealer_id', 
+            __('Dealer'), 
+            'admin/people/create', 
+            '\App\Person')
+            ->rules('required');
+        
+        $form->decimal('dealer_amount_returned', __('Dealer amount returned'))
+            ->rules('required');
+
+            \App\Helpers\SelectHelper::buildAjaxSelect(
+                $form, 
+                'dealer_amount_returned_account_id', 
+                __('Dealer amount returned account'), 
+                'admin/account-heads/create', 
+                '\App\AccountHead',
+                'type = \''. \App\AccountHead::CASH_BANK .'\'')
+                ->help('Account Head in which amount received will be debited')
+                ->rules('required');
+
+        $form->hasMany('dealerBookingReturnDetails', __('Files Returned'), function (Form\NestedForm $form) use ($dealer_booking_return) {
+    
+            $property_file_where = '  ';
+
+            $form->select('property_file_id', __('Property File'))->options(function ($id) {
+                    $property_file = \App\PropertyFile::find($id);
+                
+                    if ($property_file) {
+                        return [$property_file->id => $property_file->text_for_select];
+                    }
+                })->ajax('function(){
+                    var dealer_id = $(\'select[name="dealer_id"]\').val();
+                    if(dealer_id == "")
+                    {
+                        alert("Please select Dealer first");
+                        return "no-url";
+                    }
+                    else
+                    {
+                        return "'. url("select-data-model?model=" . urlencode("\App\PropertyFile") ) . '&where_clauses=dealer_id=" + dealer_id
+                    }
+                }', 'id', 'text_for_select');
+
+        })->mode('table');
+
+        return $form;
+    }
+}

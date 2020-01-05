@@ -1243,6 +1243,32 @@ class Form implements Renderable
      */
     public function validationMessages($input)
     {
+        $new_input = [];
+        foreach($input as $key => $value)
+        {
+            if( !is_array($value) )
+            {
+                $new_input[$key] = $value;
+            }
+            else
+            {
+                $new_array_input_value = [];
+                foreach($value as $array_input_key => $array_input_value)
+                {
+                    $is_removed = is_array($array_input_value) && 
+                        array_key_exists('_remove_', $array_input_value) && 
+                        $array_input_value['_remove_'] == '1';
+                    if(!$is_removed)
+                    {
+                        $new_array_input_value[$array_input_key] = $array_input_value;
+                    }
+                }
+                $new_input[$key] = $new_array_input_value;
+            }
+        }
+
+        $input = $new_input;
+
         $failedValidators = [];
 
         /** @var Field $field */
@@ -1250,8 +1276,8 @@ class Form implements Renderable
             if (!$validator = $field->getValidator($input)) {
                 continue;
             }
-
-            if (($validator instanceof Validator) && !$validator->passes()) {
+            
+            if (($validator instanceof Validator) && !$validator->passes()) { 
                 $failedValidators[] = $validator;
             }
         }
