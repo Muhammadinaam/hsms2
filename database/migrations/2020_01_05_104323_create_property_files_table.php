@@ -27,6 +27,7 @@ class CreatePropertyFilesTable extends Migration
             $table->boolean("is_on_boulevard")->default(false);
             $table->decimal("cash_price");
             $table->decimal("installment_price");
+            $table->decimal("cost");
             
             $table->bigInteger("dealer_id")->nullable();
             $table->bigInteger("holder_id")->nullable();

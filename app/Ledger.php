@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ledger extends Model
 {
     const DEALER_BOOKING = 'Dealer Booking';
+    const DEALER_BOOKING_RETURN = 'Dealer Booking Return';
 
     public function ledgerEntries()
     {

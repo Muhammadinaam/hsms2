@@ -158,7 +158,7 @@ class DealerBookingController extends AdminController
     {
         if($dealer_booking->id == null)
         {
-            throw new \Exception("Dealer File Booking not saved correctly", 1);   
+            throw new \Exception("Dealer Booking not saved correctly", 1);   
         }
 
         $project_id = null;

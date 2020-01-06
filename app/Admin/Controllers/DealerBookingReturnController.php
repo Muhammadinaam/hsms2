@@ -69,6 +69,40 @@ class DealerBookingReturnController extends AdminController
             request()->route()->parameters()['dealer_booking_return'] : null;
         $dealer_booking_return = \App\DealerBookingReturn::find($id);
 
+        $form->saving(function(Form $form) use ($dealer_booking_return) {
+            if($dealer_booking_return != null )
+            {
+                foreach($dealer_booking_return->dealerBookingReturnDetails as $detail)
+                {
+                    $property_file = $detail->propertyFile;
+                    $property_file->dealer_id = $dealer_booking_return->dealer_id;
+                    $property_file->save();
+                }
+            }
+        });
+
+        $form->saved(function (Form $form) {
+            
+            if( ! is_array(request()->dealerBookingReturnDetails) || count(request()->dealerBookingReturnDetails) == 0 )
+            {
+                throw new \Exception("Please select Property Files", 1);
+            }
+            
+            foreach(request()->dealerBookingReturnDetails as $detail)
+            {
+                if($detail['_remove_'] != '1')
+                {
+                    $property_file_id = $detail['property_file_id'];
+
+                    $property_file = \App\PropertyFile::find($property_file_id);
+                    $property_file->dealer_id = null;
+                    $property_file->save();
+                }
+            }
+
+            self::postDealerBookingReturn($form->model());
+        });
+
         $form->date('date', __('Date'))->default(date('Y-m-d'));
         
         \App\Helpers\SelectHelper::buildAjaxSelect(
@@ -118,5 +152,80 @@ class DealerBookingReturnController extends AdminController
         })->mode('table');
 
         return $form;
+    }
+
+    public static function postDealerBookingReturn(\App\DealerBookingReturn $model)
+    {
+        if($model->id == null)
+        {
+            throw new \Exception("Dealer Booking Return not saved correctly", 1);   
+        }
+
+        $project_id = null;
+        $phase_id = null;
+        foreach($model->dealerBookingReturnDetails as $detail) 
+        {
+            // TODO - improve this
+            $file_project_id = $detail->propertyFile->project_id; 
+            $file_phase_id = $detail->propertyFile->phase_id; 
+            // TODO - improve this
+
+            if($project_id == null)
+            {
+                
+                $project_id = $file_project_id;
+            }
+            else
+            {
+                if($project_id != $file_project_id) 
+                {
+                    throw new \Exception("All Files should be related to same Project", 1);
+                }
+            }
+
+            if($phase_id == null)
+            {
+                
+                $phase_id = $file_phase_id;
+            }
+            else
+            {
+                if($phase_id != $file_phase_id) 
+                {
+                    throw new \Exception("All Files should be related to same Phase", 1);
+                }
+            }
+        }
+
+        $ledger_id = \App\Ledger::insertOrUpdateLedger(
+            $project_id, 
+            $phase_id, 
+            $model->date, 
+            \App\Ledger::DEALER_BOOKING_RETURN, 
+            $model->id
+        );
+
+        // DELETE OLD ENTRIES
+        \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
+
+        // DEALER ACCOUNT DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            $model->dealer_id,
+            null,
+            'Amount returned from Dealer against Files Booking',
+            $model->dealer_amount_returned
+        );
+
+        // CASH / BANK CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            $model->dealer_amount_returned_account_id,
+            null,
+            null,
+            'Amount returned from Dealer against Files Booking',
+            -$model->dealer_amount_returned
+        );
     }
 }

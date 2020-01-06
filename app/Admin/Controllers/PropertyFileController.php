@@ -119,8 +119,12 @@ class PropertyFileController extends AdminController
         $form->switch('is_corner', __('Is corner'));
         $form->switch('is_facing_park', __('Is facing park'));
         $form->switch('is_on_boulevard', __('Is on boulevard'));
+
+        $form->divider('Price and Cost Information');
+
         $form->decimal('cash_price', __('Cash price'))->rules('required');
         $form->decimal('installment_price', __('Installment price'))->rules('required');
+        $form->decimal('cost', __('Cost'))->rules('required');
 
         return $form;
     }
