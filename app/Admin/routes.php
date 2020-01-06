@@ -21,7 +21,6 @@ Route::group([
     $router->resource('dealer-bookings', DealerBookingController::class);
     $router->resource('dealer-booking-returns', DealerBookingReturnController::class);
 
-    $router->resource('properties', PropertyController::class);
     $router->resource('people', PersonController::class);
     $router->resource('bookings', BookingController::class);
     $router->resource('booking-cancellations', BookingCancellationController::class);
