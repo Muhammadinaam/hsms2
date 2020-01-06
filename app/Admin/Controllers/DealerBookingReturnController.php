@@ -100,7 +100,7 @@ class DealerBookingReturnController extends AdminController
                 }
             }
 
-            self::postDealerBookingReturn($form->model());
+            self::postToLedger($form->model());
         });
 
         $form->date('date', __('Date'))->default(date('Y-m-d'));
@@ -154,7 +154,7 @@ class DealerBookingReturnController extends AdminController
         return $form;
     }
 
-    public static function postDealerBookingReturn(\App\DealerBookingReturn $model)
+    public static function postToLedger(\App\DealerBookingReturn $model)
     {
         if($model->id == null)
         {

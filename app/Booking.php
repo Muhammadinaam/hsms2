@@ -6,31 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends CommonModelWithStatuses
 {
-    protected $appends = ['text_for_select', 'booking_number'];
+    protected $appends = ['text_for_select'];
 
     public $all_statuses = [
         \App\Helpers\StatusesHelper::BOOKED,
         \App\Helpers\StatusesHelper::ALLOTTED,
         \App\Helpers\StatusesHelper::POSSESSED
     ];
+    public $effected_relations = ['propertyFile'];
 
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)
             ->where(function($query) use ($search_term) {
 
-                $query->orWhere('booking_sequence_number', 'like', '%'.$search_term.'%')
-
-                ->orWhereHas('project', function($query) use ($search_term) {
-                    $query->orWhere('short_name', 'like', '%'.$search_term.'%');
-                })
-
-                ->orWhereHas('phase', function($query) use ($search_term) {
-                    $query->orWhere('short_name', 'like', '%'.$search_term.'%');
-                })
-
-                ->orWhereHas('propertyType', function($query) use ($search_term) {
-                    $query->orWhere('short_name', 'like', '%'.$search_term.'%');
+                $query->orWhereHas('propertyFile', function($query) use ($search_term) {
+                    $query->orWhere('file_number', 'like', '%'.$search_term.'%');
                 })
                 
                 ->orWhereHas('customer', function($query) use ($search_term) {
@@ -47,44 +38,24 @@ class Booking extends CommonModelWithStatuses
     public function getTextForSelectAttribute()
     {
         return 
-            'Booking: ' . $this->booking_number . ', ' .
+            'File: ' . $this->propertyFile->file_number . ', ' .
             'Cust. Name: ' . $this->customer->name . ', ' .
             'CNIC: ' . $this->customer->cnic . ', ' .
-            'Phone: ' . $this->customer->phone . ', ' .
-            'Cust. Amount: ' . $this->customer_amount_received . ', ' .
-            'Dealer Comm: ' . $this->dealer_commission_amount;
-    }
-
-    public function project()
-    {
-        return $this->belongsTo('\App\Project');
-    }
-
-    public function phase()
-    {
-        return $this->belongsTo('\App\Phase');
-    }
-
-    public function propertyType()
-    {
-        return $this->belongsTo('\App\PropertyType');
+            'Phone: ' . $this->customer->phone . ', ';
     }
 
     public function customer()
     {
-        return $this->belongsTo('\App\person', 'customer_id');
+        return $this->belongsTo('\App\Person', 'customer_id');
     }
 
     public function dealer()
     {
-        return $this->belongsTo('\App\person', 'dealer_id');
+        return $this->belongsTo('\App\Person', 'dealer_id');
     }
 
-    public function getBookingNumberAttribute ()
+    public function propertyFile()
     {
-        return $this->project->short_name . '/' .
-            $this->phase->short_name . '/' .
-            $this->propertyType->short_name . '/' .
-            $this->booking_sequence_number;
+        return $this->belongsTo('\App\PropertyFile');
     }
 }

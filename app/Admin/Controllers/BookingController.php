@@ -30,15 +30,9 @@ class BookingController extends AdminController
     {
         $grid = new Grid(new Booking);
 
-        $grid->column('booking_number', __('Booking Number'));
-        $grid->column('date_of_booking', __('Date of booking'))->date('d-M-Y');
-        $grid->column('project.name', __('Project'));
-        $grid->column('phase.name', __('Phase'));
+        $grid->column('date', __('Date'))->date('d-M-Y');
         $grid->column('customer.text_for_select', __('Customer'));
-        $grid->column('booking_for_marlas', __('Booking For Marlas'));
-        $grid->column('is_corner', __('Is corner'))->bool();
-        $grid->column('is_facing_park', __('Is facing park'))->bool();
-        $grid->column('is_on_boulevard', __('Is on boulevard'))->bool();
+        $grid->column('propertyFile.text_for_select', __('Property File'));
         $grid->column('customer_amount_received', __('Amount received'));
         $grid->column('dealer.text_for_select', __('Dealer id'));
         $grid->column('dealer_commission_amount', __('Dealer commission amount'));
@@ -62,11 +56,8 @@ class BookingController extends AdminController
     {
         $show = new Show(Booking::findOrFail($id));
 
-        $show->field('date_of_booking', __('Date of booking'));
+        $show->field('date', __('Date'));
         $show->field('customer_id', __('Customer id'));
-        $show->field('is_corner', __('Is corner'));
-        $show->field('is_facing_park', __('Is facing park'));
-        $show->field('is_on_boulevard', __('Is on boulevard'));
         $show->field('customer_amount_received', __('Amount received'));
         $show->field('dealer_id', __('Dealer id'));
         $show->field('dealer_commission_amount', __('Dealer commission amount'));
@@ -92,63 +83,107 @@ class BookingController extends AdminController
             {
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is [' . \App\Helpers\StatusesHelper::statusTitle($booking->status) . ']. It cannot be changed now.');
             }
-            
-            if($id == null)
-            {
-                // get previous id
-                $previous_booking = \App\Booking::orderBy('booking_sequence_number', 'desc')->first();
-                $previous_number = $previous_booking == null ? 0 :$previous_booking->booking_sequence_number; 
-
-                $form->model()->booking_sequence_number = $previous_number + 1;
-            }
         });
 
-        $form->date('date_of_booking', __('Date of booking'))->default(date('Y-m-d H:i:s'));
-        $form->display('booking_number', __('Booking Number (Auto)'));
-        $form->select('customer_id', __('Customer'))
-        ->addVariables(['add_button_url' => 'admin/people/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
+        $form->saved(function(Form $form) {
 
-        $form->select('project_id', 'Project')
-        ->addVariables(['add_button_url' => 'admin/projects/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Project', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Project'), 'id', 'text_for_select');
+            $form->model()->
 
-        $form->select('phase_id', __('Phase'))
-        ->addVariables(['add_button_url' => 'admin/phases/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Phase', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Phase'), 'id', 'text_for_select');
+            self::postToLedger($form->model());
+        });
 
-        $form->select('property_type_id', __('Property Type'))
-        ->addVariables(['add_button_url' => 'admin/property-types/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\PropertyType', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\PropertyType'), 'id', 'text_for_select');
+        $form->date('date', __('Date'))->default(date('Y-m-d H:i:s'))
+        ->rules('required');
 
-        $form->decimal('booking_for_marlas', __('Booking For Marlas'));
-        $form->switch('is_corner', __('Is corner'));
-        $form->switch('is_facing_park', __('Is facing park'));
-        $form->switch('is_on_boulevard', __('Is on boulevard'));
-        $form->decimal('customer_amount_received', __('Amount received'));
-        $form->number('customer_amount_received_account_id', __('Customer Amount Received Account ID'));
+        $property_file_where = 'status = \''. \App\Helpers\StatusesHelper::AVAILABLE . '\' ';
+        if($booking != null)
+        {
+            $property_file_where .= ' OR id = \'' . $booking->property_file_id . '\'';
+        }
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'property_file_id', 
+            __('Property File'), 
+            '', 
+            '\App\PropertyFile',
+            $property_file_where)
+            ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'customer_id', 
+            __('Customer'), 
+            'admin/people/create', 
+            '\App\Person')
+            ->rules('required');
+
+        $form->decimal('customer_amount_received', __('Amount received'))
+        ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'customer_amount_received_account_id', 
+            __('Customer Amount Received Account'), 
+            'admin/account-heads/create', 
+            '\App\AccountHead',
+            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            ->help('Account Head in which amount received will be debited')
+            ->rules('required');
         
-        $form->select('dealer_id', __('Dealer id'))
-        ->addVariables(['add_button_url' => 'admin/people/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'dealer_id', 
+            __('Dealer'), 
+            'admin/people/create', 
+            '\App\Person')
+            ->rules('required');
 
-        $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
+        $form->decimal('dealer_commission_amount', __('Dealer commission amount'))
+        ->rules('required');
         
         return $form;
+    }
+
+    public static function postToLedger(\App\Booking $model)
+    {
+        if($model->id == null)
+        {
+            throw new \Exception("Booking not saved correctly", 1);   
+        }
+
+        $project_id = $model->propertyFile->project_id;
+        $phase_id = $model->propertyFile->phase_id;
+        $ledger_id = \App\Ledger::insertOrUpdateLedger(
+            $project_id, 
+            $phase_id, 
+            $model->date, 
+            \App\Ledger::CUSTOMER_BOOKING, 
+            $model->id
+        );
+
+        // DELETE OLD ENTRIES
+        \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
+
+        // CUSTOMER AMOUNT RECEIVED
+        // CASH / BANK DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            $model->customer_amount_received,
+            null,
+            null,
+            'Amount received from Dealer against Files Booking',
+            $dealer_booking->dealer_amount_received
+        );
+
+        // DEALER ACCOUNT CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            $dealer_booking->dealer_id,
+            null,
+            'Amount received from Dealer against Files Booking',
+            -$dealer_booking->dealer_amount_received
+        );
     }
 }

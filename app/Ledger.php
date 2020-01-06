@@ -8,6 +8,7 @@ class Ledger extends Model
 {
     const DEALER_BOOKING = 'Dealer Booking';
     const DEALER_BOOKING_RETURN = 'Dealer Booking Return';
+    const CUSTOMER_BOOKING = 'Customer Booking';
 
     public function ledgerEntries()
     {

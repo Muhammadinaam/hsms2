@@ -16,18 +16,9 @@ class CreateBookingsTable extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->bigIncrements('id');
-
-            $table->string('booking_sequence_number')->nullable()->unique();
-
-            $table->datetime("date_of_booking");
-            $table->bigInteger("project_id");
-            $table->bigInteger("phase_id");
-            $table->bigInteger("property_type_id");
+            $table->datetime("date");
             $table->bigInteger("customer_id");
-            $table->decimal("booking_for_marlas");
-            $table->boolean("is_corner");
-            $table->boolean("is_facing_park");
-            $table->boolean("is_on_boulevard");
+            $table->bigInteger("property_file_id");
             $table->decimal("customer_amount_received");
             $table->bigInteger("customer_amount_received_account_id");
             $table->bigInteger("dealer_id")->nullable();
