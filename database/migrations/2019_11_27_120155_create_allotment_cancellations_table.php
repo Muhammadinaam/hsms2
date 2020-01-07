@@ -19,9 +19,9 @@ class CreateAllotmentCancellationsTable extends Migration
             $table->datetime('date_of_cancellation');
             $table->string('cancellation_reason');
             $table->bigInteger('allotment_id');
-            $table->decimal('customer_amount_returned');
+            $table->decimal('customer_amount_returned', 30, 2);
             $table->bigInteger('customer_amount_returned_account_id');
-            $table->decimal('dealer_commission_to_be_returned');
+            $table->decimal('dealer_commission_to_be_returned', 30, 2);
 
             CommonMigrations::commonColumns($table);
         });

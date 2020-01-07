@@ -8,7 +8,10 @@ class AccountHead extends CommonModel
 {
 
     // RESERVED IDTS
-    const IDT_ACCOUNT_RECEIVABLE_PAYABLE = 'account-receivable-payable';
+    const IDT_ACCOUNT_RECEIVABLE_PAYABLE = 'account_receivable_payable';
+    const IDT_LAND_COST = 'land_cost';
+    const IDT_PROPERTY_SALES_INCOME = 'property_sales_income';
+    const IDT_PROPERTY_SALES_COST = 'property_sales_cost';
 
     const SALES_SERVICE_INCOME = "Sales / Service income";
     const OTHER_INCOME = "Other income";

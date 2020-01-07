@@ -18,7 +18,7 @@ class CreateDealerBookingsTable extends Migration
             
             $table->datetime("date");
             $table->bigInteger("dealer_id");
-            $table->decimal("dealer_amount_received");
+            $table->decimal("dealer_amount_received", 30, 2);
             $table->bigInteger("dealer_amount_received_account_id");
             
             CommonMigrations::commonColumns($table);

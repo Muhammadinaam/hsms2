@@ -54,6 +54,7 @@ class PersonController extends AdminController
         $show = new Show(Person::findOrFail($id));
 
         $show->field('name', __('Name'));
+        $show->field('system_id', __('System ID'));
         $show->field('father_name', __('Father name'));
         $show->field('husband_name', __('Husband name'));
         $show->field('cnic', __('Cnic'));
@@ -93,6 +94,10 @@ class PersonController extends AdminController
                     'Employee' => 'Employee',
                 ]
             );
+
+            $form->text('system_id', __('System ID'))
+            ->creationRules(['required', "unique:people"])
+            ->updateRules(['required', "unique:people,system_id,{{id}}"]);
 
             $form->text('name', __('Name'));
             $form->text('father_name', __('Father name'));

@@ -31,6 +31,8 @@ class DealerBookingController extends AdminController
         $grid->column('dealer_amount_received', __('Dealer amount received'));
         $grid->column('dealerAmountReceivedAccount.text_for_select', __('Dealer amount received account'));
 
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, false, true, true);
+
         return $grid;
     }
 
@@ -128,17 +130,7 @@ class DealerBookingController extends AdminController
 
         $form->hasMany('dealerBookingDetails', __('Files'), function (Form\NestedForm $form) use ($dealer_booking) {
             
-            $property_file_where = ' dealer_id is null ';
-
-            if($dealer_booking != null)
-            {
-                $details = $dealer_booking->DealerBookingDetails;
-                if($details != null && count($details) > 0)
-                {
-                    $property_file_ids = $details->pluck('property_file_id')->toArray();
-                    $property_file_where = '(' . $property_file_where . ' OR id in ('  . implode(',', $property_file_ids) . ') )';
-                }
-            }
+            $property_file_where = ' dealer_id is null AND status = \'' . \App\Helpers\StatusesHelper::AVAILABLE . '\'';
 
             \App\Helpers\SelectHelper::buildAjaxSelect(
                 $form, 

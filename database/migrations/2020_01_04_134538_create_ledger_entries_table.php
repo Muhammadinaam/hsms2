@@ -21,7 +21,7 @@ class CreateLedgerEntriesTable extends Migration
             $table->bigInteger('person_id')->nullable();
             $table->bigInteger('property_file_id')->nullable();
             $table->string('description');
-            $table->decimal('amount');
+            $table->decimal('amount', 30, 2);
         });
     }
 

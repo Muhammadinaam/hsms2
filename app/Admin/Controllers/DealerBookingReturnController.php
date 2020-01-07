@@ -28,8 +28,11 @@ class DealerBookingReturnController extends AdminController
 
         $grid->column('date', __('Date'));
         $grid->column('dealer.text_for_select', __('Dealer'));
+        $grid->column('return_reason', __('Return Reason'));
         $grid->column('dealer_amount_returned', __('Dealer amount returned'));
         $grid->column('dealerAmountReturnedAccount.text_for_select', __('Dealer amount returned account'));
+
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, false, true, true);
 
         return $grid;
     }
@@ -113,6 +116,9 @@ class DealerBookingReturnController extends AdminController
             '\App\Person')
             ->rules('required');
         
+        $form->text('return_reason', 'Return Reason')
+        ->rules('required');
+
         $form->decimal('dealer_amount_returned', __('Dealer amount returned'))
             ->rules('required');
 

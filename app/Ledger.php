@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ledger extends Model
 {
+    const LAND_PURCHASE = 'Land Purchase';
     const DEALER_BOOKING = 'Dealer Booking';
     const DEALER_BOOKING_RETURN = 'Dealer Booking Return';
     const CUSTOMER_BOOKING = 'Customer Booking';

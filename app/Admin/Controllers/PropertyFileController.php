@@ -46,6 +46,8 @@ class PropertyFileController extends AdminController
             return \App\Helpers\StatusesHelper::statusTitle($status);
         });
 
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
+
         return $grid;
     }
 

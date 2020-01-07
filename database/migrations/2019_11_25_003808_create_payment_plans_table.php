@@ -18,7 +18,7 @@ class CreatePaymentPlansTable extends Migration
 
             $table->bigInteger('allotment_id');
             $table->datetime('starting_date');
-            $table->decimal('amount');
+            $table->decimal('amount', 30, 2);
             $table->integer('number_of_payments');
             $table->integer('days_between_payments');
 

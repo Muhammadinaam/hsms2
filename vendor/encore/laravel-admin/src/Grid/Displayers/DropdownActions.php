@@ -67,7 +67,7 @@ SCRIPT;
     public function add(RowAction $action)
     {
         $this->prepareAction($action);
-
+        
         array_push($this->custom, $action);
 
         return $this;

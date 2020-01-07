@@ -42,6 +42,8 @@ class BookingController extends AdminController
             \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
             \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
         ]);
+
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, true, true, true);
         
         return $grid;
     }
@@ -87,7 +89,10 @@ class BookingController extends AdminController
 
         $form->saved(function(Form $form) {
 
-            $form->model()->
+            $property_file = $form->model()->propertyFile;
+            $property_file->dealer_id = null;
+            $property_file->holder_id = $form->model()->customer_id;
+            $property_file->save();
 
             self::postToLedger($form->model());
         });
@@ -164,6 +169,8 @@ class BookingController extends AdminController
 
         // DELETE OLD ENTRIES
         \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
+
+        //SALES ENTRY
 
         // CUSTOMER AMOUNT RECEIVED
         // CASH / BANK DEBIT

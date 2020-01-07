@@ -26,16 +26,40 @@ class CreateAccountHeadsTable extends Migration
 
         DB::table('account_heads')
             ->insert([
+                'idt' => \App\AccountHead::IDT_LAND_COST,
+                'name' => 'Land Cost', 
+                'type' => \App\AccountHead::NON_CURRENT_ASSETS,
+                'is_reserved' => true
+            ]);
+
+        DB::table('account_heads')
+            ->insert([
+                'idt' => \App\AccountHead::IDT_PROPERTY_SALES_INCOME,
+                'name' => 'Property Sales Income', 
+                'type' => \App\AccountHead::SALES_SERVICE_INCOME,
+                'is_reserved' => true
+            ]);
+
+        DB::table('account_heads')
+            ->insert([
+                'idt' => \App\AccountHead::IDT_PROPERTY_SALES_COST,
+                'name' => 'Property Sales Cost', 
+                'type' => \App\AccountHead::COST_DIRECT,
+                'is_reserved' => true
+            ]);
+
+        DB::table('account_heads')
+            ->insert([
                 'idt' => \App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE,
                 'name' => 'Account Receivable / Payable', 
-                'type' => 'Receivable / Payable', 
+                'type' => \App\AccountHead::RECEIVABLE_PAYABLE, 
                 'is_reserved' => true
             ]);
 
         DB::table('account_heads')
             ->insert([
                 'name' => 'Cash', 
-                'type' => 'Cash / Bank', 
+                'type' => \App\AccountHead::CASH_BANK, 
                 'is_reserved' => false
             ]);
     }

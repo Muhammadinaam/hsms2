@@ -20,6 +20,9 @@ class Person extends CommonModel
 
     public function getTextForSelectAttribute()
     {
-        return 'Name: ' . $this->name . ', ' . 'CNIC: ' . $this->cnic . ', Phone: ' . $this->phone . ', Type: ' . $this->person_type;
+        return 'ID: ' . $this->system_id . 
+        ', Name: ' . $this->name . 
+        ', CNIC: ' . $this->cnic . 
+        ', Type: ' . $this->person_type;
     }
 }

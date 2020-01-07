@@ -19,10 +19,10 @@ class CreateBookingsTable extends Migration
             $table->datetime("date");
             $table->bigInteger("customer_id");
             $table->bigInteger("property_file_id");
-            $table->decimal("customer_amount_received");
+            $table->decimal("customer_amount_received", 30, 2);
             $table->bigInteger("customer_amount_received_account_id");
             $table->bigInteger("dealer_id")->nullable();
-            $table->decimal("dealer_commission_amount")->nullable();
+            $table->decimal("dealer_commission_amount", 30, 2)->nullable();
             $table->string('status');
 
             CommonMigrations::commonColumns($table);
