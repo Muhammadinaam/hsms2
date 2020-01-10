@@ -22,6 +22,7 @@ class CreatePropertyFilesTable extends Migration
 
             $table->decimal("marlas", 30, 2);
             $table->bigInteger('property_type_id');
+            $table->boolean("is_farmhouse")->default(false);
             $table->boolean("is_corner")->default(false);
             $table->boolean("is_facing_park")->default(false);
             $table->boolean("is_on_boulevard")->default(false);

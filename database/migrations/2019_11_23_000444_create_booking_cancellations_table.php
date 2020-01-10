@@ -16,11 +16,16 @@ class CreateBookingCancellationsTable extends Migration
         Schema::create('booking_cancellations', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->datetime('date_of_cancellation');
+            $table->datetime('date');
             $table->string('cancellation_reason');
             $table->bigInteger('booking_id');
-            $table->decimal('customer_amount_returned', 30, 2);
-            $table->bigInteger('customer_amount_returned_account_id');
+
+            $table->decimal("form_processing_fee_returned", 30, 2);
+            $table->bigInteger("form_processing_fee_returned_account_id");
+            
+            $table->decimal("down_payment_returned", 30, 2);
+            $table->bigInteger("down_payment_returned_account_id");
+
             $table->decimal('dealer_commission_to_be_returned', 30, 2);
 
             CommonMigrations::commonColumns($table);

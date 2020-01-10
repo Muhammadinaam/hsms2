@@ -33,9 +33,10 @@ class BookingController extends AdminController
         $grid->column('date', __('Date'))->date('d-M-Y');
         $grid->column('customer.text_for_select', __('Customer'));
         $grid->column('propertyFile.text_for_select', __('Property File'));
-        $grid->column('customer_amount_received', __('Amount received'));
-        $grid->column('dealer.text_for_select', __('Dealer id'));
-        $grid->column('dealer_commission_amount', __('Dealer commission amount'));
+        $grid->column('form_processing_fee_received', __('Form / Processing fee'));
+        $grid->column('down_payment_received', __('Down payment'));
+        $grid->column('dealer.text_for_select', __('Dealer'));
+        $grid->column('dealer_commission_amount', __('Dealer commission'));
         $grid->column('status', __('Booking Status'))->display(function($status){
             return \App\Helpers\StatusesHelper::statusTitle($status);
         })->filter([
@@ -97,6 +98,8 @@ class BookingController extends AdminController
             self::postToLedger($form->model());
         });
 
+        $form->divider('Customer and File Information');
+
         $form->date('date', __('Date'))->default(date('Y-m-d H:i:s'))
         ->rules('required');
 
@@ -123,19 +126,38 @@ class BookingController extends AdminController
             '\App\Person')
             ->rules('required');
 
-        $form->decimal('customer_amount_received', __('Amount received'))
+        $form->divider('Down Payment');
+
+        $form->decimal('down_payment_received', __('Down payment received'))
         ->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
-            'customer_amount_received_account_id', 
-            __('Customer Amount Received Account'), 
+            'down_payment_received_account_id', 
+            __('Down payment received account'), 
             'admin/account-heads/create', 
             '\App\AccountHead',
             'type = \''. \App\AccountHead::CASH_BANK .'\'')
-            ->help('Account Head in which amount received will be debited')
+            ->help('Cash or Bank Account in which amount received will be debited')
+            ->rules('required');
+
+        $form->divider('Form Processing Fee');
+            
+        $form->decimal('form_processing_fee_received', __('Form / Processing fee received'))
+        ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'form_processing_fee_received_account_id', 
+            __('Form / Processing fee received account'), 
+            'admin/account-heads/create', 
+            '\App\AccountHead',
+            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            ->help('Cash or Bank Account in which amount received will be debited')
             ->rules('required');
         
+        $form->divider('Dealer / Commission Information');
+
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'dealer_id', 
@@ -172,25 +194,25 @@ class BookingController extends AdminController
 
         //SALES ENTRY
 
-        // CUSTOMER AMOUNT RECEIVED
-        // CASH / BANK DEBIT
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            $model->customer_amount_received,
-            null,
-            null,
-            'Amount received from Dealer against Files Booking',
-            $dealer_booking->dealer_amount_received
-        );
+        // // CUSTOMER AMOUNT RECEIVED
+        // // CASH / BANK DEBIT
+        // \App\Ledger::insertOrUpdateLedgerEntries(
+        //     $ledger_id,
+        //     $model->customer_amount_received,
+        //     null,
+        //     null,
+        //     'Amount received from Dealer against Files Booking',
+        //     $dealer_booking->dealer_amount_received
+        // );
 
-        // DEALER ACCOUNT CREDIT
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
-            $dealer_booking->dealer_id,
-            null,
-            'Amount received from Dealer against Files Booking',
-            -$dealer_booking->dealer_amount_received
-        );
+        // // DEALER ACCOUNT CREDIT
+        // \App\Ledger::insertOrUpdateLedgerEntries(
+        //     $ledger_id,
+        //     \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+        //     $dealer_booking->dealer_id,
+        //     null,
+        //     'Amount received from Dealer against Files Booking',
+        //     -$dealer_booking->dealer_amount_received
+        // );
     }
 }

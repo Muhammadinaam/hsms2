@@ -15,6 +15,7 @@ class CreateTransfersTable extends Migration
     {
         Schema::create('transfers', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->datetime('date');
             $table->string('transfer_details');
             $table->bigInteger('property_id');
             $table->bigInteger('transferred_from_id')->nullable();

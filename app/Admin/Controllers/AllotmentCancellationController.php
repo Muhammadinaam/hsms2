@@ -27,7 +27,7 @@ class AllotmentCancellationController extends AdminController
         $grid = new Grid(new AllotmentCancellation);
 
         $grid->column('id', __('Id'));
-        $grid->column('date_of_cancellation', __('Date of cancellation'))->date('d-M-Y');
+        $grid->column('date', __('Date of cancellation'))->date('d-M-Y');
         $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('allotment_id', __('Allotment id'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
@@ -48,7 +48,7 @@ class AllotmentCancellationController extends AdminController
         $show = new Show(AllotmentCancellation::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date_of_cancellation', __('Date of cancellation'));
+        $show->field('date', __('Date of cancellation'));
         $show->field('allotment_id', __('Allotment id'));
         $show->field('customer_amount_returned', __('Customer amount returned'));
         $show->field('customer_amount_returned_account_id', __('Customer amount returned account id'));
@@ -88,7 +88,7 @@ class AllotmentCancellationController extends AdminController
 
         });
 
-        $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d'));
+        $form->date('date', __('Date of cancellation'))->default(date('Y-m-d'));
         $form->text('cancellation_reason', __('Cancellation Reason'));
         
         $allotment_where = 'status = \''. \App\Helpers\StatusesHelper::ALLOTTED .'\'';

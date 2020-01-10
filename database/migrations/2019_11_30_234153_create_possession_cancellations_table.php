@@ -15,7 +15,7 @@ class CreatePossessionCancellationsTable extends Migration
     {
         Schema::create('possession_cancellations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->datetime('date_of_cancellation');
+            $table->datetime('date');
             $table->string('cancellation_reason');
             $table->bigInteger('possession_id');
 

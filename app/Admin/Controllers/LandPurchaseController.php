@@ -92,7 +92,8 @@ class LandPurchaseController extends AdminController
             ->rules('required');
 
         $form->file('purchase_document', __('Purchase document'))
-            ->rules('required');
+            ->rules('required')
+            ->downloadable();
 
         $form->decimal('cost', __('Cost'))
             ->rules('required');

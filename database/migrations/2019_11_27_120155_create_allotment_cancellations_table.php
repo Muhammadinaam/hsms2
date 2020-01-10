@@ -16,7 +16,7 @@ class CreateAllotmentCancellationsTable extends Migration
         Schema::create('allotment_cancellations', function (Blueprint $table) {
             $table->bigIncrements('id');
             
-            $table->datetime('date_of_cancellation');
+            $table->datetime('date');
             $table->string('cancellation_reason');
             $table->bigInteger('allotment_id');
             $table->decimal('customer_amount_returned', 30, 2);

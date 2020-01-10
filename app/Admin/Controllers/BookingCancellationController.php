@@ -30,7 +30,7 @@ class BookingCancellationController extends AdminController
         $grid = new Grid(new BookingCancellation);
 
         $grid->column('id', __('Id'));
-        $grid->column('date_of_cancellation', __('Date of cancellation'));
+        $grid->column('date', __('Date of cancellation'));
         $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('booking.booking_number', __('Booking Number'));
         $grid->column('customer_amount_returned', __('Customer amount returned'));
@@ -51,7 +51,7 @@ class BookingCancellationController extends AdminController
         $show = new Show(BookingCancellation::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date_of_cancellation', __('Date of cancellation'));
+        $show->field('date', __('Date of cancellation'));
         $show->field('booking_id', __('Booking id'));
         $show->field('customer_amount_returned', __('Customer amount returned'));
         $show->field('customer_amount_returned_account_id', __('Customer amount returned account id'));
@@ -99,7 +99,7 @@ class BookingCancellationController extends AdminController
         $booking_where = 'status = \''. \App\Helpers\StatusesHelper::BOOKED .'\'';
         $booking_where .=  $id != null ? ' OR bookings.id = ' . $booking_cancellation->booking_id : '';
 
-        $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d H:i:s'));
+        $form->date('date', __('Date of cancellation'))->default(date('Y-m-d H:i:s'));
         $form->text('cancellation_reason', __('Cancellation Reason'));
         $form->select('booking_id', __('Booking'))
         ->addVariables(['add_button_url' => ''])

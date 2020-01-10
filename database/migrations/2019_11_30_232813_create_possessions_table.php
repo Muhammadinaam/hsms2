@@ -15,7 +15,7 @@ class CreatePossessionsTable extends Migration
     {
         Schema::create('possessions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->datetime('date_of_possession');
+            $table->datetime('date');
             $table->bigInteger('allotment_id');
             $table->string('status');
 

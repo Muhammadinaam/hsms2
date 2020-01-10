@@ -17,7 +17,7 @@ class CreateAllotmentsTable extends Migration
         Schema::create('allotments', function (Blueprint $table) {
             $table->bigIncrements('id');
             
-            $table->datetime('date_of_allotment');
+            $table->datetime('date');
             $table->bigInteger('booking_id');
             $table->bigInteger('property_id');
             $table->decimal('any_amount_received_before_or_at_allotment_time', 30, 2);

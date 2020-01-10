@@ -57,11 +57,77 @@
 
         <table style="margin-top: 15px;" class="full-width">
             <tr>
-                <td>Name:______________</td>
-                <td>Father Name:________________</td>
+                <td>Name:</td> <td class="td-value"></td>
+                <td>Father Name:</td> <td class="td-value"></td>
+                <td>Husband Name:</td> <td class="td-value"></td>
+            </tr>
+            
+            <tr>
+                <td>CNIC/Passport:</td> <td colspan="2" class="td-value"></td>
+                <td>Email:</td> <td colspan="2" class="td-value"></td>
+            </tr>
+
+            <tr>
+                <td>Address:</td> <td colspan="2" class="td-value"></td>
+                <td>Phone:</td> <td colspan="2" class="td-value"></td>
             </tr>
         </table>
     </div>
 
+    <br>
+    <div class="round-border p3">
+        <span class="round-border bg-gray p1">
+            Next of Kin Information
+        </span>
+
+        <table style="margin-top: 15px;" class="full-width">
+            <tr>
+                <td>Name:</td> <td class="td-value"></td>
+                <td>Father Name:</td> <td class="td-value"></td>
+                <td>Husband Name:</td> <td class="td-value"></td>
+            </tr>
+            
+            <tr>
+                <td>CNIC/Passport:</td> <td colspan="2" class="td-value"></td>
+                <td>Email:</td> <td colspan="2" class="td-value"></td>
+            </tr>
+
+            <tr>
+                <td>Address:</td> <td colspan="2" class="td-value"></td>
+                <td>Phone:</td> <td colspan="2" class="td-value"></td>
+            </tr>
+        </table>
+    </div>
+
+    <br>
+    <div class="round-border p3">
+        <span class="round-border bg-gray p1">
+            Required Documents
+        </span>
+
+        <p style="margin-top: 15px;">
+            (a). 2 Passport Size Pictures (b). Valid CNIC copy of Applicant (c).Valid CNIC copy Next of Kin
+        </p>
+    </div>
+
+    <br>
+    <div class="round-border p3">
+        <span class="round-border bg-gray p1">
+            Bank Details
+        </span>
+
+        <table style="margin-top: 15px;" class="full-width">
+            <tr>
+                <td>Instrument No.:</td> <td colspan="3" class="td-value"></td>
+                <td>Branch:</td> <td class="td-value"></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>Instrument Date:</td> <td class="td-value"></td>
+                <td>Instrument Amount:</td> <td class="td-value"></td>
+            </tr>
+        </table>
+    </div>
 
 @endsection

@@ -33,6 +33,7 @@ class PropertyFileController extends AdminController
         $grid->column('marlas', __('Marlas'));
 
         $grid->column('propertyType.name', __('Property Type'));
+        $grid->column('is_farmhouse', __('Farmhouse'))->bool();
         $grid->column('is_corner', __('Corner'))->bool();
         $grid->column('is_facing_park', __('Facing Park'))->bool();
         $grid->column('is_on_boulevard', __('On Boulevard'))->bool();
@@ -118,9 +119,17 @@ class PropertyFileController extends AdminController
             '\App\PropertyType')
             ->rules('required');
 
-        $form->switch('is_corner', __('Is corner'));
-        $form->switch('is_facing_park', __('Is facing park'));
-        $form->switch('is_on_boulevard', __('Is on boulevard'));
+        $yes_no_states = [
+            'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
+            'off' => ['value' => 0, 'text' => 'No', 'color' => 'secondary'],
+        ];
+            
+        $form->switch('is_farmhouse', __('Farmhouse'))->states($yes_no_states);
+
+        $form->divider('Preference Location');
+        $form->switch('is_corner', __('Corner'))->states($yes_no_states);
+        $form->switch('is_facing_park', __('Facing park'))->states($yes_no_states);
+        $form->switch('is_on_boulevard', __('On boulevard'))->states($yes_no_states);
 
         $form->divider('Price and Cost Information');
 

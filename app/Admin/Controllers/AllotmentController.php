@@ -28,7 +28,7 @@ class AllotmentController extends AdminController
         $grid = new Grid(new Allotment);
 
         $grid->column('id', __('Id'));
-        $grid->column('date_of_allotment', __('Date of allotment'));
+        $grid->column('date', __('Date of allotment'));
         $grid->column('booking_id', __('Booking id'));
         $grid->column('property_id', __('Property id'));
         $grid->column('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
@@ -52,7 +52,7 @@ class AllotmentController extends AdminController
         $show = new Show(Allotment::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date_of_allotment', __('Date of allotment'));
+        $show->field('date', __('Date of allotment'));
         $show->field('booking_id', __('Booking id'));
         $show->field('property_id', __('Property id'));
         $show->field('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
@@ -104,7 +104,7 @@ class AllotmentController extends AdminController
 
 
 
-        $form->date('date_of_allotment', __('Date of allotment'))->default(date('Y-m-d'));
+        $form->date('date', __('Date of allotment'))->default(date('Y-m-d'));
         
         $form->select('booking_id', __('Booking'))
         ->rules('required')

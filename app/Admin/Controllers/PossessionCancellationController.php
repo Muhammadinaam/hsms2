@@ -27,7 +27,7 @@ class PossessionCancellationController extends AdminController
         $grid = new Grid(new PossessionCancellation);
 
         $grid->column('id', __('Id'));
-        $grid->column('date_of_cancellation', __('Date of cancellation'));
+        $grid->column('date', __('Date of cancellation'));
         $grid->column('cancellation_reason', __('Cancellation reason'));
         $grid->column('possession_id', __('Possession id'));
         
@@ -46,7 +46,7 @@ class PossessionCancellationController extends AdminController
         $show = new Show(PossessionCancellation::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date_of_cancellation', __('Date of cancellation'));
+        $show->field('date', __('Date of cancellation'));
         $show->field('cancellation_reason', __('Cancellation reason'));
         $show->field('possession_id', __('Possession id'));
         $show->field('created_by', __('Created by'));
@@ -88,7 +88,7 @@ class PossessionCancellationController extends AdminController
 
         });
 
-        $form->date('date_of_cancellation', __('Date of cancellation'))->default(date('Y-m-d'));
+        $form->date('date', __('Date of cancellation'))->default(date('Y-m-d'));
         $form->text('cancellation_reason', __('Cancellation reason'));
         
         $possession_where = 'status = \''. \App\Helpers\StatusesHelper::POSSESSED .'\'';

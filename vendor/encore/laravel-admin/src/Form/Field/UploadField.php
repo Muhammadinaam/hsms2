@@ -413,11 +413,11 @@ trait UploadField
      */
     public function objectUrl($path)
     {
-        if (URL::isValidUrl($path)) {
+        if (URL::isValidUrl($path)) { 
             return $path;
         }
 
-        if ($this->storage) {
+        if ($this->storage) { 
             return $this->storage->url($path);
         }
 

@@ -27,7 +27,7 @@ class PossessionController extends AdminController
         $grid = new Grid(new Possession);
 
         $grid->column('id', __('Id'));
-        $grid->column('date_of_possession', __('Date of possession'));
+        $grid->column('date', __('Date of possession'));
         $grid->column('allotment_id', __('Allotment id'));
         $grid->column('status', __('Status'));
 
@@ -45,7 +45,7 @@ class PossessionController extends AdminController
         $show = new Show(Possession::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date_of_possession', __('Date of possession'));
+        $show->field('date', __('Date of possession'));
         $show->field('allotment_id', __('Allotment id'));
         $show->field('status', __('Status'));
         $show->field('created_by', __('Created by'));
@@ -77,7 +77,7 @@ class PossessionController extends AdminController
 
         });
 
-        $form->date('date_of_possession', __('Date of possession'))->default(date('Y-m-d'));
+        $form->date('date', __('Date of possession'))->default(date('Y-m-d'));
         
         $allotment_where = 'status = \''. \App\Helpers\StatusesHelper::ALLOTTED .'\'';
         $allotment_where .=  $id != null ? ' OR allotments.id = ' . $allotment_cancellation->allotment_id : '';
