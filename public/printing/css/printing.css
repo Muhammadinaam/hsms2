@@ -61,3 +61,11 @@ p span.value {
     text-decoration: underline;
     font-weight: bold;
 }
+
+table {
+    border-collapse: collapse;
+}
+
+.tr-bordered th, .tr-bordered td {
+    border: 1px solid black;
+}

@@ -50,7 +50,7 @@
     </div>
 
     <br>
-    <div class="round-border p3" style="width: 45%; float: left;">
+    <div class="round-border p3" style="width: 45vw; float: left;">
         <span class="round-border bg-gray p1">
             Applicant Information
         </span>
@@ -85,7 +85,7 @@
         </table>
     </div>
 
-    <div class="round-border p3" style="width: 45%; float:left; margin-left: 10px;">
+    <div class="round-border p3" style="width: 45vw; float:left; margin-left: 1vw;">
         <span class="round-border bg-gray p1">
             Next of Kin Information
         </span>

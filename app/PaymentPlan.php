@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaymentPlan extends Model
+class PaymentPlan extends CommonModel
 {
     protected $fillable = [
         'allotment_id',

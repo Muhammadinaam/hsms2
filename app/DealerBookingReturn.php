@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DealerBookingReturn extends Model
+class DealerBookingReturn extends CommonModel
 {
     public function dealerBookingReturnDetails()
     {

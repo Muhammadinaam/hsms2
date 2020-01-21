@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transfer extends Model
+class Transfer extends CommonModel
 {
     public static function boot()
     {

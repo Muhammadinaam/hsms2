@@ -8,6 +8,20 @@ class CommonModel extends Model
 {
     protected $appends = ['text_for_select'];
 
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($model) {
+            $model->created_by = \Auth::guard('admin')->user()->id;
+        });
+
+        self::saving(function ($model) {
+            if($model->id != null ) {
+                $model->updated_by = \Auth::guard('admin')->user()->id;
+            }
+        });
+    }
+
     public function searchForSelect($search_term, $where_clauses)
     {
         if($where_clauses == '') 
@@ -26,5 +40,10 @@ class CommonModel extends Model
     public function getTextForSelectAttribute()
     {
         return 'Id: ' . $this->id;
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo('\Encore\Admin\Auth\Database\Administrator', 'created_by');
     }
 }

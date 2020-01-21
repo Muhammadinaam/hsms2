@@ -33,9 +33,12 @@ class BookingCancellationController extends AdminController
         $grid->column('date', __('Date of cancellation'));
         $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('booking.booking_number', __('Booking Number'));
-        $grid->column('customer_amount_returned', __('Customer amount returned'));
-        $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $grid->column('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
+
+        $grid->column('form_processing_fee_returned', __('Form Processing Fee Returned'));
+        $grid->column('down_payment_returned', __('Down Payment Returned'));
+        $grid->column('dealer_commission_to_be_returned', __('Dealer Commission To be Returned'));
+
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, true, true, true);
 
         return $grid;
     }
@@ -75,6 +78,8 @@ class BookingCancellationController extends AdminController
         $id = isset(request()->route()->parameters()['booking_cancellation']) ? 
             request()->route()->parameters()['booking_cancellation'] : null;
         $booking_cancellation = \App\BookingCancellation::find($id);
+
+        
 
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
             

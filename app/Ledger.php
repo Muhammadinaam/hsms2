@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ledger extends Model
+class Ledger extends CommonModel
 {
     const LAND_PURCHASE = 'Land Purchase';
     const DEALER_BOOKING = 'Dealer Booking';

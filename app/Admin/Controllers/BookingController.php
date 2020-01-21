@@ -188,11 +188,9 @@ class BookingController extends AdminController
             __('Dealer'), 
             'admin/people/create', 
             '\App\Person',
-            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ')
-            ->rules('required');
+            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ');
 
-        $form->decimal('dealer_commission_amount', __('Dealer commission amount'))
-        ->rules('required');
+        $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
         
         return $form;
     }
@@ -311,13 +309,14 @@ class BookingController extends AdminController
 
         // DEALER COMMISSION ENTRY
         // COMMISSION EXPENSE DEBIT
+        $commission_amount = $model->dealer_commission_amount != null ? $model->dealer_commission_amount : 0;
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
             \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE)->id,
             null,
             null,
             'Dealer Commission',
-            $model->dealer_commission_amount,
+            $commission_amount,
         );
 
         // DEALER ACCOUNT CREDIT
@@ -327,7 +326,7 @@ class BookingController extends AdminController
             $model->dealer_id,
             null,
             'Dealer Commission',
-            -$model->dealer_commission_amount,
+            -$commission_amount,
         );
     }
 }

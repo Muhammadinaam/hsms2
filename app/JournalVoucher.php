@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class JournalVoucher extends Model
+class JournalVoucher extends CommonModel
 {
     public function journalVoucherDetails()
     {

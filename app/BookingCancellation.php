@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BookingCancellation extends Model
+class BookingCancellation extends CommonModel
 {
     public function booking()
     {
