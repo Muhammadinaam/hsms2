@@ -26,6 +26,7 @@ class PersonController extends AdminController
     {
         $grid = new Grid(new Person);
 
+        $grid->column('picture', __('picture'))->image();
         $grid->column('name', __('Name'));
         $grid->column('father_name', __('Father name'));
         $grid->column('husband_name', __('Husband name'));
@@ -88,16 +89,18 @@ class PersonController extends AdminController
             ->rules('required')
             ->options(
                 [
-                    'Dealer' => 'Dealer',
-                    'Customer' => 'Customer',
-                    'Supplier' => 'Supplier',
-                    'Employee' => 'Employee',
+                    \App\Person::PERSON_TYPE_DEALER => \App\Person::PERSON_TYPE_DEALER,
+                    \App\Person::PERSON_TYPE_CUSTOMER => \App\Person::PERSON_TYPE_CUSTOMER,
+                    \App\Person::PERSON_TYPE_SUPPLIER => \App\Person::PERSON_TYPE_SUPPLIER,
+                    \App\Person::PERSON_TYPE_EMPLOYEE => \App\Person::PERSON_TYPE_EMPLOYEE,
                 ]
             );
 
             $form->text('system_id', __('System ID'))
             ->creationRules(['required', "unique:people"])
             ->updateRules(['required', "unique:people,system_id,{{id}}"]);
+
+            $form->image('picture', __('Picture'));
 
             $form->text('name', __('Name'));
             $form->text('father_name', __('Father name'));

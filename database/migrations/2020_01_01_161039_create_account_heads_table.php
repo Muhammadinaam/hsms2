@@ -62,6 +62,22 @@ class CreateAccountHeadsTable extends Migration
                 'type' => \App\AccountHead::CASH_BANK, 
                 'is_reserved' => false
             ]);
+
+        DB::table('account_heads')
+            ->insert([
+                'idt' => \App\AccountHead::IDT_FORM_PROCESSING_FEE_INCOME,
+                'name' => 'Form Processing Fee Income', 
+                'type' => \App\AccountHead::OTHER_INCOME, 
+                'is_reserved' => true
+            ]);
+
+        DB::table('account_heads')
+            ->insert([
+                'idt' => \App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE,
+                'name' => 'Dealer Commission Expense', 
+                'type' => \App\AccountHead::SELLING_EXPENSES, 
+                'is_reserved' => true
+            ]);
     }
 
     /**

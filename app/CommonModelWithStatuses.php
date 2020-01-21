@@ -89,4 +89,11 @@ class CommonModelWithStatuses extends CommonModel
     {
         return $this->status == $this->all_statuses[0];
     }
+
+    public function getModalTitle()
+    {
+        $title = $this->getTable();
+        $title = ucwords(str_replace("_", " ", $title));
+        return $title;
+    }
 }

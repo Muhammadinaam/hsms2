@@ -81,6 +81,8 @@ class DealerBookingController extends AdminController
                     $property_file->save();
                 }
             }
+
+            
         });
 
         $form->saved(function (Form $form) {
@@ -112,7 +114,8 @@ class DealerBookingController extends AdminController
             'dealer_id', 
             __('Dealer'), 
             'admin/people/create', 
-            '\App\Person')
+            '\App\Person',
+            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ')
             ->rules('required');
         
         $form->decimal('dealer_amount_received', __('Dealer amount received'))

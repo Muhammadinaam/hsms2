@@ -23,6 +23,11 @@ class CreateBookingsTable extends Migration
             $table->decimal("form_processing_fee_received", 30, 2);
             $table->bigInteger("form_processing_fee_received_account_id");
             
+            $table->enum('booking_type', [
+                \App\Booking::BOOKING_TYPE_CASH,
+                \App\Booking::BOOKING_TYPE_INSTALLMENT,
+            ]);
+
             $table->decimal("down_payment_received", 30, 2);
             $table->bigInteger("down_payment_received_account_id");
             

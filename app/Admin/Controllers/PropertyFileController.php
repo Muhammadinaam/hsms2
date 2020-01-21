@@ -40,6 +40,7 @@ class PropertyFileController extends AdminController
         $grid->column('cash_price', __('Cash price'));
         $grid->column('installment_price', __('Installment price'));
         
+        $grid->column('soldByDealer.text_for_select', __('Sold By Dealer'));
         $grid->column('dealer.text_for_select', __('Dealer'));
         $grid->column('holder.text_for_select', __('Holder'));
         

@@ -113,7 +113,8 @@ class DealerBookingReturnController extends AdminController
             'dealer_id', 
             __('Dealer'), 
             'admin/people/create', 
-            '\App\Person')
+            '\App\Person',
+            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ')
             ->rules('required');
         
         $form->text('return_reason', 'Return Reason')
@@ -220,7 +221,7 @@ class DealerBookingReturnController extends AdminController
             \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
             $model->dealer_id,
             null,
-            'Amount returned from Dealer against Files Booking',
+            'Amount returned to Dealer against Files Booking',
             $model->dealer_amount_returned
         );
 
@@ -230,7 +231,7 @@ class DealerBookingReturnController extends AdminController
             $model->dealer_amount_returned_account_id,
             null,
             null,
-            'Amount returned from Dealer against Files Booking',
+            'Amount returned to Dealer against Files Booking',
             -$model->dealer_amount_returned
         );
     }

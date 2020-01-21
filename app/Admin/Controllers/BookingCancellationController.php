@@ -82,12 +82,20 @@ class BookingCancellationController extends AdminController
             {
                 $old_booking = $booking_cancellation->booking;
                 $ret = $old_booking->unsetCancelledStatus();
+                $old_property_file = $old_booking->propertyFile;
+                $old_property_file->sold_by_dealer_id = $old_booking->propertyFile->dealer_id;
+                $old_property_file->dealer_id = null;
+                $old_property_file->save();
                 if ($ret instanceof Response) {
                     return $ret;
                 }
             }
 
             $new_booking = \App\Booking::find($form->booking_id);
+            $new_property_file = $new_booking->propertyFile;
+            $new_property_file->dealer_id = $new_property_file->sold_by_dealer_id;
+            $new_property_file->sold_by_dealer_id = null;
+            $new_property_file->save();
             $ret = $new_booking->setCancelledStatus();
             if ($ret instanceof Response) {
                 return $ret;
@@ -99,17 +107,49 @@ class BookingCancellationController extends AdminController
         $booking_where = 'status = \''. \App\Helpers\StatusesHelper::BOOKED .'\'';
         $booking_where .=  $id != null ? ' OR bookings.id = ' . $booking_cancellation->booking_id : '';
 
+        $form->divider('Booking Cancellation Information');
+
         $form->date('date', __('Date of cancellation'))->default(date('Y-m-d H:i:s'));
         $form->text('cancellation_reason', __('Cancellation Reason'));
-        $form->select('booking_id', __('Booking'))
-        ->addVariables(['add_button_url' => ''])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Booking', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Booking', $booking_where), 'id', 'text_for_select');
 
-        $form->decimal('customer_amount_returned', __('Customer amount returned'));
-        $form->number('customer_amount_returned_account_id', __('Customer amount returned account id'));
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'booking_id', 
+            __('Booking'), 
+            '', 
+            '\App\Booking')
+            ->rules('required');
+
+        $form->divider('Down Payment Returned');
+
+        $form->decimal('down_payment_returned', __('Down payment returned'))
+        ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'down_payment_returned_account_id', 
+            __('Down payment returnded account'), 
+            'admin/account-heads/create', 
+            '\App\AccountHead',
+            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            ->help('Cash or Bank Account from which amount is being returned')
+            ->rules('required');
+        
+        $form->divider('Form / Processing fee returned');
+        
+        $form->decimal('form_processing_fee_returned', __('Form / Processing fee returned'))
+            ->rules('required');
+    
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'form_processing_fee_returned_account_id', 
+            __('Form / Processing fee returned account'), 
+            'admin/account-heads/create', 
+            '\App\AccountHead',
+            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            ->help('Cash or Bank Account from which amount is being returned')
+            ->rules('required');
+
         $form->decimal('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $form;

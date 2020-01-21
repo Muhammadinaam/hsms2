@@ -49,6 +49,11 @@ class PropertyFile extends CommonModelWithStatuses
         return $this->belongsTo('\App\Person', 'dealer_id');
     }
 
+    public function soldByDealer()
+    {
+        return $this->belongsTo('\App\Person', 'sold_by_dealer_id');
+    }
+
     public function holder()
     {
         return $this->belongsTo('\App\Person', 'holder_id');

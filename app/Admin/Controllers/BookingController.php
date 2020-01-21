@@ -34,6 +34,7 @@ class BookingController extends AdminController
         $grid->column('customer.text_for_select', __('Customer'));
         $grid->column('propertyFile.text_for_select', __('Property File'));
         $grid->column('form_processing_fee_received', __('Form / Processing fee'));
+        $grid->column('booking_type', __('Booking Type'));
         $grid->column('down_payment_received', __('Down payment'));
         $grid->column('dealer.text_for_select', __('Dealer'));
         $grid->column('dealer_commission_amount', __('Dealer commission'));
@@ -86,12 +87,25 @@ class BookingController extends AdminController
             {
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is [' . \App\Helpers\StatusesHelper::statusTitle($booking->status) . ']. It cannot be changed now.');
             }
+
+            $property_file = \App\PropertyFile::find($form->property_file_id);
+            if($property_file->dealer_id != null && 
+                $property_file->dealer_id != $form->dealer_id)
+            {
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. ['.$property_file->dealer->text_for_select.']');
+            }
         });
 
         $form->saved(function(Form $form) {
 
             $property_file = $form->model()->propertyFile;
-            $property_file->dealer_id = null;
+            
+            if($form->model()->propertyFile->dealer_id != null) 
+            {
+                $property_file->sold_by_dealer_id = $form->model()->propertyFile->dealer_id; 
+                $property_file->dealer_id = null;
+            }
+            
             $property_file->holder_id = $form->model()->customer_id;
             $property_file->save();
 
@@ -123,10 +137,20 @@ class BookingController extends AdminController
             'customer_id', 
             __('Customer'), 
             'admin/people/create', 
-            '\App\Person')
+            '\App\Person',
+            'person_type = \'' .\App\Person::PERSON_TYPE_CUSTOMER. '\' ')
             ->rules('required');
 
         $form->divider('Down Payment');
+
+        $form->select('booking_type', __('Booking Type'))
+            ->rules('required')
+            ->options(
+                [
+                    \App\Booking::BOOKING_TYPE_CASH => \App\Booking::BOOKING_TYPE_CASH,
+                    \App\Booking::BOOKING_TYPE_INSTALLMENT => \App\Booking::BOOKING_TYPE_INSTALLMENT,
+                ]
+            );
 
         $form->decimal('down_payment_received', __('Down payment received'))
         ->rules('required');
@@ -163,7 +187,8 @@ class BookingController extends AdminController
             'dealer_id', 
             __('Dealer'), 
             'admin/people/create', 
-            '\App\Person')
+            '\App\Person',
+            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ')
             ->rules('required');
 
         $form->decimal('dealer_commission_amount', __('Dealer commission amount'))
@@ -192,27 +217,117 @@ class BookingController extends AdminController
         // DELETE OLD ENTRIES
         \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
 
+        $file = \App\PropertyFile::find($model->property_file_id);
+        $sale_price = \App\Booking::BOOKING_TYPE_INSTALLMENT ? $file->installment_price : $file->cash_price;
+
+        if($sale_price == 0)
+        {
+            throw new \Exception("Sale price is 0", 1);
+        }
+
         //SALES ENTRY
+        // FILE DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            null,
+            $model->property_file_id,
+            'Sales booked',
+            $sale_price,
+        );
 
-        // // CUSTOMER AMOUNT RECEIVED
-        // // CASH / BANK DEBIT
-        // \App\Ledger::insertOrUpdateLedgerEntries(
-        //     $ledger_id,
-        //     $model->customer_amount_received,
-        //     null,
-        //     null,
-        //     'Amount received from Dealer against Files Booking',
-        //     $dealer_booking->dealer_amount_received
-        // );
+        // SALES CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_PROPERTY_SALES_INCOME)->id,
+            null,
+            null,
+            'Sales booked',
+            -$sale_price,
+        );
 
-        // // DEALER ACCOUNT CREDIT
-        // \App\Ledger::insertOrUpdateLedgerEntries(
-        //     $ledger_id,
-        //     \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
-        //     $dealer_booking->dealer_id,
-        //     null,
-        //     'Amount received from Dealer against Files Booking',
-        //     -$dealer_booking->dealer_amount_received
-        // );
+        // COST OF SALES ENTRY
+        // COST ACCOUNT DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_PROPERTY_SALES_COST)->id,
+            null,
+            null,
+            'Cost of Sales booked',
+            $file->cost,
+        );
+
+        // LAND COST CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_LAND_COST)->id,
+            null,
+            null,
+            'Cost of Sales booked',
+            -$file->cost,
+        );
+
+        // DOWNPAYMENT ENTRY
+        // FILE CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            null,
+            $model->property_file_id,
+            'Downpayment received',
+            -$model->down_payment_received,
+        );
+
+        // DOWNPAYMENT RECEIVED ACCOUNT DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            $model->down_payment_received_account_id,
+            null,
+            null,
+            'Downpayment received',
+            $model->down_payment_received,
+        );
+
+        // FORM PROCESSING FEE ENTRY
+        // FORM PROCESSING FEE RECEIVED ACCOUNT DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            $model->form_processing_fee_received_account_id,
+            null,
+            null,
+            'Form Processing Fee',
+            $model->form_processing_fee_received,
+        );
+
+        // FORM PROCESSING FEE INCOME CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_FORM_PROCESSING_FEE_INCOME)->id,
+            null,
+            null,
+            'Form Processing Fee',
+            -$model->form_processing_fee_received,
+        );
+
+        // DEALER COMMISSION ENTRY
+        // COMMISSION EXPENSE DEBIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE)->id,
+            null,
+            null,
+            'Dealer Commission',
+            $model->dealer_commission_amount,
+        );
+
+        // DEALER ACCOUNT CREDIT
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            $model->dealer_id,
+            null,
+            'Dealer Commission',
+            -$model->dealer_commission_amount,
+        );
     }
 }

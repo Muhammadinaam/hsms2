@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends CommonModel
 {
+    public const PERSON_TYPE_DEALER = 'Dealer';
+    public const PERSON_TYPE_CUSTOMER = 'Customer';
+    public const PERSON_TYPE_SUPPLIER = 'Supplier';
+    public const PERSON_TYPE_EMPLOYEE = 'Employee';
+
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)

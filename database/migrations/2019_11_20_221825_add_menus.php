@@ -42,8 +42,8 @@ class AddMenus extends Migration
         CommonMigrations::addMenu($parent_menu_id, 304, 'Receipts', 'fa-money', 'receipts', 'receipts_list');
 
         $parent_menu_id = CommonMigrations::addMenu(0, 401, 'Accounting Reports', 'fa-briefcase', '', null);
-        CommonMigrations::addMenu($parent_menu_id, 402, 'Receivables Report', 'fa-money', 'receivables-report', 'receivables_report');
-        CommonMigrations::addMenu($parent_menu_id, 403, 'Payables Report', 'fa-money', 'payables-report', 'payables_report');
+        CommonMigrations::addMenu($parent_menu_id, 402, 'Receivable/Payable Report', 'fa-money', 'receivables-payables-report', 'receivables_payables_report');
+        CommonMigrations::addMenu($parent_menu_id, 403, 'Receivable/Payable Detail', 'fa-money', 'receivables-payables-detail-report', 'receivables_payables_detail_report');
         CommonMigrations::addMenu($parent_menu_id, 404, 'Ledger Report', 'fa-balance-scale', 'ledger-report', 'ledger_report');
         CommonMigrations::addMenu($parent_menu_id, 405, 'Trial Balance Report', 'fa-balance-scale', 'trial-balance-report', 'trial_balance_report');
     }

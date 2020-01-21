@@ -15,6 +15,9 @@ class Booking extends CommonModelWithStatuses
     ];
     public $effected_relations = ['propertyFile'];
 
+    public const BOOKING_TYPE_CASH = 'Cash';
+    public const BOOKING_TYPE_INSTALLMENT = 'Installment';
+
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)

@@ -37,6 +37,13 @@ Route::group([
 
     $router->resource('account-heads', AccountHeadController::class);
 
+    $router->resource('journal-vouchers', JournalVoucherController::class);
+
     $router->get('{entity}/{entity_id}/print', 'PrintController@print');
+
+    $router->get('receivables-payables-report', 'ReportController@receivablesPayablesReport');
+    $router->get('receivables-payables-detail-report', 'ReportController@receivablesPayablesDetailReport');
+    $router->get('trial-balance-report', 'ReportController@trialBalanceReport');
+    $router->get('ledger-report', 'ReportController@showLedger');
 
 });
