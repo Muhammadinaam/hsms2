@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\AttachmentsRelation;
 
 class Booking extends CommonModelWithStatuses
 {
+    use AttachmentsRelation;
+
     protected $appends = ['text_for_select'];
 
     public $all_statuses = [

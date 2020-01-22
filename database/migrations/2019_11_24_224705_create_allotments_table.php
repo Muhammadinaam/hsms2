@@ -19,12 +19,7 @@ class CreateAllotmentsTable extends Migration
             
             $table->datetime('date');
             $table->bigInteger('booking_id');
-            $table->bigInteger('property_id');
-            $table->decimal('any_amount_received_before_or_at_allotment_time', 30, 2);
-            $table->datetime('amount_received_date');
-            $table->bigInteger("amount_received_account_id");
-            $table->bigInteger("dealer_id")->nullable();
-            $table->decimal("dealer_commission_amount", 30, 2)->nullable();
+            $table->string('property_number');
             $table->string('status');
 
             CommonMigrations::commonColumns($table);

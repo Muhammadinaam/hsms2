@@ -40,4 +40,35 @@ class CommonMigrations
             ->delete();
 
     }
+
+    public static function insertEntityPermission($singular_title, $plural_title, $singular_slug, $plural_slug, $resource_url)
+    {
+        DB::table('admin_permissions')
+            ->insert([
+                [
+                    'name' => $plural_title . ' List',
+                    'slug' => $plural_slug . '_list',
+                    'http_method' => 'GET',
+                    'http_path' => $resource_url,
+                ],
+                [
+                    'name' => 'Add ' . $singular_title,
+                    'slug' => 'add_' . $singular_slug,
+                    'http_method' => 'GET,POST',
+                    'http_path' => '/' . $resource_url . '/create' . "\r\n" . '/' . $resource_url,
+                ],
+                [
+                    'name' => 'Edit ' . $singular_title,
+                    'slug' => 'edit_' . $singular_slug,
+                    'http_method' => 'GET,PUT',
+                    'http_path' => '/' . $resource_url . '/*/edit' . "\r\n" . '/' . $resource_url . '/*',
+                ],
+                [
+                    'name' => 'Delete ' . $singular_title,
+                    'slug' => 'Delete_' . $singular_slug,
+                    'http_method' => 'DELETE',
+                    'http_path' => '/' . $resource_url . '/*',
+                ],
+            ]);
+    }
 }

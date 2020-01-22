@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAllotmentCancellationsTable extends Migration
+class CreateAttachmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateAllotmentCancellationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('allotment_cancellations', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->bigIncrements('id');
             
-            $table->datetime('date');
-            $table->string('cancellation_reason');
-            $table->bigInteger('allotment_id');
+            $table->string('attachable_type');
+            $table->bigInteger('attachable_id');
 
-            CommonMigrations::commonColumns($table);
+            $table->string('attachment');
+            $table->string('attachment_description');
+
+            $table->timestamps();
         });
     }
 
@@ -31,6 +33,6 @@ class CreateAllotmentCancellationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('allotment_cancellations');
+        Schema::dropIfExists('attachments');
     }
 }

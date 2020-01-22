@@ -47,8 +47,12 @@ class DealerBookingController extends AdminController
         $show = new Show(DealerBooking::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('date', __('Date'));
-        $show->field('dealer_id', __('Dealer id'));
+        $show->field('date', __('Date'))->as(function($value){
+            return \Carbon\Carbon::parse($value)->format('d-M-Y');
+        });
+        $show->field('dealer_id', __('Dealer'))->as(function($value){
+            return \App\Person::find($value)->text_for_select;
+        });
         $show->field('dealer_amount_received', __('Dealer amount received'));
         $show->field('dealer_amount_received_account_id', __('Dealer amount received account id'));
         $show->field('created_by', __('Created by'));
