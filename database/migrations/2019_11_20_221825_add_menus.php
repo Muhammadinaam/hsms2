@@ -48,7 +48,31 @@ class AddMenus extends Migration
         CommonMigrations::addMenu($parent_menu_id, 405, 'Trial Balance Report', 'fa-balance-scale', 'trial-balance-report', 'trial_balance_report');
 
 
-        CommonMigrations::insertEntityPermission('Project', 'Projects', 'project', 'projects', 'projects');
+        CommonMigrations::insertEntityPermissions('Project', 'Projects', 'project', 'projects', 'projects');
+        CommonMigrations::insertEntityPermissions('Phase', 'Phases', 'phase', 'phases', 'phases');
+        CommonMigrations::insertEntityPermissions('Block', 'Blocks', 'block', 'blocks', 'blocks');
+        CommonMigrations::insertEntityPermissions('Property Type', 'Property Types', 'property_type', 'property_types', 'property-types');
+        CommonMigrations::insertEntityPermissions('Land Purchase', 'Land Purchases', 'land_purchase', 'land_purchases', 'land-purchases');
+        CommonMigrations::insertEntityPermissions('Property File', 'Property Files', 'property_file', 'property_files', 'property-files');
+        CommonMigrations::insertEntityPermissions('Dealer Booking', 'Dealer Bookings', 'dealer_booking', 'dealer_bookings', 'dealer-bookings');
+        CommonMigrations::insertEntityPermissions('Dealer Booking Return', 'Dealer Booking Returns', 'dealer_booking_return', 'dealer_booking_returns', 'dealer-booking-returns');
+        CommonMigrations::insertEntityPermissions('Booking', 'Booking', 'booking', 'bookings', 'bookings');
+        CommonMigrations::insertEntityPermissions('Booking Cancellation', 'Booking Cancellations', 'booking_cancellation', 'booking_cancellations', 'booking-cancellations');
+        CommonMigrations::insertEntityPermissions('Allotment', 'Allotments', 'allotment', 'allotments', 'allotments');
+        CommonMigrations::insertEntityPermissions('Allotment Cancellation', 'Allotment Cancellations', 'allotment_cancellation', 'allotment_cancellations', 'allotment-cancellations');
+        CommonMigrations::insertEntityPermissions('Possession', 'Possessions', 'possession', 'possessions', 'possessions');
+        CommonMigrations::insertEntityPermissions('Possession Cancellation', 'Possession Cancellations', 'possession_cancellation', 'possession_cancellations', 'possession-cancellations');
+        CommonMigrations::insertEntityPermissions('Transfer', 'Transfers', 'transfer', 'transfers', 'transfers');
+        CommonMigrations::insertEntityPermissions('Account Head', 'Account Heads', 'account_head', 'account_heads', 'account-heads');
+        CommonMigrations::insertEntityPermissions('Person', 'Persons', 'person', 'persons', 'people');
+        CommonMigrations::insertEntityPermissions('Journal Voucher', 'Journal Vouchers', 'journal_voucher', 'journal_vouchers', 'journal-vouchers');
+        CommonMigrations::insertEntityPermissions('Payment', 'Payments', 'payment', 'payments', 'payments');
+        CommonMigrations::insertEntityPermissions('Receipt', 'Receipts', 'receipt', 'receipts', 'receipts');
+
+        CommonMigrations::insertPermission('Receivable/Payable Report', 'receivables_payables_report', 'GET', 'receivables-payables-report');
+        CommonMigrations::insertPermission('Receivable/Payable Detail', 'receivables_payables_detail_report', 'GET', 'receivables-payables-detail-report');
+        CommonMigrations::insertPermission('Ledger Report', 'ledger_report', 'GET', 'ledger-report');
+        CommonMigrations::insertPermission('Trial Balance Report', 'trial_balance_report', 'GET', 'trial-balance-report');
     }
 
     /**

@@ -7,9 +7,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Helpers\UpdateHelpers;
-use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\DB;
 
 class BookingCancellationController extends AdminController
 {
@@ -105,6 +104,14 @@ class BookingCancellationController extends AdminController
                 return $ret;
             }
 
+            $dealer_commission = $form->dealer_commission_to_be_returned == '' || 
+                $form->dealer_commission_to_be_returned == null ? 0 :
+                +$form->dealer_commission_to_be_returned;
+            if($dealer_commission != 0 && $new_booking->dealer == null)
+            {
+                throw new \Exception("Please set commission returned = 0, because no dealer commission was paid at the time of booking", 1);
+            }
+
         });
 
 
@@ -145,7 +152,7 @@ class BookingCancellationController extends AdminController
             ->help('Cash or Bank Account from which amount is being returned')
             ->rules('required');
 
-        $form->divider('Customer Amount Returned');
+        $form->divider('Commission Returned');
 
         $form->decimal('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
@@ -175,6 +182,7 @@ class BookingCancellationController extends AdminController
         $booking = $model->booking;
         $file = \App\PropertyFile::find($booking->property_file_id);
         $sale_price = $booking->booking_type == \App\Booking::BOOKING_TYPE_INSTALLMENT ? $file->installment_price : $file->cash_price;
+        $account_receivable_payable_id = \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id;
 
         if($sale_price == 0)
         {
@@ -185,7 +193,7 @@ class BookingCancellationController extends AdminController
         // FILE CREDIT
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            $account_receivable_payable_id,
             null,
             $booking->property_file_id,
             'Sales Return booked',
@@ -223,68 +231,77 @@ class BookingCancellationController extends AdminController
             $file->cost,
         );
 
-        // DOWNPAYMENT RETURNED ENTRY
-        // FILE CREDIT
+
+        $property_file_balance = DB::table('ledger_entries')
+            ->where('account_head_id', $account_receivable_payable_id)
+            ->where('property_file_id', $file->id)
+            ->sum('amount');
+        // PROPERTY FILE BALANCE TRANSFERRED TO BOOKING CANCELLATION ACCOUNT
+        // FILE BALANCE
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
+            $account_receivable_payable_id,
             null,
-            $model->property_file_id,
-            'Downpayment received',
-            -$model->down_payment_received,
+            $model->booking->property_file_id,
+            'Property File Balance Transferred to Booking Cancellation Account',
+            -$property_file_balance,
         );
 
-        // DOWNPAYMENT RECEIVED ACCOUNT DEBIT
+        $booking_cancellation_account_id = \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_BOOKING_CANCELLATION)->id;
+        // BOOKING CANCELLATION ACCOUNT
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
-            $model->down_payment_received_account_id,
+            $booking_cancellation_account_id,
             null,
             null,
-            'Downpayment received',
-            $model->down_payment_received,
+            'Property File Balance Transferred to Booking Cancellation Account',
+            $property_file_balance,
         );
 
-        // FORM PROCESSING FEE ENTRY
-        // FORM PROCESSING FEE RECEIVED ACCOUNT DEBIT
+        //CUSTOMER AMOUNT RETURNED ENTRY - CHARGED TO BOOKING CANCELLATION ACCOUNT
+        // CASH / BANK ACCOUNT CREDIT
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
-            $model->form_processing_fee_received_account_id,
+            $model->customer_amount_returned_account_id,
             null,
             null,
-            'Form Processing Fee',
-            $model->form_processing_fee_received,
+            'Customer Amount Return on Booking Cancellation',
+            -$model->customer_amount_returned,
         );
 
-        // FORM PROCESSING FEE INCOME CREDIT
+        // BOOKING CANCELLATION ACCOUNT DEBIT
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_FORM_PROCESSING_FEE_INCOME)->id,
+            $booking_cancellation_account_id,
             null,
             null,
-            'Form Processing Fee',
-            -$model->form_processing_fee_received,
+            'Customer Amount Return on Booking Cancellation',
+            $model->customer_amount_returned,
         );
 
-        // DEALER COMMISSION ENTRY
-        // COMMISSION EXPENSE DEBIT
-        $commission_amount = $model->dealer_commission_amount != null ? $model->dealer_commission_amount : 0;
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE)->id,
-            null,
-            null,
-            'Dealer Commission',
-            $commission_amount,
-        );
-
-        // DEALER ACCOUNT CREDIT
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
-            $model->dealer_id,
-            null,
-            'Dealer Commission',
-            -$commission_amount,
-        );
+        if($model->booking->dealer_id != null)
+        {
+            // DEALER COMMISSION ENTRY REVERSED
+            // COMMISSION EXPENSE DEBIT
+            $commission_amount = $model->dealer_commission_amount != null ? $model->dealer_commission_amount : 0;
+            \App\Ledger::insertOrUpdateLedgerEntries(
+                $ledger_id,
+                \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE)->id,
+                null,
+                null,
+                'Dealer Commission reversal on booking cancellation',
+                -$commission_amount,
+            );
+    
+            // DEALER ACCOUNT CREDIT
+            \App\Ledger::insertOrUpdateLedgerEntries(
+                $ledger_id,
+                $account_receivable_payable_id,
+                $model->booking->dealer_id,
+                null,
+                'Dealer Commission reversal on booking cancellation',
+                $commission_amount,
+            );
+        }
     }
 }

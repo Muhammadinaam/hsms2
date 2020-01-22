@@ -41,7 +41,7 @@ class CommonMigrations
 
     }
 
-    public static function insertEntityPermission($singular_title, $plural_title, $singular_slug, $plural_slug, $resource_url)
+    public static function insertEntityPermissions($singular_title, $plural_title, $singular_slug, $plural_slug, $resource_url)
     {
         DB::table('admin_permissions')
             ->insert([
@@ -69,6 +69,19 @@ class CommonMigrations
                     'http_method' => 'DELETE',
                     'http_path' => '/' . $resource_url . '/*',
                 ],
+            ]);
+    }
+
+    public static function insertPermission($name, $slug, $http_method, $http_path)
+    {
+        DB::table('admin_permissions')
+            ->insert([
+                [
+                    'name' => $name,
+                    'slug' => $slug,
+                    'http_method' => $http_method,
+                    'http_path' => $http_path,
+                ]
             ]);
     }
 }

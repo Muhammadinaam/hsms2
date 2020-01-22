@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateAccountHeadsTable extends Migration
 {
@@ -76,6 +77,14 @@ class CreateAccountHeadsTable extends Migration
                 'idt' => \App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE,
                 'name' => 'Dealer Commission Expense', 
                 'type' => \App\AccountHead::SELLING_EXPENSES, 
+                'is_reserved' => true
+            ]);
+
+        DB::table('account_heads')
+            ->insert([
+                'idt' => \App\AccountHead::IDT_BOOKING_CANCELLATION,
+                'name' => 'Booking Cancellation', 
+                'type' => \App\AccountHead::OTHER_INCOME, 
                 'is_reserved' => true
             ]);
     }

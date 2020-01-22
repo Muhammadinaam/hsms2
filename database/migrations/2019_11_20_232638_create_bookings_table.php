@@ -32,7 +32,7 @@ class CreateBookingsTable extends Migration
             $table->bigInteger("down_payment_received_account_id");
             
             $table->bigInteger("dealer_id")->nullable();
-            $table->decimal("dealer_commission_amount", 30, 2)->nullable();
+            $table->decimal("dealer_commission_amount", 30, 2)->nullable()->default(0);
             $table->string('status');
 
             CommonMigrations::commonColumns($table);

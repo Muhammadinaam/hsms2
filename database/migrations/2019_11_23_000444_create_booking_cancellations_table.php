@@ -20,10 +20,10 @@ class CreateBookingCancellationsTable extends Migration
             $table->string('cancellation_reason');
             $table->bigInteger('booking_id');
 
-            $table->decimal('customer_amount_returned', 30, 2);
+            $table->decimal('customer_amount_returned', 30, 2)->nullable()->default(0);
             $table->bigInteger('customer_amount_returned_account_id');
 
-            $table->decimal('dealer_commission_to_be_returned', 30, 2);
+            $table->decimal('dealer_commission_to_be_returned', 30, 2)->nullable()->default(0);
 
             CommonMigrations::commonColumns($table);
         });
