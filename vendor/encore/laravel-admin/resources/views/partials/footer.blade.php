@@ -4,12 +4,18 @@
     <div class="pull-right hidden-xs">
         @if(config('admin.show_environment'))
             <strong>Env</strong>&nbsp;&nbsp; {!! config('app.env') !!}
+            &nbsp;&nbsp;&nbsp;&nbsp;
         @endif
 
-        &nbsp;&nbsp;&nbsp;&nbsp;
+        
 
-        @if(config('admin.show_version'))
-        <strong>Version</strong>&nbsp;&nbsp; {!! \Encore\Admin\Admin::VERSION !!}
+        @if(config('admin.show_admin_version'))
+        <strong>Admin Version</strong>&nbsp;&nbsp; {!! \Encore\Admin\Admin::VERSION !!}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        @endif
+
+        @if(config('admin.show_app_version'))
+        <strong>Version</strong>&nbsp;&nbsp; {!! config('admin.app_version') !!}
         @endif
 
     </div>

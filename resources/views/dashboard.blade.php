@@ -35,6 +35,14 @@ $files_with_plots_allotted_infobox = new InfoBox(
     \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::BOOKED)
     ->count());
 
+$files_with_possession_given_infobox = new InfoBox(
+    'Files with possession given', 
+    'file', 
+    'red', 
+    '/admin/property-files', 
+    \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::BOOKED)
+    ->count());
+
 ?>
 
 <div class="row">
@@ -52,5 +60,8 @@ $files_with_plots_allotted_infobox = new InfoBox(
     </div>
     <div class="col-md-4">
         {!! $files_with_plots_allotted_infobox !!}
+    </div>
+    <div class="col-md-4">
+    {!! $files_with_possession_given_infobox !!}
     </div>
 </div>

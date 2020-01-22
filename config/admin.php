@@ -311,7 +311,10 @@ return [
     | each page
     |
     */
-    'show_version' => true,
+    'show_admin_version' => false,
+
+    'show_app_version' => true,
+    'app_version' => '1.0.0',
 
     /*
     |--------------------------------------------------------------------------
