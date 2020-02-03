@@ -30,9 +30,6 @@ class AllotmentCancellationController extends AdminController
         $grid->column('date', __('Date of cancellation'))->date('d-M-Y');
         $grid->column('cancellation_reason', __('Cancellation Reason'));
         $grid->column('allotment_id', __('Allotment id'));
-        $grid->column('customer_amount_returned', __('Customer amount returned'));
-        $grid->column('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $grid->column('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $grid;
     }
@@ -99,10 +96,6 @@ class AllotmentCancellationController extends AdminController
             return \App\Helpers\SelectHelper::selectedOptionData('\App\Allotment', $id);
         })
         ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Allotment', $allotment_where), 'id', 'text_for_select');
-        
-        $form->decimal('customer_amount_returned', __('Customer amount returned'));
-        $form->number('customer_amount_returned_account_id', __('Customer amount returned account id'));
-        $form->decimal('dealer_commission_to_be_returned', __('Dealer commission to be returned'));
 
         return $form;
     }

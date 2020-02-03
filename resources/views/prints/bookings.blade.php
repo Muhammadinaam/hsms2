@@ -13,7 +13,7 @@
     <br>
     <div class="text-center">
         <span class="sub-title round-border bg-gray p1">
-            {{ $model->propertyFile->marlas }} Marlas - {{ $model->propertyFile->propertyType->name }} Plot
+            {{ $model->propertyFile->marlas + 0 }} Marlas - {{ $model->propertyFile->propertyType->name }} Plot
         </span>
     </div>
 

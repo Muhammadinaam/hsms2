@@ -29,13 +29,9 @@ class AllotmentController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('date', __('Date of allotment'));
-        $grid->column('booking_id', __('Booking id'));
-        $grid->column('property_id', __('Property id'));
-        $grid->column('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
-        $grid->column('amount_received_date', __('Amount received date'));
-        $grid->column('amount_received_account_id', __('Amount received account id'));
-        $grid->column('dealer_id', __('Dealer id'));
-        $grid->column('dealer_commission_amount', __('Dealer commission amount'));
+        $grid->column('booking.text_for_select', __('Booking'));
+        $grid->column('property_number', __('Property Number'));
+        $grid->column('block.text_for_select', __('Block'));
         $grid->column('status', __('Allotment Status'));
 
         return $grid;
@@ -84,95 +80,45 @@ class AllotmentController extends AdminController
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Allotment is [' . \App\Helpers\StatusesHelper::statusTitle($allotment->status) . ']. It cannot be changed now.');
             }
 
-            $new_booking = \App\Booking::find($form->booking_id);
-            $new_property = \App\Property::find($form->property_id);
-            $booking_and_property_match = $this->bookingAndPropertyMatch($new_booking, $new_property);
-            if( $booking_and_property_match !== true )
+            if($allotment != null)
             {
-                $error = $booking_and_property_match;
-            
-                return back()->with(compact('error')); 
+                $previous_booking = $allotment->booking;
+                $previous_property_file = $previous_booking->propertyFile;     
+                $previous_property_file->property_number = null;
+                $previous_property_file->block_id = null;
+                $previous_property_file->save();
             }
-        });
 
+            $new_booking = \App\Booking::find($form->booking_id);
+            $new_property_file = $new_booking->propertyFile;     
+            $new_property_file->property_number = $form->property_number;
+            $new_property_file->block_id = $form->block_id;
+            $new_property_file->save();
+        });
 
         $booking_where = 'status = \''. \App\Helpers\StatusesHelper::BOOKED .'\'';
         $booking_where .=  $id != null ? ' OR bookings.id = ' . $allotment->booking_id : '';
 
-        $property_where = 'status = \''. \App\Helpers\StatusesHelper::AVAILABLE .'\'';
-        $property_where .=  $id != null ? ' OR properties.id = ' . $allotment->property_id : '';
-
-
 
         $form->date('date', __('Date of allotment'))->default(date('Y-m-d'));
-        
-        $form->select('booking_id', __('Booking'))
-        ->rules('required')
-        ->addVariables(['add_button_url' => 'admin/bookings/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Booking', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Booking', $booking_where), 'id', 'text_for_select');
-        
-        $form->select('property_id', __('Property'))
-        ->rules('required')
-        ->addVariables(['add_button_url' => 'admin/properties/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Property', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Property', $property_where), 'id', 'text_for_select');
 
-        $form->decimal('any_amount_received_before_or_at_allotment_time', __('Any amount received before or at allotment time'));
-        $form->date('amount_received_date', __('Amount received date'))->default(date('Y-m-d'));
-        $form->number('amount_received_account_id', __('Amount received account id'));
-        
-        $form->select('dealer_id', __('Dealer id'))
-        ->addVariables(['add_button_url' => 'admin/people/create'])
-        ->options(function ($id) {
-            return \App\Helpers\SelectHelper::selectedOptionData('\App\Person', $id);
-        })
-        ->ajax(\App\Helpers\SelectHelper::selectModelUrl('\App\Person'), 'id', 'text_for_select');
-        
-        $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'booking_id', 
+            __('Booking'), 
+            'admin/bookings/create', 
+            '\App\Booking');
 
-        $form->hasMany('paymentPlans', function (Form\NestedForm $form) {
-            $form->date('starting_date')->default(date('Y-m-d'));
-            $form->decimal('amount', "Amount");
-            $form->number('number_of_payments', 'Number of Payments');
-            $form->number('days_between_payments', 'Days between payments');
-        })->mode('table');
+        $form->text('property_number', __('Property Number'));
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'block_id', 
+            __('Block'), 
+            'admin/blocks/create', 
+            '\App\Block');
 
         return $form;
     }
 
-    private function bookingAndPropertyMatch($booking, $property)
-    {
-        $attributes = [
-            [ 'title' => 'Project', 'booking_db_field' => 'project_id', 'property_db_field' => 'project_id' ],
-            [ 'title' => 'Phase', 'booking_db_field' => 'phase_id', 'property_db_field' => 'phase_id' ],
-            [ 'title' => 'Marlas', 'booking_db_field' => 'booking_for_marlas', 'property_db_field' => 'marlas' ],
-            [ 'title' => 'Is Corner', 'booking_db_field' => 'is_corner', 'property_db_field' => 'is_corner' ],
-            [ 'title' => 'Is Facing Park', 'booking_db_field' => 'is_facing_park', 'property_db_field' => 'is_facing_park' ],
-            [ 'title' => 'Is On Boulevard', 'booking_db_field' => 'is_on_boulevard', 'property_db_field' => 'is_on_boulevard' ],
-        ];
-
-        $error_message = '';
-
-        $ret = true;
-        foreach($attributes as $attribute)
-        {
-            if($booking->{$attribute['booking_db_field']} != $property->{$attribute['property_db_field']})
-            {
-                $error_message .= 'Value of [' . $attribute['title'] . '] in Booking is ' . $booking->{$attribute['booking_db_field']}
-                    . ' while value of [' . $attribute['title'] . '] in Property is ' . $property->{$attribute['property_db_field']} . '. ';
-                
-                $ret = new MessageBag([
-                    'title'   => 'Error',
-                    'message' => $error_message,
-                ]);
-            }
-        }
-
-        return $ret;
-    }
 }

@@ -29,6 +29,9 @@ class CreatePropertyFilesTable extends Migration
             $table->decimal("cash_price", 30, 2);
             $table->decimal("installment_price", 30, 2);
             $table->decimal("cost", 30, 2);
+
+            $table->string('property_number')->nullable();
+            $table->bigInteger('block_id')->nullable();
             
             $table->bigInteger("dealer_id")->nullable();
             $table->bigInteger("sold_by_dealer_id")->nullable();

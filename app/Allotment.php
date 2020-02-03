@@ -10,34 +10,19 @@ class Allotment extends CommonModelWithStatuses
         \App\Helpers\StatusesHelper::ALLOTTED,
         \App\Helpers\StatusesHelper::POSSESSED
     ];
-    public $effected_relations = ['property', 'booking'];
+    public $effected_relations = ['booking'];
 
     public function searchForSelect($search_term, $where_clauses)
     {
         $data = parent::searchForSelect($search_term, $where_clauses)
             ->where(function($query) use ($search_term) {
 
-                $query->orWhereHas('property', function($query) use ($search_term) {
-                    $query->orWhere('properties.name', 'like', '%'.$search_term.'%');
-                });
-
-                $query->orWhereHas('property.project', function($query) use ($search_term) {
-                    $query->orWhere('projects.name', 'like', '%'.$search_term.'%')
-                        ->orWhere('projects.short_name', 'like', '%'.$search_term.'%');
-                });
-
-                $query->orWhereHas('property.phase', function($query) use ($search_term) {
-                    $query->orWhere('phases.name', 'like', '%'.$search_term.'%')
-                        ->orWhere('phases.short_name', 'like', '%'.$search_term.'%');
-                });
-
-                $query->orWhereHas('property.block', function($query) use ($search_term) {
-                    $query->orWhere('blocks.name', 'like', '%'.$search_term.'%')
-                        ->orWhere('blocks.short_name', 'like', '%'.$search_term.'%');
-                });
-
                 $query->orWhereHas('booking.customer', function($query) use ($search_term) {
                     $query->orWhere('name', 'like', '%'.$search_term.'%');
+                });
+
+                $query->orWhereHas('booking.propertyFile', function($query) use ($search_term) {
+                    $query->orWhere('file_number', 'like', '%'.$search_term.'%');
                 });
             });
 
@@ -49,19 +34,15 @@ class Allotment extends CommonModelWithStatuses
     {
         return 
             'Allotment Id: ' . $this->id . ', ' .
+            'Property File: ' . $this->booking->propertyFile->file_number . ', ' .
             'Booking: ' . $this->booking->booking_number . ', ' .
             'Cust. Name: ' . $this->booking->customer->name . ', ' .
             'CNIC: ' . $this->booking->customer->cnic;
     }
 
-    public function paymentPlans()
+    public function block()
     {
-        return $this->hasMany('\App\PaymentPlan');
-    }
-
-    public function property()
-    {
-        return $this->belongsTo('\App\Property');
+        return $this->belongsTo('\App\Block');
     }
 
     public function booking()

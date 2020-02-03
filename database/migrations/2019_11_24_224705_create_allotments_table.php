@@ -20,6 +20,7 @@ class CreateAllotmentsTable extends Migration
             $table->datetime('date');
             $table->bigInteger('booking_id');
             $table->string('property_number');
+            $table->bigInteger('block_id');
             $table->string('status');
 
             CommonMigrations::commonColumns($table);
