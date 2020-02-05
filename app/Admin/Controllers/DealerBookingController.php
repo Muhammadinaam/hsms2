@@ -122,18 +122,17 @@ class DealerBookingController extends AdminController
             'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ')
             ->rules('required');
         
-        $form->decimal('dealer_amount_received', __('Dealer amount received'))
-            ->rules('required');
+        $form->text('dealer_amount_received_description', 'Dealer amount received description');
+
+        $form->decimal('dealer_amount_received', __('Dealer amount received'));
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'dealer_amount_received_account_id', 
             __('Dealer amount received account'), 
             'admin/account-heads/create', 
-            '\App\AccountHead',
-            'type = \''. \App\AccountHead::CASH_BANK .'\'')
-            ->help('Account Head in which amount received will be debited')
-            ->rules('required');
+            '\App\AccountHead')
+            ->help('Account Head in which amount received will be debited');
 
         $form->hasMany('dealerBookingDetails', __('Files'), function (Form\NestedForm $form) use ($dealer_booking) {
             
@@ -206,6 +205,11 @@ class DealerBookingController extends AdminController
 
         // DELETE OLD ENTRIES
         \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
+
+        if($dealer_booking->dealer_amount_received_account_id == '' && $dealer_booking->dealer_amount_received != '')
+        {
+            throw new \Exception("Dealer Amount Received Account is empty", 1);
+        }
 
         // CASH / BANK DEBIT
         \App\Ledger::insertOrUpdateLedgerEntries(

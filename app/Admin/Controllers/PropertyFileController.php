@@ -109,16 +109,14 @@ class PropertyFileController extends AdminController
             ->creationRules(['required', "unique:property_files"])
             ->updateRules(['required', "unique:property_files,file_number,{{id}}"]);
 
-        $form->decimal('marlas', __('Marlas'))
-        ->rules('required');
+        $form->decimal('marlas', __('Marlas'));
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'property_type_id', 
             __('Property type'), 
             'admin/property-types/create', 
-            '\App\PropertyType')
-            ->rules('required');
+            '\App\PropertyType');
 
         $yes_no_states = [
             'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
@@ -134,9 +132,9 @@ class PropertyFileController extends AdminController
 
         $form->divider('Price and Cost Information');
 
-        $form->decimal('cash_price', __('Cash price'))->rules('required');
-        $form->decimal('installment_price', __('Installment price'))->rules('required');
-        $form->decimal('cost', __('Cost'))->rules('required');
+        $form->decimal('cash_price', __('Cash price'));
+        $form->decimal('installment_price', __('Installment price'));
+        $form->decimal('cost', __('Cost'));
 
         return $form;
     }

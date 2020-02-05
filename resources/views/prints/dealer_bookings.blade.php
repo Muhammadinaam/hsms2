@@ -26,7 +26,9 @@
                         <p>
                             Date: <span class="value">{{\Carbon\Carbon::parse($model->date)->format('d-M-Y')}}</span>, &nbsp;&nbsp;&nbsp;
                             Booking No. <span class="value">{{$model->id}}</span>, &nbsp;&nbsp;&nbsp;
+                            @if($model->dealer_amount_received != '' && $model->dealer_amount_received != 0 && $model->dealer_amount_received != null)
                             Token Received: <span class="value">{{$model->dealer_amount_received}}</span>, &nbsp;&nbsp;&nbsp;
+                            @endif
                         </p>
 
                         <br><br>
@@ -84,9 +86,9 @@
             
             <tr class="tr-bordered">
                 <th>File No.</th>
-                <th>Type</th>
+                <!-- <th>Type</th>
                 <th>Plot Size</th>
-                <th>Farm House</th>
+                <th>Farm House</th> -->
             </tr>
         </thead>
 
@@ -94,9 +96,9 @@
             @foreach($model->dealerBookingDetails as $detail)
             <tr class="tr-bordered" style="text-align: center;">
                 <td>{{$detail->propertyFile->file_number}}</td>
-                <td>{{$detail->propertyFile->propertyType->name}}</td>
+                <!-- <td>{{$detail->propertyFile->propertyType->name}}</td>
                 <td>{{ $detail->propertyFile->marlas + 0 }}M</td>
-                <td>{{ $detail->propertyFile->is_farmhouse == '1' ? 'Yes' : 'No'}}</td>
+                <td>{{ $detail->propertyFile->is_farmhouse == '1' ? 'Yes' : 'No'}}</td> -->
             </tr>
             @endforeach
         </tbody>

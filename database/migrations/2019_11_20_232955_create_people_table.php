@@ -19,6 +19,7 @@ class CreatePeopleTable extends Migration
             $table->string('system_id')->unique();
             $table->string('picture')->nullable();
             $table->string("name");
+            $table->string("business_name");
             $table->string("father_name")->nullable();
             $table->string("husband_name")->nullable();
             $table->string("cnic");

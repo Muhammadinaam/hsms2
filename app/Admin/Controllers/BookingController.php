@@ -116,6 +116,20 @@ class BookingController extends AdminController
 
         $form->saved(function(Form $form) {
 
+            $model = $form->model();
+            $property_file = $model->propertyFile;
+
+            $property_file->marlas = $model->marlas;
+            $property_file->property_type_id = $model->property_type_id;
+            $property_file->is_farmhouse = $model->is_farmhouse;
+            $property_file->is_corner = $model->is_corner;
+            $property_file->is_facing_park = $model->is_facing_park;
+            $property_file->is_on_boulevard = $model->is_on_boulevard;
+            $property_file->cash_price = $model->cash_price;
+            $property_file->installment_price = $model->installment_price;
+            $property_file->cost = $model->cost;
+            $property_file->save();
+
             self::postToLedger($form->model());
         });
 
@@ -147,6 +161,40 @@ class BookingController extends AdminController
             '\App\Person',
             'person_type = \'' .\App\Person::PERSON_TYPE_CUSTOMER. '\' ')
             ->rules('required');
+
+        $form->divider('Property Information');
+
+        $form->decimal('marlas', __('Marlas'))
+        ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'property_type_id', 
+            __('Property type'), 
+            'admin/property-types/create', 
+            '\App\PropertyType')
+            ->rules('required');
+
+        $yes_no_states = [
+            'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
+            'off' => ['value' => 0, 'text' => 'No', 'color' => 'secondary'],
+        ];
+            
+        $form->switch('is_farmhouse', __('Farmhouse'))->states($yes_no_states);
+
+        $form->divider('Preference Location');
+        $form->switch('is_corner', __('Corner'))->states($yes_no_states);
+        $form->switch('is_facing_park', __('Facing park'))->states($yes_no_states);
+        $form->switch('is_on_boulevard', __('On boulevard'))->states($yes_no_states);
+
+        $form->divider('Price and Cost Information');
+
+        $form->decimal('cash_price', __('Cash price'))->rules('required');
+        $form->decimal('installment_price', __('Installment price'))->rules('required');
+        $form->decimal('cost', __('Cost'))->rules('required');
+
+
+        
 
         $form->divider('Down Payment');
 

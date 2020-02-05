@@ -28,6 +28,7 @@ class PersonController extends AdminController
 
         $grid->column('picture', __('picture'))->image();
         $grid->column('name', __('Name'));
+        $grid->column('business_name', __('Business Name'));
         $grid->column('father_name', __('Father name'));
         $grid->column('husband_name', __('Husband name'));
         $grid->column('cnic', __('Cnic'));
@@ -103,6 +104,7 @@ class PersonController extends AdminController
             $form->image('picture', __('Picture'));
 
             $form->text('name', __('Name'));
+            $form->text('business_name', __('Business Name'));
             $form->text('father_name', __('Father name'));
             $form->text('husband_name', __('Husband name'));
             $form->text('cnic', __('Cnic'))->rules('required');

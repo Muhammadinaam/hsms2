@@ -20,15 +20,15 @@ class CreatePropertyFilesTable extends Migration
             $table->bigInteger("phase_id");
             $table->string('file_number')->unique();
 
-            $table->decimal("marlas", 30, 2);
-            $table->bigInteger('property_type_id');
+            $table->decimal("marlas", 30, 2)->nullable();
+            $table->bigInteger('property_type_id')->nullable();
             $table->boolean("is_farmhouse")->default(false);
             $table->boolean("is_corner")->default(false);
             $table->boolean("is_facing_park")->default(false);
             $table->boolean("is_on_boulevard")->default(false);
-            $table->decimal("cash_price", 30, 2);
-            $table->decimal("installment_price", 30, 2);
-            $table->decimal("cost", 30, 2);
+            $table->decimal("cash_price", 30, 2)->nullable();
+            $table->decimal("installment_price", 30, 2)->nullable();
+            $table->decimal("cost", 30, 2)->nullable();
 
             $table->string('property_number')->nullable();
             $table->bigInteger('block_id')->nullable();
