@@ -96,9 +96,7 @@
             @foreach($model->dealerBookingDetails as $detail)
             <tr class="tr-bordered" style="text-align: center;">
                 <td>{{$detail->propertyFile->file_number}}</td>
-                <!-- <td>{{$detail->propertyFile->propertyType->name}}</td>
-                <td>{{ $detail->propertyFile->marlas + 0 }}M</td>
-                <td>{{ $detail->propertyFile->is_farmhouse == '1' ? 'Yes' : 'No'}}</td> -->
+                
             </tr>
             @endforeach
         </tbody>
