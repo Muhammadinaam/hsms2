@@ -85,7 +85,7 @@
             </tr>
             
             <tr class="tr-bordered">
-                <th>Sr No.</th>
+                <th style="width: 100px;">Sr No.</th>
                 <th>File No.</th>
                 <!-- <th>Type</th>
                 <th>Plot Size</th>
@@ -96,7 +96,7 @@
         <tbody>
             @foreach($model->dealerBookingDetails as $detail)
             <tr class="tr-bordered" style="text-align: center;">
-                <td>{{$loop->index}}</td>
+                <td style="width: 100px;">{{$loop->index + 1}}</td>
                 <td>{{$detail->propertyFile->file_number}}</td>
             </tr>
             @endforeach
