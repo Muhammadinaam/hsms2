@@ -291,7 +291,7 @@ class BookingController extends AdminController
             null,
             $model->property_file_id,
             'Sales booked',
-            $sale_price,
+            $sale_price
         );
 
         // SALES CREDIT
@@ -301,7 +301,7 @@ class BookingController extends AdminController
             null,
             null,
             'Sales booked',
-            -$sale_price,
+            -$sale_price
         );
 
         // COST OF SALES ENTRY
@@ -312,7 +312,7 @@ class BookingController extends AdminController
             null,
             null,
             'Cost of Sales booked',
-            $file->cost,
+            $file->cost
         );
 
         // LAND COST CREDIT
@@ -322,7 +322,7 @@ class BookingController extends AdminController
             null,
             null,
             'Cost of Sales booked',
-            -$file->cost,
+            -$file->cost
         );
 
         // DOWNPAYMENT ENTRY
@@ -333,7 +333,7 @@ class BookingController extends AdminController
             null,
             $model->property_file_id,
             'Downpayment received',
-            -$model->down_payment_received,
+            -$model->down_payment_received
         );
 
         // DOWNPAYMENT RECEIVED ACCOUNT DEBIT
@@ -343,7 +343,7 @@ class BookingController extends AdminController
             null,
             null,
             'Downpayment received',
-            $model->down_payment_received,
+            $model->down_payment_received
         );
 
         // FORM PROCESSING FEE ENTRY
@@ -354,7 +354,7 @@ class BookingController extends AdminController
             null,
             null,
             'Form Processing Fee',
-            $model->form_processing_fee_received,
+            $model->form_processing_fee_received
         );
 
         // FORM PROCESSING FEE INCOME CREDIT
@@ -364,7 +364,7 @@ class BookingController extends AdminController
             null,
             null,
             'Form Processing Fee',
-            -$model->form_processing_fee_received,
+            -$model->form_processing_fee_received
         );
 
         // DEALER COMMISSION ENTRY
@@ -376,7 +376,7 @@ class BookingController extends AdminController
             null,
             null,
             'Dealer Commission',
-            $commission_amount,
+            $commission_amount
         );
 
         // DEALER ACCOUNT CREDIT
@@ -386,7 +386,7 @@ class BookingController extends AdminController
             $model->dealer_id,
             null,
             'Dealer Commission',
-            -$commission_amount,
+            -$commission_amount
         );
     }
 }
