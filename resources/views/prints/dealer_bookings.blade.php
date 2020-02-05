@@ -52,8 +52,8 @@
                         <br><br>
                         <p>
                             Dealer ID: <span class="value">&nbsp;&nbsp;{{$model->dealer->system_id}}&nbsp;&nbsp;</span>,&nbsp;&nbsp;&nbsp;&nbsp;
+                            Business Name: <span class="value">&nbsp;&nbsp;{{$model->dealer->business_name}}&nbsp;&nbsp;</span>,&nbsp;&nbsp;&nbsp;&nbsp;
                             Dealer Name: <span class="value">&nbsp;&nbsp;{{$model->dealer->name}}&nbsp;&nbsp;</span>,&nbsp;&nbsp;&nbsp;&nbsp;
-                            Father Name: <span class="value">&nbsp;&nbsp;{{$model->dealer->father_name}}&nbsp;&nbsp;</span>,&nbsp;&nbsp;&nbsp;&nbsp;
                         </p>
                         <br>
                         <p>
@@ -80,11 +80,12 @@
             </tr>
             <tr>
                 <th colspan="100">
-                    <h1>Files</h1>
+                    <h1>Files Numbers</h1>
                 </th>
             </tr>
             
             <tr class="tr-bordered">
+                <th>Sr No.</th>
                 <th>File No.</th>
                 <!-- <th>Type</th>
                 <th>Plot Size</th>
@@ -95,8 +96,8 @@
         <tbody>
             @foreach($model->dealerBookingDetails as $detail)
             <tr class="tr-bordered" style="text-align: center;">
+                <td>{{$loop->index}}</td>
                 <td>{{$detail->propertyFile->file_number}}</td>
-                
             </tr>
             @endforeach
         </tbody>
