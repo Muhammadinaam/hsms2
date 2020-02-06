@@ -7,14 +7,14 @@
     ?>
 
     <p class="title text-center">
-        File Booking
+        File Information
     </p>
 
     <br>
     <div class="text-center">
         <span class="sub-title round-border bg-gray p1">
-            @if($model->marlas != null && $model->marlas != 0)
-            {{ $model->marlas + 0 }} Marlas -
+            @if($model->marlas != null && $model->marlas != '' && $model->marlas != 0)
+            {{ $model->marlas + 0 }} Marlas - 
             @endif
             @if($model->propertyType != null)
             {{ $model->propertyType->name }} Plot
@@ -29,7 +29,24 @@
                     {{$model->file_number}}
                 </b>
             </td>
-            <td class="text-right">Registration No._________</td>
+            <td class="text-right">
+                Plot: 
+                <b>
+                    @if($model->property_number != null)
+                    {{$model->property_number}}
+                    @else
+                    _______
+                    @endif
+                </b> <br>
+                Block: 
+                <b>
+                    @if($model->block != null)
+                    {{$model->block->name}}
+                    @else
+                    _______
+                    @endif
+                </b> <br>
+            </td>
         </tr>
     </table>
 
@@ -55,84 +72,173 @@
     </div>
 
     <br>
-    <div class="round-border p3">
+    <div class="round-border p3" style="width: 45vw; float: left;">
         <span class="round-border bg-gray p1">
-            Applicant Information
+            File Holder Information
         </span>
 
         <table style="margin-top: 15px;" class="full-width">
             <tr>
-                <td>Name:</td> <td class="td-value"></td>
-                <td>Father Name:</td> <td class="td-value"></td>
-                <td>Husband Name:</td> <td class="td-value"></td>
+                <td>Picture:</td> 
+                <td>
+                    @if($model->holder_id != null)
+                    <img src="{{asset('uploads/'. $model->customer->picture)}}" style="max-width: 80px;">
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->name}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Father Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->father_name}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Husband Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->husband_name}}
+                    @endif
+                </td>
             </tr>
             
             <tr>
-                <td>CNIC/Passport:</td> <td colspan="2" class="td-value"></td>
-                <td>Email:</td> <td colspan="2" class="td-value"></td>
+                <td>CNIC/Passport:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->cnic}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Email:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->email}}
+                    @endif
+                </td>
             </tr>
 
             <tr>
-                <td>Address:</td> <td colspan="2" class="td-value"></td>
-                <td>Phone:</td> <td colspan="2" class="td-value"></td>
+                <td>Address:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->address}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Phone:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->phone}}
+                    @endif
+                </td>
             </tr>
         </table>
     </div>
 
-    <br>
-    <div class="round-border p3">
+    <div class="round-border p3" style="width: 45vw; float:left; margin-left: 1vw;">
         <span class="round-border bg-gray p1">
             Next of Kin Information
         </span>
 
         <table style="margin-top: 15px;" class="full-width">
             <tr>
-                <td>Name:</td> <td class="td-value"></td>
-                <td>Father Name:</td> <td class="td-value"></td>
-                <td>Husband Name:</td> <td class="td-value"></td>
+                <td>Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_name}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Father Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_father_name}}
+                    @endif
+                </td>
+            </tr>
+            <tr>    
+                <td>Husband Name:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_husband_name}}
+                    @endif
+                </td>
             </tr>
             
             <tr>
-                <td>CNIC/Passport:</td> <td colspan="2" class="td-value"></td>
-                <td>Email:</td> <td colspan="2" class="td-value"></td>
+                <td>CNIC/Passport:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_cnic}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Email:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_email}}
+                    @endif
+                </td>
             </tr>
 
             <tr>
-                <td>Address:</td> <td colspan="2" class="td-value"></td>
-                <td>Phone:</td> <td colspan="2" class="td-value"></td>
+                <td>Address:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_address}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td>Phone:</td> 
+                <td class="td-value">
+                    @if($model->holder_id != null)
+                    {{$model->customer->kin_phone}}
+                    @endif
+                </td>
             </tr>
         </table>
     </div>
 
-    <br>
-    <div class="round-border p3">
-        <span class="round-border bg-gray p1">
-            Required Documents
-        </span>
-
-        <p style="margin-top: 15px;">
-            (a). 2 Passport Size Pictures (b). Valid CNIC copy of Applicant (c).Valid CNIC copy Next of Kin
-        </p>
+    <div style="clear: left;">
     </div>
-
+    
     <br>
     <div class="round-border p3">
         <span class="round-border bg-gray p1">
-            Bank Details
+            Other Information
         </span>
 
-        <table style="margin-top: 15px;" class="full-width">
-            <tr>
-                <td>Instrument No.:</td> <td colspan="3" class="td-value"></td>
-                <td>Branch:</td> <td class="td-value"></td>
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td>Instrument Date:</td> <td class="td-value"></td>
-                <td>Instrument Amount:</td> <td class="td-value"></td>
-            </tr>
-        </table>
+        <div style="margin-top: 15px;">
+            <p>
+                File Status: <span class="value">{{ \App\Helpers\StatusesHelper::statusTitle($model->status)}}</span>,
+            </p>
+            <p>
+                Property Type: 
+                <span class="value">
+                    @if($model->propertyType != null)
+                    {{ $model->propertyType->name }}
+                    @else
+                    ________
+                    @endif
+                </span>,
+            </p>
+        </div>
+        
     </div>
 
 @endsection

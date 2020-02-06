@@ -26,7 +26,8 @@ class Person extends CommonModel
     public function getTextForSelectAttribute()
     {
         return 'ID: ' . $this->system_id . 
-        ', Name: ' . $this->name . 
+        ( $this->business_name != '' ? ', Business Name: ' . $this->business_name : '' ) .
+        ', Name: ' . $this->name .
         ', CNIC: ' . $this->cnic . 
         ', Type: ' . $this->person_type;
     }

@@ -63,4 +63,9 @@ class PropertyFile extends CommonModelWithStatuses
     {
         return $this->belongsTo('\App\PropertyType');
     }
+
+    public function block()
+    {
+        return $this->belongsTo('\App\Block');
+    }
 }
