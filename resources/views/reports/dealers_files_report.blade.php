@@ -12,6 +12,7 @@
             <div class="form-group">
                 <label>Select Person</label>
                 <select class="form-control" name="person">
+                    <option value="">-</option>
                     @foreach(\App\Person::where('person_type', \App\Person::PERSON_TYPE_DEALER)->get() as $person)
                     <option value="{{$person->id}}" {{$person->id == request()->person ? 'selected' : ''}}>{{$person->name}} ({{$person->person_type}}) - [ID: {{$person->system_id}}]</option>
                     @endforeach
