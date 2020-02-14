@@ -441,6 +441,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
 
     public static $classMap = array (
         'AddMenus' => __DIR__ . '/../..' . '/database/migrations/2019_11_20_221825_add_menus.php',
+        'AddOtherReportsMenus' => __DIR__ . '/../..' . '/database/migrations/2020_02_14_082802_add_other_reports_menus.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',
         'App\\Admin\\Controllers\\AccountHeadController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AccountHeadController.php',
         'App\\Admin\\Controllers\\AllotmentCancellationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AllotmentCancellationController.php',
@@ -515,6 +516,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Traits\\AttachmentsRelation' => __DIR__ . '/../..' . '/app/Traits/AttachmentsRelation.php',
         'App\\Transfer' => __DIR__ . '/../..' . '/app/Transfer.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
         'Barryvdh\\Debugbar\\Console\\ClearCommand' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/Console/ClearCommand.php',

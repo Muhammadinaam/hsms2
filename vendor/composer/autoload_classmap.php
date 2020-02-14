@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AddMenus' => $baseDir . '/database/migrations/2019_11_20_221825_add_menus.php',
+    'AddOtherReportsMenus' => $baseDir . '/database/migrations/2020_02_14_082802_add_other_reports_menus.php',
     'App\\AccountHead' => $baseDir . '/app/AccountHead.php',
     'App\\Admin\\Controllers\\AccountHeadController' => $baseDir . '/app/Admin/Controllers/AccountHeadController.php',
     'App\\Admin\\Controllers\\AllotmentCancellationController' => $baseDir . '/app/Admin/Controllers/AllotmentCancellationController.php',
@@ -81,6 +82,7 @@ return array(
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
+    'App\\Traits\\AttachmentsRelation' => $baseDir . '/app/Traits/AttachmentsRelation.php',
     'App\\Transfer' => $baseDir . '/app/Transfer.php',
     'App\\User' => $baseDir . '/app/User.php',
     'Barryvdh\\Debugbar\\Console\\ClearCommand' => $vendorDir . '/barryvdh/laravel-debugbar/src/Console/ClearCommand.php',

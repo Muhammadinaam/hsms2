@@ -46,4 +46,6 @@ Route::group([
     $router->get('trial-balance-report', 'ReportController@trialBalanceReport');
     $router->get('ledger-report', 'ReportController@showLedger');
 
+    $router->get('dealers-files-report', 'ReportController@dealersFilesReport');
+
 });

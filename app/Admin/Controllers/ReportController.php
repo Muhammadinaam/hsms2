@@ -103,4 +103,20 @@ class ReportController
             ->description('Trial Balance Report')
             ->row(view('reports.trial_balance_report', compact('report_data')));
     }
+
+    public function dealersFilesReport(Content $content)
+    {
+        $report_data = new \App\PropertyFile();
+
+        if(request()->person != '')
+        {
+            $report_data = $report_data->where('dealer_id', request()->person);
+        }
+        $report_data = $report_data->with('dealer')->get()->groupBy('dealer_id');
+
+        return $content
+            ->title('Dealers Files Report')
+            ->description('Report of Files Given to Dealers')
+            ->row(view('reports.dealers_files_report', compact('report_data')));
+    }
 }
