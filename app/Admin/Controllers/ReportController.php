@@ -106,7 +106,7 @@ class ReportController
 
     public function dealersFilesReport(Content $content)
     {
-        $report_data = new \App\PropertyFile();
+        $report_data = \App\PropertyFile::whereNotNull('dealer_id');
 
         if(request()->person != '')
         {
