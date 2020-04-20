@@ -29,6 +29,7 @@ Route::group([
     
     $router->resource('bookings', BookingController::class)->except($exclude_destroy);
     $router->resource('booking-cancellations', BookingCancellationController::class)->except($exclude_destroy);
+    $router->resource('payment-plans', PaymentPlanController::class);
     $router->resource('allotments', AllotmentController::class)->except($exclude_destroy);
     $router->resource('allotment-cancellations', AllotmentCancellationController::class)->except($exclude_destroy);
     $router->resource('possessions', PossessionController::class)->except($exclude_destroy);
@@ -47,5 +48,6 @@ Route::group([
     $router->get('ledger-report', 'ReportController@showLedger');
 
     $router->get('dealers-files-report', 'ReportController@dealersFilesReport');
+
 
 });

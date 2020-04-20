@@ -26,11 +26,12 @@ class AddMenus extends Migration
         CommonMigrations::addMenu($parent_menu_id, 1040, 'Dealer Booking Returns', 'fa-book', 'dealer-booking-returns', 'dealer_booking_returns_list');
         CommonMigrations::addMenu($parent_menu_id, 1050, 'Bookings', 'fa-book', 'bookings', 'bookings_list');
         CommonMigrations::addMenu($parent_menu_id, 1060, 'Booking Cancellations', 'fa-times-rectangle', 'booking-cancellations', 'booking_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 1070, 'Allotments', 'fa-book', 'allotments', 'allotments_list');
-        CommonMigrations::addMenu($parent_menu_id, 1080, 'Allotment Cancellations', 'fa-times-rectangle', 'allotment-cancellations', 'allotment_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 1090, 'Possessions', 'fa-book', 'possessions', 'possessions_list');
-        CommonMigrations::addMenu($parent_menu_id, 1100, 'Possession Cancellations', 'fa-times-rectangle', 'possession-cancellations', 'possession_cancellations_list');
-        CommonMigrations::addMenu($parent_menu_id, 1110, 'Transfers', 'fa-book', 'transfers', 'transfers_list');
+        CommonMigrations::addMenu($parent_menu_id, 1070, 'Payment Plans', 'fa-list', 'payment-plans', 'payment_plans_list');
+        CommonMigrations::addMenu($parent_menu_id, 1080, 'Allotments', 'fa-book', 'allotments', 'allotments_list');
+        CommonMigrations::addMenu($parent_menu_id, 1090, 'Allotment Cancellations', 'fa-times-rectangle', 'allotment-cancellations', 'allotment_cancellations_list');
+        CommonMigrations::addMenu($parent_menu_id, 1100, 'Possessions', 'fa-book', 'possessions', 'possessions_list');
+        CommonMigrations::addMenu($parent_menu_id, 1110, 'Possession Cancellations', 'fa-times-rectangle', 'possession-cancellations', 'possession_cancellations_list');
+        CommonMigrations::addMenu($parent_menu_id, 1120, 'Transfers', 'fa-book', 'transfers', 'transfers_list');
 
         $parent_menu_id = CommonMigrations::addMenu(0, 2000, 'Accounting Setup', 'fa-briefcase', '', null);
         CommonMigrations::addMenu($parent_menu_id, 2010, 'Account Heads', 'fa-cubes', 'account-heads', 'account_heads_list');
@@ -58,6 +59,9 @@ class AddMenus extends Migration
         CommonMigrations::insertEntityPermissions('Dealer Booking Return', 'Dealer Booking Returns', 'dealer_booking_return', 'dealer_booking_returns', 'dealer-booking-returns');
         CommonMigrations::insertEntityPermissions('Booking', 'Booking', 'booking', 'bookings', 'bookings');
         CommonMigrations::insertEntityPermissions('Booking Cancellation', 'Booking Cancellations', 'booking_cancellation', 'booking_cancellations', 'booking-cancellations');
+
+        CommonMigrations::insertEntityPermissions('Payment Plan', 'Payment Plans', 'payment_plan', 'payment_plans', 'payment-plans');
+
         CommonMigrations::insertEntityPermissions('Allotment', 'Allotments', 'allotment', 'allotments', 'allotments');
         CommonMigrations::insertEntityPermissions('Allotment Cancellation', 'Allotment Cancellations', 'allotment_cancellation', 'allotment_cancellations', 'allotment-cancellations');
         CommonMigrations::insertEntityPermissions('Possession', 'Possessions', 'possession', 'possessions', 'possessions');

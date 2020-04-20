@@ -3,7 +3,7 @@
         margin-bottom: 0 !important;
     }
 
-    .table-has-many td:not(.remove-td) {
+    .table-has-many > tbody > tr > td:not(.remove-td) {
         min-width: 250px;
     }
 </style>
