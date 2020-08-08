@@ -54,10 +54,12 @@
                   $balance = 0; 
                 ?>
                 @foreach($report_data as $report_row)
-                <?php 
-                  $total_debit += $report_row->amount > 0 ? $report_row->amount: 0; 
-                  $total_credit += $report_row->amount > 0 ? 0 : abs($report_row->amount);
-                  $balance += $total_debit - $total_credit; 
+                <?php
+                  $debit = $report_row->amount > 0 ? $report_row->amount: 0; 
+                  $credit = $report_row->amount > 0 ? 0 : abs($report_row->amount); 
+                  $total_debit += $debit; 
+                  $total_credit += $credit;
+                  $balance += $debit - $credit; 
                 ?>
                 <tr class="{{ $report_row->amount > 0 ? 'bg-info' : 'bg-danger' }}">
                     <td>{{ \Carbon\Carbon::parse($report_row->date)->format('d-M-Y') }}</td>
@@ -74,9 +76,10 @@
                 </tr>
                 @endforeach
                 <tr style="font-weight: bold;" class="bg-info">
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td>Total</td>
-                    <td></td>
-                    <td></td>
                     <td>{{$total_debit}}</td>
                     <td>{{$total_credit}}</td>
                     <td>{{$balance}}</td>
