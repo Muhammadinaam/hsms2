@@ -40,6 +40,7 @@
                 <tr>
                     <th>Date</th>
                     <th>Entry Type</th>
+                    <th>Entry ID</th>
                     <th>Description</th>
                     <th>Debit</th>
                     <th>Credit</th>
@@ -61,6 +62,11 @@
                 <tr class="{{ $report_row->amount > 0 ? 'bg-info' : 'bg-danger' }}">
                     <td>{{ \Carbon\Carbon::parse($report_row->date)->format('d-M-Y') }}</td>
                     <td>{{ $report_row->entry_type }}</td>
+                    <td>
+                        <a href="#">
+                            {{ $report_row->entry_id }}
+                        </a>
+                    </td>
                     <td>{{ $report_row->description }}</td>
                     <td>{{ $report_row->amount > 0 ? $report_row->amount : '' }}</td>
                     <td>{{ $report_row->amount > 0 ? '' : abs($report_row->amount) }}</td>

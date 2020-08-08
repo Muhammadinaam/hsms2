@@ -45,7 +45,7 @@ function loadUrlInModal(url) {
 $(document).on('submit', '.form-in-modal, form', function(e){
     
     var form = $(this);
-    if($(form).attr('method') == undefined) // get forms i.e filter and menu forms
+    if($(form).attr('method') == undefined || $(form).attr('method') == 'get') // get forms i.e filter and menu forms
     {
         return;
     }

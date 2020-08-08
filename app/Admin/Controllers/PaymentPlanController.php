@@ -101,6 +101,24 @@ class PaymentPlanController extends AdminController
             $form->date('starting_date', __('Starting Date'))->rules('required');
         })->mode('table');
 
+        // $form->html(
+        //     '
+        //     <h3>Total: <span id="total_value">10000</span></h3>
+
+        //     <script>
+        //         $(document).ready(function(){
+        //             setInterval(() => {
+        //                 if($("#total_value").length > 0) {
+        //                     $("tr.has-many-paymentPlanDetails-form").each((i, tr) => {
+        //                         console.log($(tr).find("#amount").val())
+        //                     })
+        //                 }
+        //             }, 500);
+        //         });
+        //     </script>
+        //     '
+        // );
+
         return $form;
     }
 }

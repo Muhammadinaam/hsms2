@@ -29,7 +29,7 @@ class PropertyFileController extends AdminController
         $grid->column('project.name', __('Project'));
         $grid->column('phase.name', __('Phase'));
         
-        $grid->column('file_number', __('File number'));
+        $grid->column('file_number', __('File number'))->filter('like');
         $grid->column('marlas', __('Marlas'));
 
         $grid->column('propertyType.name', __('Property Type'));
@@ -46,9 +46,31 @@ class PropertyFileController extends AdminController
         
         $grid->column('status', __('Status'))->display(function($status){
             return \App\Helpers\StatusesHelper::statusTitle($status);
-        });
+        })->filter([
+            \App\Helpers\StatusesHelper::AVAILABLE => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::AVAILABLE),
+            \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
+            \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
+            \App\Helpers\StatusesHelper::POSSESSED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::POSSESSED),
+        ]);
 
         \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
+
+        $grid->filter(function($filter){
+
+            // Remove the default id filter
+            $filter->disableIdFilter();
+        
+            // Add a column filter
+            $filter->like('file_number', 'File Number');
+
+            $filter->in('status', 'Status')->multipleSelect([
+                \App\Helpers\StatusesHelper::AVAILABLE => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::AVAILABLE),
+                \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
+                \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
+                \App\Helpers\StatusesHelper::POSSESSED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::POSSESSED),
+            ]);
+        
+        });
 
         return $grid;
     }

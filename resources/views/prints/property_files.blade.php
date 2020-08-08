@@ -82,7 +82,7 @@
                 <td>Picture:</td> 
                 <td>
                     @if($model->holder_id != null)
-                    <img src="{{asset('uploads/'. $model->customer->picture)}}" style="max-width: 80px;">
+                    <img src="{{asset('uploads/'. $model->holder->picture)}}" style="max-width: 80px;">
                     @endif
                 </td>
             </tr>
@@ -90,7 +90,7 @@
                 <td>Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->name}}
+                    {{$model->holder->name}}
                     @endif
                 </td>
             </tr>
@@ -98,7 +98,7 @@
                 <td>Father Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->father_name}}
+                    {{$model->holder->father_name}}
                     @endif
                 </td>
             </tr>
@@ -106,7 +106,7 @@
                 <td>Husband Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->husband_name}}
+                    {{$model->holder->husband_name}}
                     @endif
                 </td>
             </tr>
@@ -115,7 +115,7 @@
                 <td>CNIC/Passport:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->cnic}}
+                    {{$model->holder->cnic}}
                     @endif
                 </td>
             </tr>
@@ -123,7 +123,7 @@
                 <td>Email:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->email}}
+                    {{$model->holder->email}}
                     @endif
                 </td>
             </tr>
@@ -132,7 +132,7 @@
                 <td>Address:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->address}}
+                    {{$model->holder->address}}
                     @endif
                 </td>
             </tr>
@@ -140,7 +140,7 @@
                 <td>Phone:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->phone}}
+                    {{$model->holder->phone}}
                     @endif
                 </td>
             </tr>
@@ -157,7 +157,7 @@
                 <td>Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_name}}
+                    {{$model->holder->kin_name}}
                     @endif
                 </td>
             </tr>
@@ -165,7 +165,7 @@
                 <td>Father Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_father_name}}
+                    {{$model->holder->kin_father_name}}
                     @endif
                 </td>
             </tr>
@@ -173,7 +173,7 @@
                 <td>Husband Name:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_husband_name}}
+                    {{$model->holder->kin_husband_name}}
                     @endif
                 </td>
             </tr>
@@ -182,7 +182,7 @@
                 <td>CNIC/Passport:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_cnic}}
+                    {{$model->holder->kin_cnic}}
                     @endif
                 </td>
             </tr>
@@ -190,7 +190,7 @@
                 <td>Email:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_email}}
+                    {{$model->holder->kin_email}}
                     @endif
                 </td>
             </tr>
@@ -199,7 +199,7 @@
                 <td>Address:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_address}}
+                    {{$model->holder->kin_address}}
                     @endif
                 </td>
             </tr>
@@ -207,7 +207,7 @@
                 <td>Phone:</td> 
                 <td class="td-value">
                     @if($model->holder_id != null)
-                    {{$model->customer->kin_phone}}
+                    {{$model->holder->kin_phone}}
                     @endif
                 </td>
             </tr>

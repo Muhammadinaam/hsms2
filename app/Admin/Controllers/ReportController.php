@@ -19,6 +19,7 @@ class ReportController
                 ->select(
                     'ledgers.date',
                     'ledgers.entry_type',
+                    'ledgers.entry_id',
                     'account_heads.name as account_head_name',
                     'account_heads.type as accoun_head_type',
                     'ledger_entries.description',

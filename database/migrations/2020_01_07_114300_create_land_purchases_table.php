@@ -19,7 +19,7 @@ class CreateLandPurchasesTable extends Migration
             $table->datetime('date');
             $table->bigInteger("project_id");
             $table->bigInteger("phase_id");
-            $table->string('land_information');
+            $table->text('land_information');
             $table->string('purchase_document')->nullable();
             $table->decimal('cost', 30, 2);
             $table->bigInteger('credit_account_id');

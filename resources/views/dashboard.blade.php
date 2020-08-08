@@ -32,7 +32,7 @@ $files_with_plots_allotted_infobox = new InfoBox(
     'file', 
     'aqua', 
     '/admin/property-files', 
-    \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::BOOKED)
+    \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::ALLOTTED)
     ->count());
 
 $files_with_possession_given_infobox = new InfoBox(
@@ -40,7 +40,7 @@ $files_with_possession_given_infobox = new InfoBox(
     'file', 
     'red', 
     '/admin/property-files', 
-    \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::BOOKED)
+    \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::POSSESSED)
     ->count());
 
 ?>
