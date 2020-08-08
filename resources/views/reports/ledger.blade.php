@@ -42,9 +42,9 @@
                     <th>Entry Type</th>
                     <th>Entry ID</th>
                     <th>Description</th>
-                    <th>Debit</th>
-                    <th>Credit</th>
-                    <th>Balance</th>
+                    <th class="text-right">Debit</th>
+                    <th class="text-right">Credit</th>
+                    <th class="text-right">Balance</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,9 +70,9 @@
                         </a>
                     </td>
                     <td>{{ $report_row->description }}</td>
-                    <td>{{ $report_row->amount > 0 ? $report_row->amount : '' }}</td>
-                    <td>{{ $report_row->amount > 0 ? '' : abs($report_row->amount) }}</td>
-                    <td>{{ $balance }}</td>
+                    <td class="text-right">{{ number_format($debit, 2) }}</td>
+                    <td class="text-right">{{ number_format($credit, 2) }}</td>
+                    <td class="text-right">{{ number_format($balance, 2) }}</td>
                 </tr>
                 @endforeach
                 <tr style="font-weight: bold;" class="bg-info">
@@ -80,9 +80,9 @@
                     <td></td>
                     <td></td>
                     <td>Total</td>
-                    <td>{{$total_debit}}</td>
-                    <td>{{$total_credit}}</td>
-                    <td>{{$balance}}</td>
+                    <td class="text-right">{{number_format($total_debit, 2)}}</td>
+                    <td class="text-right">{{number_format($total_credit, 2)}}</td>
+                    <td class="text-right">{{number_format($balance, 2)}}</td>
                 </tr>
             </tbody>
         </table>
