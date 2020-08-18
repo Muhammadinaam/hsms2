@@ -249,7 +249,9 @@ class BookingController extends AdminController
 
         $form->hasMany('attachments', __('Attachments'), function (Form\NestedForm $form) {
             $form->text('attachment_description', __('Attachment Description'))->rules('required');
-            $form->file('attachment', __('Attachment'))->rules('required');
+            $form->file('attachment', __('Attachment'))
+                ->creationRules(['required'])
+                ->updateRules([]);
         })->mode('table');
         
         return $form;

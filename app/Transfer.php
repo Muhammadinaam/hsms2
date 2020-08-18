@@ -24,9 +24,9 @@ class Transfer extends CommonModel
         });
     }
 
-    public function property()
+    public function propertyFile()
     {
-        return $this->belongsTo('\App\Property');
+        return $this->belongsTo('\App\PropertyFile');
     }
 
     public function transferredTo()

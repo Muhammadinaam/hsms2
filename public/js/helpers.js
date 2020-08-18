@@ -127,8 +127,9 @@ function ajaxErrorSweetAlert(jqXhr) {
         })
 
         
+        
     }
-    if(jqXhr.status === 500) {
+    else if(jqXhr.status === 500) {
         Swal.fire({
             title: '<strong>Error</strong>',
             type: 'error',
