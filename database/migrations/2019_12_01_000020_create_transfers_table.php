@@ -17,7 +17,7 @@ class CreateTransfersTable extends Migration
             $table->bigIncrements('id');
             $table->datetime('date');
             $table->string('transfer_details');
-            $table->bigInteger('property_file_id');
+            $table->bigInteger("property_file_id");
             $table->bigInteger('transferred_from_id')->nullable();
             $table->bigInteger('transferred_to_id');
 

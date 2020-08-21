@@ -120,4 +120,41 @@ class ReportController
             ->description('Report of Files Given to Dealers')
             ->row(view('reports.dealers_files_report', compact('report_data')));
     }
+
+    public function instalmentsDueReport(Content $content)
+    {
+        $now = \Carbon\Carbon::now()->addDays(1)->format('Y-m-d');
+
+        $ledger_entries = \DB::table('ledger_entries')
+            ->join('ledgers', 'ledger_entries.ledger_id', '=', 'ledgers.id')
+            ->select('ledger_entries.property_file_id', 'ledger_entries.amount')
+            ->where('ledgers.entry_type', \App\Ledger::INSTALMENT_RECEIPT)
+            ->where('ledgers.date', '<=', $now);
+
+        $report_data = \DB::table('property_files')
+            ->leftJoin('people', 'property_files.holder_id', '=', 'people.id')
+            ->leftJoin('payment_plan_schedules', function($join) use ($now){
+                $join->on('property_files.id', '=', 'payment_plan_schedules.property_file_id')
+                    ->whereDate('payment_plan_schedules.date', '<=', $now);
+            })
+            ->leftJoinSub($ledger_entries, 'ledger_entries', function($join) {
+                $join->on('property_files.id', '=', 'ledger_entries.property_file_id');
+            })
+            ->select(
+                'property_files.file_number', 
+                'people.name as holder_name',
+                \DB::raw('sum(payment_plan_schedules.amount) as instalments_amount'),
+                \DB::raw('sum(ledger_entries.amount) as instalments_receipts_amount')
+            )
+            ->groupBy([
+                'property_files.file_number', 
+                'people.name',
+            ])
+            ->get();
+
+        return $content
+            ->title('Instalments Due Report')
+            ->description('Report of Instalments due from plot holders')
+            ->row(view('reports.instalments_due_report', compact('report_data')));
+    }
 }

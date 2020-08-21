@@ -34,6 +34,10 @@ class LandPurchaseController extends AdminController
         $grid->column('cost', __('Cost'));
         $grid->column('creditAccount.text_for_select', __('Credit account'));
 
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, true, false, true);
+
+        $grid->disableRowSelector();
+
         return $grid;
     }
 
@@ -46,6 +50,10 @@ class LandPurchaseController extends AdminController
     protected function detail($id)
     {
         $show = new Show(LandPurchase::findOrFail($id));
+
+        $show->panel()->tools(function ($tools) {
+            $tools->disableDelete();
+        });
 
         $show->field('id', __('Id'));
         $show->field('land_information', __('Land information'));
@@ -64,6 +72,10 @@ class LandPurchaseController extends AdminController
     protected function form()
     {
         $form = new Form(new LandPurchase);
+
+        $form->tools(function ($tools) {
+            $tools->disableDelete();
+        });
 
         $form->saved(function(Form $form){
             self::postToLedger($form->model());

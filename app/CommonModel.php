@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CommonModel extends Model
 {
     protected $appends = ['text_for_select'];
+    protected static $relationMethods = [];
 
     public static function boot()
     {
@@ -18,6 +19,14 @@ class CommonModel extends Model
         self::saving(function ($model) {
             if($model->id != null ) {
                 $model->updated_by = \Auth::guard('admin')->user()->id;
+            }
+        });
+
+        self::deleting(function ($model) {
+            foreach (self::$relationMethods as $relationMethod) {
+                if ($model->$relationMethod()->count() > 0) {
+                    return false;
+                }
             }
         });
     }

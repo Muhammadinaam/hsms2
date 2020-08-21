@@ -15,7 +15,7 @@ class CreatePaymentPlansTable extends Migration
     {
         Schema::create('payment_plans', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('property_file_id');
+            $table->bigInteger("property_file_id");
             CommonMigrations::commonColumns($table);
         });
     }

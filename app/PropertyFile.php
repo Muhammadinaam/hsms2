@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PropertyFile extends CommonModelWithStatuses
 {
+    protected static $relationMethods = [];
+
     public $all_statuses = [
         \App\Helpers\StatusesHelper::AVAILABLE,
         \App\Helpers\StatusesHelper::BOOKED,

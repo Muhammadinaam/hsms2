@@ -440,6 +440,10 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
     );
 
     public static $classMap = array (
+        'AddDescriptionColumnInPaymentPlanDetailsTable' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_195522_add_description_column_in_payment_plan_details_table.php',
+        'AddDescriptionColumnInPaymentPlanSchedulesTable' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_195717_add_description_column_in_payment_plan_schedules_table.php',
+        'AddInstallmentReceiptMenu' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_222723_add_installment_receipt_menu.php',
+        'AddInstallmentsDueReportMenu' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_202747_add_installments_due_report_menu.php',
         'AddMenus' => __DIR__ . '/../..' . '/database/migrations/2019_11_20_221825_add_menus.php',
         'AddOtherReportsMenus' => __DIR__ . '/../..' . '/database/migrations/2020_02_14_082802_add_other_reports_menus.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',
@@ -454,6 +458,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'App\\Admin\\Controllers\\DealerBookingReturnController' => __DIR__ . '/../..' . '/app/Admin/Controllers/DealerBookingReturnController.php',
         'App\\Admin\\Controllers\\ExampleController' => __DIR__ . '/../..' . '/app/Admin/Controllers/ExampleController.php',
         'App\\Admin\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Admin/Controllers/HomeController.php',
+        'App\\Admin\\Controllers\\InstalmentReceiptController' => __DIR__ . '/../..' . '/app/Admin/Controllers/InstalmentReceiptController.php',
         'App\\Admin\\Controllers\\JournalVoucherController' => __DIR__ . '/../..' . '/app/Admin/Controllers/JournalVoucherController.php',
         'App\\Admin\\Controllers\\LandPurchaseController' => __DIR__ . '/../..' . '/app/Admin/Controllers/LandPurchaseController.php',
         'App\\Admin\\Controllers\\PaymentPlanController' => __DIR__ . '/../..' . '/app/Admin/Controllers/PaymentPlanController.php',
@@ -500,6 +505,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\InstalmentReceipt' => __DIR__ . '/../..' . '/app/InstalmentReceipt.php',
         'App\\JournalVoucher' => __DIR__ . '/../..' . '/app/JournalVoucher.php',
         'App\\JournalVoucherDetail' => __DIR__ . '/../..' . '/app/JournalVoucherDetail.php',
         'App\\LandPurchase' => __DIR__ . '/../..' . '/app/LandPurchase.php',
@@ -609,6 +615,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'CreateDealerBookingReturnsTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_05_152411_create_dealer_booking_returns_table.php',
         'CreateDealerBookingsTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_01_150134_create_dealer_bookings_table.php',
         'CreateFailedJobsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_19_000000_create_failed_jobs_table.php',
+        'CreateInstalmentReceiptsTable' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_221900_create_instalment_receipts_table.php',
         'CreateJournalVoucherDetailsTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_20_184146_create_journal_voucher_details_table.php',
         'CreateJournalVouchersTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_20_183938_create_journal_vouchers_table.php',
         'CreateLandPurchasesTable' => __DIR__ . '/../..' . '/database/migrations/2020_01_07_114300_create_land_purchases_table.php',
@@ -4088,6 +4095,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'Ramsey\\Uuid\\UuidFactory' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactory.php',
         'Ramsey\\Uuid\\UuidFactoryInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactoryInterface.php',
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
+        'RemoveReceiptPaymentMenu' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_220223_remove_receipt_payment_menu.php',
         'SebastianBergmann\\CodeCoverage\\CodeCoverage' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/CodeCoverage.php',
         'SebastianBergmann\\CodeCoverage\\CoveredCodeNotExecutedException' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Exception/CoveredCodeNotExecutedException.php',
         'SebastianBergmann\\CodeCoverage\\Driver\\Driver' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Driver/Driver.php',

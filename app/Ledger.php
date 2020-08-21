@@ -12,6 +12,7 @@ class Ledger extends CommonModel
     const CUSTOMER_BOOKING = 'Customer Booking';
     const CUSTOMER_BOOKING_CANCELLATION = 'Customer Booking Cancellation';
     const JOURNAL_VOUCHER = 'Journal Voucher';
+    const INSTALMENT_RECEIPT = 'Instalment Receipt';
 
     public function ledgerEntries()
     {

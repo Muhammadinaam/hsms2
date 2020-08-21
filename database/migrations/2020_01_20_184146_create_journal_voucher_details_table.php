@@ -19,7 +19,7 @@ class CreateJournalVoucherDetailsTable extends Migration
             $table->bigInteger('journal_voucher_id');
             $table->bigInteger('account_head_id');
             $table->bigInteger('person_id')->nullable();
-            $table->bigInteger('property_file_id')->nullable();
+            $table->bigInteger("property_file_id")->nullable();
             $table->string('description')->nullable();
             $table->decimal('debit', 30, 2)->nullable();
             $table->decimal('credit', 30, 2)->nullable();

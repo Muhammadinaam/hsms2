@@ -17,7 +17,7 @@ class CreatePaymentPlanSchedulesTable extends Migration
             $table->bigIncrements('id');
 
             $table->bigInteger('payment_plan_id');
-            $table->bigInteger('property_file_id');
+            $table->bigInteger("property_file_id");
             $table->date('date');
             $table->decimal('amount', 30, 2);
 

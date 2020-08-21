@@ -49,5 +49,6 @@ Route::group([
 
     $router->get('dealers-files-report', 'ReportController@dealersFilesReport');
 
-
+    $router->get('instalments-due-report', 'ReportController@instalmentsDueReport');
+    $router->resource('instalment-receipts', InstalmentReceiptController::class);
 });

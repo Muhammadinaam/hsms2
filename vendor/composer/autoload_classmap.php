@@ -6,6 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddDescriptionColumnInPaymentPlanDetailsTable' => $baseDir . '/database/migrations/2020_08_21_195522_add_description_column_in_payment_plan_details_table.php',
+    'AddDescriptionColumnInPaymentPlanSchedulesTable' => $baseDir . '/database/migrations/2020_08_21_195717_add_description_column_in_payment_plan_schedules_table.php',
+    'AddInstallmentReceiptMenu' => $baseDir . '/database/migrations/2020_08_21_222723_add_installment_receipt_menu.php',
+    'AddInstallmentsDueReportMenu' => $baseDir . '/database/migrations/2020_08_21_202747_add_installments_due_report_menu.php',
     'AddMenus' => $baseDir . '/database/migrations/2019_11_20_221825_add_menus.php',
     'AddOtherReportsMenus' => $baseDir . '/database/migrations/2020_02_14_082802_add_other_reports_menus.php',
     'App\\AccountHead' => $baseDir . '/app/AccountHead.php',
@@ -20,6 +24,7 @@ return array(
     'App\\Admin\\Controllers\\DealerBookingReturnController' => $baseDir . '/app/Admin/Controllers/DealerBookingReturnController.php',
     'App\\Admin\\Controllers\\ExampleController' => $baseDir . '/app/Admin/Controllers/ExampleController.php',
     'App\\Admin\\Controllers\\HomeController' => $baseDir . '/app/Admin/Controllers/HomeController.php',
+    'App\\Admin\\Controllers\\InstalmentReceiptController' => $baseDir . '/app/Admin/Controllers/InstalmentReceiptController.php',
     'App\\Admin\\Controllers\\JournalVoucherController' => $baseDir . '/app/Admin/Controllers/JournalVoucherController.php',
     'App\\Admin\\Controllers\\LandPurchaseController' => $baseDir . '/app/Admin/Controllers/LandPurchaseController.php',
     'App\\Admin\\Controllers\\PaymentPlanController' => $baseDir . '/app/Admin/Controllers/PaymentPlanController.php',
@@ -66,6 +71,7 @@ return array(
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\InstalmentReceipt' => $baseDir . '/app/InstalmentReceipt.php',
     'App\\JournalVoucher' => $baseDir . '/app/JournalVoucher.php',
     'App\\JournalVoucherDetail' => $baseDir . '/app/JournalVoucherDetail.php',
     'App\\LandPurchase' => $baseDir . '/app/LandPurchase.php',
@@ -175,6 +181,7 @@ return array(
     'CreateDealerBookingReturnsTable' => $baseDir . '/database/migrations/2020_01_05_152411_create_dealer_booking_returns_table.php',
     'CreateDealerBookingsTable' => $baseDir . '/database/migrations/2020_01_01_150134_create_dealer_bookings_table.php',
     'CreateFailedJobsTable' => $baseDir . '/database/migrations/2019_08_19_000000_create_failed_jobs_table.php',
+    'CreateInstalmentReceiptsTable' => $baseDir . '/database/migrations/2020_08_21_221900_create_instalment_receipts_table.php',
     'CreateJournalVoucherDetailsTable' => $baseDir . '/database/migrations/2020_01_20_184146_create_journal_voucher_details_table.php',
     'CreateJournalVouchersTable' => $baseDir . '/database/migrations/2020_01_20_183938_create_journal_vouchers_table.php',
     'CreateLandPurchasesTable' => $baseDir . '/database/migrations/2020_01_07_114300_create_land_purchases_table.php',
@@ -3654,6 +3661,7 @@ return array(
     'Ramsey\\Uuid\\UuidFactory' => $vendorDir . '/ramsey/uuid/src/UuidFactory.php',
     'Ramsey\\Uuid\\UuidFactoryInterface' => $vendorDir . '/ramsey/uuid/src/UuidFactoryInterface.php',
     'Ramsey\\Uuid\\UuidInterface' => $vendorDir . '/ramsey/uuid/src/UuidInterface.php',
+    'RemoveReceiptPaymentMenu' => $baseDir . '/database/migrations/2020_08_21_220223_remove_receipt_payment_menu.php',
     'SebastianBergmann\\CodeCoverage\\CodeCoverage' => $vendorDir . '/phpunit/php-code-coverage/src/CodeCoverage.php',
     'SebastianBergmann\\CodeCoverage\\CoveredCodeNotExecutedException' => $vendorDir . '/phpunit/php-code-coverage/src/Exception/CoveredCodeNotExecutedException.php',
     'SebastianBergmann\\CodeCoverage\\Driver\\Driver' => $vendorDir . '/phpunit/php-code-coverage/src/Driver/Driver.php',

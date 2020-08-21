@@ -41,6 +41,14 @@ class CommonMigrations
 
     }
 
+    public static function removeEntityPermissions($singular_slug, $plural_slug)
+    {
+        DB::table('admin_permissions')->where('slug', $plural_slug . '_list')->delete();
+        DB::table('admin_permissions')->where('slug', 'add_' . $singular_slug)->delete();
+        DB::table('admin_permissions')->where('slug', 'edit_' . $singular_slug)->delete();
+        DB::table('admin_permissions')->where('slug', 'delete_' . $singular_slug)->delete();
+    }
+
     public static function insertEntityPermissions($singular_title, $plural_title, $singular_slug, $plural_slug, $resource_url)
     {
         DB::table('admin_permissions')
