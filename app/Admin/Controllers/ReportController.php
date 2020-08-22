@@ -127,7 +127,11 @@ class ReportController
 
         $ledger_entries = \DB::table('ledger_entries')
             ->join('ledgers', 'ledger_entries.ledger_id', '=', 'ledgers.id')
-            ->select('ledger_entries.property_file_id', 'ledger_entries.amount')
+            ->select(
+                'ledger_entries.property_file_id', 
+                \DB::raw('sum(ledger_entries.amount) as amount')
+            )
+            ->groupBy('ledger_entries.property_file_id')
             ->where('ledgers.entry_type', \App\Ledger::INSTALMENT_RECEIPT)
             ->where('ledgers.date', '<=', $now);
 
