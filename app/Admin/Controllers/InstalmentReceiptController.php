@@ -27,14 +27,9 @@ class InstalmentReceiptController extends AdminController
         $grid = new Grid(new InstalmentReceipt);
 
         $grid->column('id', __('Id'));
-        $grid->column('date', __('Date'));
-        $grid->column('property_file_id', __('Property file id'));
+        $grid->column('date', __('Date'))->date('d-M-Y');
+        $grid->column('propertyFile.text_for_select', __('Property File'));
         $grid->column('description', __('Description'));
-        $grid->column('amount', __('Amount'));
-        $grid->column('created_by', __('Created by'));
-        $grid->column('updated_by', __('Updated by'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
 
         return $grid;
     }
@@ -84,7 +79,7 @@ class InstalmentReceiptController extends AdminController
             '\App\PropertyFile')
             ->rules('required');
         $form->text('description', __('Description'));
-        $form->decimal('amount', __('Amount'));
+
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'amount_received_account_id', 
@@ -94,6 +89,19 @@ class InstalmentReceiptController extends AdminController
             'type = \''. \App\AccountHead::CASH_BANK .'\'')
             ->help('Cash or Bank Account in which amount received will be debited')
             ->rules('required');
+
+        $form->hasMany('instalmentReceiptDetails', __('Instalment Receipt Details'), function (Form\NestedForm $form) {
+            $form->decimal('amount', __('Amount'))->rules('required');
+
+            \App\Helpers\SelectHelper::buildAjaxSelect(
+                $form, 
+                'payment_plan_type_id', 
+                __('Payment Plan Type'), 
+                '', 
+                '\App\PaymentPlanType')
+                ->rules('required');
+
+        })->mode('table');
 
         return $form;
     }
@@ -118,6 +126,12 @@ class InstalmentReceiptController extends AdminController
         // DELETE OLD ENTRIES
         \App\LedgerEntry::where('ledger_id', $ledger_id)->delete();
 
+        $total_amount = 0;
+        foreach($model->instalmentReceiptDetails as $instalmentReceiptDetail)
+        {
+            $total_amount += $instalmentReceiptDetail->amount;
+        }
+
         // DEBIT
         \App\Ledger::insertOrUpdateLedgerEntries(
             $ledger_id,
@@ -125,7 +139,7 @@ class InstalmentReceiptController extends AdminController
             null,
             null,
             'Instalment received - ' . $model->description,
-            +$model->amount
+            +$total_amount
         );
 
         //  CREDIT
@@ -135,7 +149,7 @@ class InstalmentReceiptController extends AdminController
             null,
             $model->property_file_id,
             'Instalment received - ' . $model->description,
-            -$model->amount
+            -$total_amount
         );
     }
 }

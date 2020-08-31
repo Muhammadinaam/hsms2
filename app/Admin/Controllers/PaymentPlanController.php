@@ -75,7 +75,7 @@ class PaymentPlanController extends AdminController
                 {
                     $payment_plan_schedule = new \App\PaymentPlanSchedule;
                     $payment_plan_schedule->payment_plan_id = $model->id;
-                    $payment_plan_schedule->description = $paymentPlanDetail->description;
+                    $payment_plan_schedule->payment_plan_type_id = $paymentPlanDetail->payment_plan_type_id;
                     $payment_plan_schedule->property_file_id = $model->property_file_id;
                     $payment_plan_schedule->date = 
                         \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
@@ -97,9 +97,17 @@ class PaymentPlanController extends AdminController
 
         $form->hasMany('paymentPlanDetails', __('Payment Plan Details'), function (Form\NestedForm $form) {
             $form->decimal('amount', __('Amount'))->rules('required');
-            $form->text('description', __('Description'))->rules('required');
+
+            \App\Helpers\SelectHelper::buildAjaxSelect(
+                $form, 
+                'payment_plan_type_id', 
+                __('Payment Plan Type'), 
+                '', 
+                '\App\PaymentPlanType')
+                ->rules('required');
+
             $form->number('number_of_payments', __('Number of Payments'))->rules('required|numeric|gt:0');
-            $form->number('days_between_each_payment', __('Days between each payment'))->rules('required');
+            $form->number('days_between_each_payment', __('Days between each payment'))->rules('required|gt:0');
             $form->date('starting_date', __('Starting Date'))->rules('required');
         })->mode('table');
 

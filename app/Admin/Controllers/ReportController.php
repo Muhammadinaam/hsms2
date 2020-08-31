@@ -125,15 +125,19 @@ class ReportController
     {
         $now = \Carbon\Carbon::now()->addDays(1)->format('Y-m-d');
 
-        $ledger_entries = \DB::table('ledger_entries')
-            ->join('ledgers', 'ledger_entries.ledger_id', '=', 'ledgers.id')
+        $instalment_receipt_details = \DB::table('instalment_receipt_details')
+            ->join('instalment_receipts', 'instalment_receipts.id', '=', 'instalment_receipt_details.instalment_receipt_id')
             ->select(
-                'ledger_entries.property_file_id', 
-                \DB::raw('sum(ledger_entries.amount) as amount')
+                'instalment_receipts.property_file_id', 
+                'instalment_receipt_details.payment_plan_type_id',
+                \DB::raw('sum(instalment_receipt_details.amount) as amount'),
+                \DB::raw('count(instalment_receipt_details.amount) as receipt_count'),
             )
-            ->groupBy('ledger_entries.property_file_id')
-            ->where('ledgers.entry_type', \App\Ledger::INSTALMENT_RECEIPT)
-            ->where('ledgers.date', '<=', $now);
+            ->groupBy([
+                'instalment_receipts.property_file_id',
+                'instalment_receipt_details.payment_plan_type_id'
+            ])
+            ->where('instalment_receipts.date', '<=', $now);
 
         $report_data = \DB::table('property_files')
             ->leftJoin('people', 'property_files.holder_id', '=', 'people.id')
@@ -141,18 +145,28 @@ class ReportController
                 $join->on('property_files.id', '=', 'payment_plan_schedules.property_file_id')
                     ->whereDate('payment_plan_schedules.date', '<=', $now);
             })
-            ->leftJoinSub($ledger_entries, 'ledger_entries', function($join) {
-                $join->on('property_files.id', '=', 'ledger_entries.property_file_id');
+            ->leftJoinSub($instalment_receipt_details, 'instalment_receipt_details', function($join) {
+                $join->on('property_files.id', '=', 'instalment_receipt_details.property_file_id')
+                    ->on('payment_plan_schedules.payment_plan_type_id', '=', 'instalment_receipt_details.payment_plan_type_id');
             })
+            ->leftJoin('payment_plan_types', 'payment_plan_types.id', '=', 'payment_plan_schedules.payment_plan_type_id')
             ->select(
+                'property_files.id as property_file_id',
                 'property_files.file_number', 
                 'people.name as holder_name',
+                'people.phone as holder_phone',
+                'payment_plan_types.name as payment_plan_type_name',
+                \DB::raw('count(payment_plan_schedules.amount) as instalments_count'),
+                \DB::raw('sum(instalment_receipt_details.receipt_count) as instalments_receipts_count'),
                 \DB::raw('sum(payment_plan_schedules.amount) as instalments_amount'),
-                \DB::raw('sum(ledger_entries.amount) as instalments_receipts_amount')
+                \DB::raw('sum(instalment_receipt_details.amount) as instalments_receipts_amount')
             )
             ->groupBy([
+                'property_files.id',
+                'payment_plan_types.name',
                 'property_files.file_number', 
                 'people.name',
+                'people.phone'
             ])
             ->get();
 

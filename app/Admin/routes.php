@@ -51,4 +51,5 @@ Route::group([
 
     $router->get('instalments-due-report', 'ReportController@instalmentsDueReport');
     $router->resource('instalment-receipts', InstalmentReceiptController::class);
+    $router->resource('payment-plan-types', PaymentPlanTypeController::class);
 });

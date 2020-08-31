@@ -10,4 +10,9 @@ class InstalmentReceipt extends CommonModel
     {
         return $this->belongsTo('\App\PropertyFile');
     }
+
+    public function instalmentReceiptDetails()
+    {
+        return $this->hasMany('\App\InstalmentReceiptDetail');
+    }
 }
