@@ -1,5 +1,8 @@
+@component('components.report_header')
+@endcomponent
+
 <div class="box box-default box-solid">
-    <div class="box-header with-border">
+    <div class="box-header with-border hidden-print">
         <h3 class="box-title">Filter</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -10,7 +13,7 @@
         
         <form>
             <div class="form-group">
-                <label>Select Person</label>
+                <label>Person</label>
                 <select class="form-control" name="person">
                     @foreach(\App\Person::all() as $person)
                     <option value="{{$person->id}}" {{$person->id == request()->person ? 'selected' : ''}}>{{$person->name}} ({{$person->person_type}}) - [ID: {{$person->system_id}}]</option>
@@ -19,7 +22,7 @@
             </div>
 
             <div class="text-right">
-                <button class="btn btn-primary">Show Report</button>
+                <button class="btn btn-primary hidden-print">Show Report</button>
             </div>
         </form>
 

@@ -1,5 +1,8 @@
+@component('components.report_header')
+@endcomponent
+
 <div class="box box-default box-solid">
-    <div class="box-header with-border">
+    <div class="box-header with-border hidden-print">
         <h3 class="box-title">Filter</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -10,7 +13,7 @@
         
         <form>
             <div class="form-group">
-                <label>Select Account Head</label>
+                <label>Account Head</label>
                 <select class="form-control" name="account">
                     @foreach(\App\AccountHead::all() as $account)
                     <option value="{{$account->id}}" {{$account->id == request()->account ? 'selected' : ''}}>{{$account->name}} - [Type: {{$account->type}}]</option>
@@ -19,7 +22,7 @@
             </div>
 
             <div class="text-right">
-                <button class="btn btn-primary">Show Report</button>
+                <button class="btn btn-primary hidden-print">Show Report</button>
             </div>
         </form>
 
@@ -28,7 +31,7 @@
 
 <div class="box box-primary box-solid">
     <div class="box-header with-border">
-        <h3 class="box-title">Receivable / Payable Detail Report</h3>
+        <h3 class="box-title">Ledger</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div><!-- /.box-tools -->

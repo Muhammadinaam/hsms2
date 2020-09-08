@@ -1,3 +1,6 @@
+@component('components.report_header')
+@endcomponent
+
 <div class="box box-primary box-solid">
     <div class="box-header with-border">
         <h3 class="box-title">Instalments Due Report</h3>
@@ -20,26 +23,41 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($report_data as $row)
-                    <?php
-                        $due_amount = $row->instalments_amount - $row->instalments_receipts_amount;
-                        $count = $row->instalments_count - $row->instalments_receipts_count;
-                        $count = $count < 0 ? '' : $count;
-                        $booking = \App\Booking::where('status', '<>', '\App\Helpers\StatusesHelper::CANCELLED')->where('property_file_id', $row->property_file_id)->first();
-                        $booking_date = $booking != null ? \Carbon\Carbon::parse($booking->date)->format('d-M-Y') : '';
-                    ?>
+                <?php
+                    $grouped_report_data = $report_data->groupBy('file_number');
+                ?>
+                @foreach($grouped_report_data as $file_number => $rows)
+                    <?php $total_due_amount = 0; ?>
+                    @foreach($rows as $row)
+                        <?php
+                            $due_amount = $row->instalments_amount - $row->instalments_receipts_amount;
+                            $count = $row->instalments_count - $row->instalments_receipts_count;
+                            $count = $count < 0 ? '' : $count;
+                            $booking = \App\Booking::where('status', '<>', '\App\Helpers\StatusesHelper::CANCELLED')->where('property_file_id', $row->property_file_id)->first();
+                            $booking_date = $booking != null ? \Carbon\Carbon::parse($booking->date)->format('d-M-Y') : '';
+                        ?>
 
-                    @if($due_amount > 0)
-                    <tr>
-                        <td>{{$row->file_number}}</td>
-                        <td>{{ $booking_date }}</td>
-                        <td>{{$row->holder_name}}</td>
-                        <td>{{$row->holder_phone}}</td>
-                        <td>{{$row->payment_plan_type_name}}</td>
-                        <td>{{$count}}</td>
-                        <td>{{$due_amount}}</td>
+                        @if($due_amount > 0)
+                        <?php $total_due_amount += $due_amount; ?>
+                        <tr>
+                            <td>{{$row->file_number}}</td>
+                            <td>{{ $booking_date }}</td>
+                            <td>{{$row->holder_name}}</td>
+                            <td>{{$row->holder_phone}}</td>
+                            <td>{{$row->payment_plan_type_name}}</td>
+                            <td>{{$count}}</td>
+                            <td>{{$due_amount}}</td>
+                        </tr>
+                        @endif
+                    @endforeach
+                    <tr class="bg-info">
+                        <td colspan=6>
+                            <b>Total</b>
+                        </td>
+                        <td>
+                            <b>{{$total_due_amount}}</b>
+                        </td>
                     </tr>
-                    @endif
                 @endforeach
             </tbody>
         </table>

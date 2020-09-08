@@ -1,3 +1,6 @@
+@component('components.report_header')
+@endcomponent
+
 <div class="box box-default box-solid">
     <div class="box-header with-border">
         <h3 class="box-title">Filter</h3>

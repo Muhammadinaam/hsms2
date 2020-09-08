@@ -34,6 +34,24 @@ class AllotmentController extends AdminController
         $grid->column('block.text_for_select', __('Block'));
         $grid->column('status', __('Allotment Status'));
 
+        $grid->filter(function($filter){
+
+            // Remove the default id filter
+            $filter->disableIdFilter();
+        
+            // Add a column filter
+            $filter->where(function($query){
+                // $query->booking->searchForSelect($this->input);
+                $query->whereHas('booking', function($query){
+                    $query->whereHas('propertyFile', function($query) {
+                        $query->where('file_number', 'like', '%'.$this->input.'%');
+                    });
+                });
+                
+            }, 'Property File');
+        
+        });
+
         return $grid;
     }
 

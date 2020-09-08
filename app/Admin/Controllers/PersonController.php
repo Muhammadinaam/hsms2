@@ -41,6 +41,23 @@ class PersonController extends AdminController
         $grid->column('kin_cnic', __('Kin cnic'));
         $grid->column('kin_address', __('Kin address'));
         $grid->column('kin_phone', __('Kin phone'));
+
+        $grid->filter(function($filter){
+
+            // Remove the default id filter
+            $filter->disableIdFilter();
+        
+            // Add a column filter
+            $filter->like('name', 'Name');
+            $filter->like('business_name', 'Business Name');
+            $filter->in('person_type', 'Person Type')->multipleSelect([
+                \App\Person::PERSON_TYPE_DEALER => \App\Person::PERSON_TYPE_DEALER,
+                \App\Person::PERSON_TYPE_CUSTOMER => \App\Person::PERSON_TYPE_CUSTOMER,
+                \App\Person::PERSON_TYPE_SUPPLIER => \App\Person::PERSON_TYPE_SUPPLIER,
+                \App\Person::PERSON_TYPE_EMPLOYEE => \App\Person::PERSON_TYPE_EMPLOYEE,
+            ]);
+        
+        });
         
         return $grid;
     }

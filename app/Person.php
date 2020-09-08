@@ -17,6 +17,7 @@ class Person extends CommonModel
             ->where(function($query) use ($search_term) {
                 $query->orWhere('name', 'like', '%'.$search_term.'%')
                 ->orWhere('cnic', 'like', '%'.$search_term.'%')
+                ->orWhere('business_name', 'like', '%'.$search_term.'%')
                 ->orWhere('phone', 'like', '%'.$search_term.'%');
             });
 
