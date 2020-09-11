@@ -31,6 +31,8 @@ class JournalVoucherController extends AdminController
         $grid->column('project_id', __('Project'));
         $grid->column('phase_id', __('Phase'));
 
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
+
         return $grid;
     }
 
@@ -163,7 +165,7 @@ class JournalVoucherController extends AdminController
 
         if($total_debit != $total_credit)
         {
-            throw new \Exception("Error Processing Request", 1);
+            throw new \Exception("Debit and Credit are not equal", 1);
         }
     }
 }

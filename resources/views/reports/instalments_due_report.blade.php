@@ -18,8 +18,8 @@
                     <th>Holder Name</th>
                     <th>Holder Phone</th>
                     <th>Type</th>
-                    <th>Count</th>
-                    <th>Amount</th>
+                    <th class="text-right">Count</th>
+                    <th class="text-right">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,19 +45,21 @@
                             <td>{{$row->holder_name}}</td>
                             <td>{{$row->holder_phone}}</td>
                             <td>{{$row->payment_plan_type_name}}</td>
-                            <td>{{$count}}</td>
-                            <td>{{$due_amount}}</td>
+                            <td class="text-right">{{$count}}</td>
+                            <td class="text-right">{{number_format($due_amount, 2)}}</td>
                         </tr>
                         @endif
                     @endforeach
+                    @if($total_due_amount != 0)
                     <tr class="bg-info">
                         <td colspan=6>
                             <b>Total</b>
                         </td>
-                        <td>
-                            <b>{{$total_due_amount}}</b>
+                        <td class="text-right">
+                            <b>{{number_format($total_due_amount, 2)}}</b>
                         </td>
                     </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

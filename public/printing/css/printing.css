@@ -21,6 +21,14 @@
     font-weight: bold;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
 .sub-title {
     font-size: 15px;
     font-weight: bold;
@@ -64,6 +72,10 @@ p span.value {
 
 table {
     border-collapse: collapse;
+}
+
+table.padding td, table.padding th {
+    padding: 5px;
 }
 
 .tr-bordered th, .tr-bordered td {

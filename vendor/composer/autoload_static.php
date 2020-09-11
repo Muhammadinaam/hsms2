@@ -446,6 +446,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'AddInstallmentsDueReportMenu' => __DIR__ . '/../..' . '/database/migrations/2020_08_21_202747_add_installments_due_report_menu.php',
         'AddMenus' => __DIR__ . '/../..' . '/database/migrations/2019_11_20_221825_add_menus.php',
         'AddOtherReportsMenus' => __DIR__ . '/../..' . '/database/migrations/2020_02_14_082802_add_other_reports_menus.php',
+        'AddPaymentMenu' => __DIR__ . '/../..' . '/database/migrations/2020_09_11_015553_add_payment_menu.php',
         'AddPaymentPlanTypeIdColumn' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_164505_add_payment_plan_type_id_column.php',
         'AddPaymentPlanTypeMenuAndPermissions' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_144233_add_payment_plan_type_menu_and_permissions.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',

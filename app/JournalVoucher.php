@@ -10,4 +10,14 @@ class JournalVoucher extends CommonModel
     {
         return $this->hasMany('\App\JournalVoucherDetail');
     }
+
+    public function project()
+    {
+        return $this->belongsTo('\App\Project');
+    }
+
+    public function phase()
+    {
+        return $this->belongsTo('\App\Phase');
+    }
 }

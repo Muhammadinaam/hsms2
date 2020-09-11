@@ -91,26 +91,18 @@ class BookingController extends AdminController
             $new_property_file = \App\PropertyFile::find($form->property_file_id);
             $old_property_file = $booking != null ? $booking->propertyfile : null;
 
+            if($new_property_file->dealer_id != null && 
+                $new_property_file->dealer_id != $form->dealer_id)
+            {
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. ['.$new_property_file->dealer->text_for_select.']');
+            }
+
             if($old_property_file != null)
             {
                 $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
                 $old_property_file->sold_by_dealer_id = null;
                 $old_property_file->holder_id = null;
                 $old_property_file->save();
-            }
-
-            if($new_property_file->dealer_id != null)
-            {
-                $new_property_file->sold_by_dealer_id = $new_property_file->dealer_id; 
-                $new_property_file->dealer_id = null;
-            }
-            $new_property_file->holder_id = $form->customer_id;
-            $new_property_file->save();
-
-            if($new_property_file->dealer_id != null && 
-                $new_property_file->dealer_id != $form->dealer_id)
-            {
-                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. ['.$new_property_file->dealer->text_for_select.']');
             }
         });
 
@@ -128,6 +120,14 @@ class BookingController extends AdminController
             $property_file->cash_price = $model->cash_price;
             $property_file->installment_price = $model->installment_price;
             $property_file->cost = $model->cost;
+
+            if($property_file->dealer_id != null)
+            {
+                $property_file->sold_by_dealer_id = $property_file->dealer_id; 
+                $property_file->dealer_id = null;
+            }
+            $property_file->holder_id = $model->customer_id;
+
             $property_file->save();
 
             self::postToLedger($form->model());
