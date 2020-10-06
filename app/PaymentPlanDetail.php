@@ -13,4 +13,9 @@ class PaymentPlanDetail extends Model
         'days_between_each_payment',
         'starting_date',
     ];
+
+    public function paymentPlanType()
+    {
+        return $this->belongsTo('\App\PaymentPlanType');
+    }
 }

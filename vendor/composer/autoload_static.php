@@ -449,6 +449,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'AddPaymentMenu' => __DIR__ . '/../..' . '/database/migrations/2020_09_11_015553_add_payment_menu.php',
         'AddPaymentPlanTypeIdColumn' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_164505_add_payment_plan_type_id_column.php',
         'AddPaymentPlanTypeMenuAndPermissions' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_144233_add_payment_plan_type_menu_and_permissions.php',
+        'AddTwoNewReports' => __DIR__ . '/../..' . '/database/migrations/2020_10_06_061031_add_two_new_reports.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',
         'App\\Admin\\Controllers\\AccountHeadController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AccountHeadController.php',
         'App\\Admin\\Controllers\\AllotmentCancellationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AllotmentCancellationController.php',

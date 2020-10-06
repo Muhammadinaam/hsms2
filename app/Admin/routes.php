@@ -50,6 +50,9 @@ Route::group([
     $router->get('dealers-files-report', 'ReportController@dealersFilesReport');
 
     $router->get('instalments-due-report', 'ReportController@instalmentsDueReport');
+    $router->get('property-files-collections', 'ReportController@propertyFilesCollections');
+    $router->get('payment-plan-letter', 'ReportController@paymentPlanLetter');
+    
     $router->resource('instalment-receipts', InstalmentReceiptController::class);
     $router->resource('payment-plan-types', PaymentPlanTypeController::class);
 });

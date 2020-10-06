@@ -175,4 +175,81 @@ class ReportController
             ->description('Report of Instalments due from plot holders')
             ->row(view('reports.instalments_due_report', compact('report_data')));
     }
+
+    public function propertyFilesCollections(Content $content) 
+    {
+        $report_data = 
+        \DB::table('bookings')
+            ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
+            ->leftJoin('allotments', 'allotments.booking_id', '=', 'bookings.id')
+            ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
+            ->select(
+                'bookings.date',
+                'bookings.property_file_id', 
+                'property_files.file_number', 
+                'bookings.down_payment_received', 
+                'bookings.form_processing_fee_received',
+                'bookings.dealer_commission_amount',
+                'allotments.property_number',
+            )
+            ->get();
+
+        foreach($report_data as $row)
+        {
+            $row->instalmentReceipts = \DB::table('instalment_receipts')
+                ->where('property_file_id', $row->property_file_id)
+                ->join('instalment_receipt_details', 'instalment_receipt_details.instalment_receipt_id', '=', 'instalment_receipts.id')
+                ->join('payment_plan_types', 'instalment_receipt_details.payment_plan_type_id', '=', 'payment_plan_types.id')
+                ->select('payment_plan_types.name', 'instalment_receipt_details.amount')
+                ->get();
+        }
+
+        return $content
+            ->title('Property Files Collections')
+            ->description('Property Files Collections')
+            ->row(view('reports.property_files_collections', compact('report_data')));
+    }
+
+    public function paymentPlanLetter(Content $content) 
+    {
+        $report_data = [];
+        $message = '';
+
+        if(request()->property_file != '')
+        {
+            $payment_plan = \App\PaymentPlan::where('property_file_id', request()->property_file)->first();
+
+            if($payment_plan == null)
+            {
+                $message = 'No payment plan attached with property file';
+            }
+            else
+            {
+                foreach($payment_plan->paymentPlanDetails as $paymentPlanDetail)
+                {
+                    for($i = 0; $i < $paymentPlanDetail->number_of_payments; $i++)
+                    {
+                        $report_data[] = [
+                            'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
+                            'date' => \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
+                                ->addDays($i * $paymentPlanDetail->days_between_each_payment)
+                                ->format('d-M-Y'),
+                            'amount' => $paymentPlanDetail->amount
+                        ];
+                    }
+                }
+
+                $report_data = collect($report_data)->sortBy('date');
+            }
+        }
+        else
+        {
+            $message = 'Please select property file';
+        }
+
+        return $content
+            ->title('Payment Plan Letter')
+            ->description('Payment Plan Letter')
+            ->row(view('reports.payment_plan_letter', compact('report_data', 'message')));
+    }
 }

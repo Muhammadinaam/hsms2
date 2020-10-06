@@ -15,6 +15,7 @@ return array(
     'AddPaymentMenu' => $baseDir . '/database/migrations/2020_09_11_015553_add_payment_menu.php',
     'AddPaymentPlanTypeIdColumn' => $baseDir . '/database/migrations/2020_08_31_164505_add_payment_plan_type_id_column.php',
     'AddPaymentPlanTypeMenuAndPermissions' => $baseDir . '/database/migrations/2020_08_31_144233_add_payment_plan_type_menu_and_permissions.php',
+    'AddTwoNewReports' => $baseDir . '/database/migrations/2020_10_06_061031_add_two_new_reports.php',
     'App\\AccountHead' => $baseDir . '/app/AccountHead.php',
     'App\\Admin\\Controllers\\AccountHeadController' => $baseDir . '/app/Admin/Controllers/AccountHeadController.php',
     'App\\Admin\\Controllers\\AllotmentCancellationController' => $baseDir . '/app/Admin/Controllers/AllotmentCancellationController.php',
