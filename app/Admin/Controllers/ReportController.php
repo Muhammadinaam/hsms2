@@ -140,7 +140,8 @@ class ReportController
             ->where('instalment_receipts.date', '<=', $now);
 
         $report_data = \DB::table('property_files')
-            ->leftJoin('people', 'property_files.holder_id', '=', 'people.id')
+            ->leftJoin('people as holders', 'property_files.holder_id', '=', 'holders.id')
+            ->leftJoin('people as dealers', 'property_files.dealer_id', '=', 'dealers.id')
             ->leftJoin('payment_plan_schedules', function($join) use ($now){
                 $join->on('property_files.id', '=', 'payment_plan_schedules.property_file_id')
                     ->whereDate('payment_plan_schedules.date', '<=', $now);
@@ -153,8 +154,10 @@ class ReportController
             ->select(
                 'property_files.id as property_file_id',
                 'property_files.file_number', 
-                'people.name as holder_name',
-                'people.phone as holder_phone',
+                'holders.name as holder_name',
+                'holders.phone as holder_phone',
+                'dealers.name as dealer_name',
+                'dealers.phone as dealer_phone',
                 'payment_plan_types.name as payment_plan_type_name',
                 \DB::raw('count(payment_plan_schedules.amount) as instalments_count'),
                 \DB::raw('sum(instalment_receipt_details.receipt_count) as instalments_receipts_count'),
@@ -165,8 +168,10 @@ class ReportController
                 'property_files.id',
                 'payment_plan_types.name',
                 'property_files.file_number', 
-                'people.name',
-                'people.phone'
+                'holders.name',
+                'holders.phone',
+                'dealers.name',
+                'dealers.phone'
             ])
             ->get();
 
@@ -187,7 +192,6 @@ class ReportController
                 'bookings.date',
                 'bookings.property_file_id', 
                 'property_files.file_number', 
-                'bookings.down_payment_received', 
                 'bookings.form_processing_fee_received',
                 'bookings.dealer_commission_amount',
                 'allotments.property_number',

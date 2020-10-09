@@ -35,7 +35,6 @@ class BookingController extends AdminController
         $grid->column('propertyFile.text_for_select', __('Property File'));
         $grid->column('form_processing_fee_received', __('Form / Processing fee'));
         $grid->column('booking_type', __('Booking Type'));
-        $grid->column('down_payment_received', __('Down payment'));
         $grid->column('dealer.text_for_select', __('Dealer'));
         $grid->column('dealer_commission_amount', __('Dealer commission'));
         $grid->column('status', __('Booking Status'))->display(function($status){
@@ -196,7 +195,7 @@ class BookingController extends AdminController
 
         
 
-        $form->divider('Down Payment');
+        $form->divider('Booking Type');
 
         $form->select('booking_type', __('Booking Type'))
             ->rules('required')
@@ -206,19 +205,6 @@ class BookingController extends AdminController
                     \App\Booking::BOOKING_TYPE_INSTALLMENT => \App\Booking::BOOKING_TYPE_INSTALLMENT,
                 ]
             );
-
-        $form->decimal('down_payment_received', __('Down payment received'))
-        ->rules('required');
-
-        \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'down_payment_received_account_id', 
-            __('Down payment received account'), 
-            'admin/account-heads/create', 
-            '\App\AccountHead',
-            'type = \''. \App\AccountHead::CASH_BANK .'\'')
-            ->help('Cash or Bank Account in which amount received will be debited')
-            ->rules('required');
 
         $form->divider('Form Processing Fee');
             
@@ -327,27 +313,6 @@ class BookingController extends AdminController
             -$file->cost
         );
 
-        // DOWNPAYMENT ENTRY
-        // FILE CREDIT
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_ACCOUNT_RECEIVABLE_PAYABLE)->id,
-            null,
-            $model->property_file_id,
-            'Downpayment received',
-            -$model->down_payment_received
-        );
-
-        // DOWNPAYMENT RECEIVED ACCOUNT DEBIT
-        \App\Ledger::insertOrUpdateLedgerEntries(
-            $ledger_id,
-            $model->down_payment_received_account_id,
-            null,
-            null,
-            'Downpayment received',
-            $model->down_payment_received
-        );
-
         // FORM PROCESSING FEE ENTRY
         // FORM PROCESSING FEE RECEIVED ACCOUNT DEBIT
         \App\Ledger::insertOrUpdateLedgerEntries(
@@ -390,5 +355,27 @@ class BookingController extends AdminController
             'Dealer Commission',
             -$commission_amount
         );
+
+        // property inventory
+        \App\PropertyInventoryLedger::where('entry_type', \App\PropertyInventoryLedger::BOOKING)
+            ->where('entry_id', $model->id)
+            ->delete();
+
+        $propertyInventoryLedger = new \App\PropertyInventoryLedger();
+        $propertyInventoryLedger->date = $model->date;
+        $propertyInventoryLedger->entry_id = $model->id;
+        $propertyInventoryLedger->entry_type = \App\PropertyInventoryLedger::BOOKING;
+        $propertyInventoryLedger->project_id = $project_id;
+        $propertyInventoryLedger->phase_id = $phase_id;
+        $propertyInventoryLedger->remarks = 'Customer booking';
+        $propertyInventoryLedger->marlas = $model->marlas;
+        $propertyInventoryLedger->property_type_id = $model->property_type_id;
+        $propertyInventoryLedger->is_farmhouse = $model->is_farmhouse;
+        $propertyInventoryLedger->is_corner = $model->is_corner;
+        $propertyInventoryLedger->is_facing_park = $model->is_facing_park;
+        $propertyInventoryLedger->is_on_boulevard = $model->is_on_boulevard;
+        $propertyInventoryLedger->quantity = -1;
+        $propertyInventoryLedger->save();
+
     }
 }

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PropertyFile extends CommonModelWithStatuses
 {
-    protected static $relationMethods = [];
-
     public $all_statuses = [
         \App\Helpers\StatusesHelper::AVAILABLE,
         \App\Helpers\StatusesHelper::BOOKED,
@@ -34,6 +32,16 @@ class PropertyFile extends CommonModelWithStatuses
         ', Marlas: ' . $this->marlas . 
         ', Project: ' . $this->project->name . 
         ', Phase: ' . $this->phase->name;
+    }
+
+    public function getOpenOrOtherStatus()
+    {
+        if($this->holder_id == null && $this->dealer_id != null)
+        {
+            return 'open';
+        }
+        
+        return $this->status;
     }
 
     public function project()
@@ -69,5 +77,19 @@ class PropertyFile extends CommonModelWithStatuses
     public function block()
     {
         return $this->belongsTo('\App\Block');
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', \App\Helpers\StatusesHelper::AVAILABLE)
+        ->whereNull('holder_id')
+        ->whereNull('dealer_id');
+    }
+
+    public function scopeOpen($query)
+    {
+        return $query->where('status', \App\Helpers\StatusesHelper::AVAILABLE)
+        ->whereNull('holder_id')
+        ->whereNotNull('dealer_id');
     }
 }

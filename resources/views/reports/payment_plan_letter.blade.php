@@ -36,7 +36,25 @@
 
 <h3>Payment Plan</h3>
 <p>
-    Property File: {{ request()->property_file != '' ? \App\PropertyFile::find(request()->property_file)->file_number : '' }}
+    <?php
+        if(request()->property_file != '') 
+        {
+            $property_file = \App\PropertyFile::find(request()->property_file);
+            $holder = $property_file->holder;
+            $dealer = $property_file->dealer;
+        }
+    ?>
+    @if(isset($property_file))
+    Property {{ $property_file->text_for_select }} <br>
+        @if(isset($holder))
+            Holder Name: {{ $holder->name }} <br>
+            Holder Phone: {{ $holder->phone }} <br>
+        @endif
+        @if(isset($dealer))
+            Dealer Name: {{ $dealer->name }} <br>
+            Dealer Phone: {{ $dealer->phone }} <br>
+        @endif
+    @endif
 </p>
 
 <table class="table table-bordered">

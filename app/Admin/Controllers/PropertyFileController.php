@@ -29,7 +29,7 @@ class PropertyFileController extends AdminController
         $grid->column('project.name', __('Project'));
         $grid->column('phase.name', __('Phase'));
         
-        $grid->column('file_number', __('File number'))->filter('like');
+        $grid->column('file_number', __('File number'));
         $grid->column('marlas', __('Marlas'));
 
         $grid->column('propertyType.name', __('Property Type'));
@@ -44,14 +44,11 @@ class PropertyFileController extends AdminController
         $grid->column('dealer.text_for_select', __('Dealer'));
         $grid->column('holder.text_for_select', __('Holder'));
         
-        $grid->column('status', __('Status'))->display(function($status){
+        $grid->column('id', __('Status'))
+        ->display(function($id){
+            $status = \App\PropertyFile::find($id)->getOpenOrOtherStatus();
             return \App\Helpers\StatusesHelper::statusTitle($status);
-        })->filter([
-            \App\Helpers\StatusesHelper::AVAILABLE => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::AVAILABLE),
-            \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
-            \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
-            \App\Helpers\StatusesHelper::POSSESSED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::POSSESSED),
-        ]);
+        });
 
         \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
 
@@ -63,8 +60,30 @@ class PropertyFileController extends AdminController
             // Add a column filter
             $filter->like('file_number', 'File Number');
 
-            $filter->in('status', 'Status')->multipleSelect([
+            $filter->where(function ($query) {
+
+                foreach ($this->input as $statusFilterValue) {
+                    if($statusFilterValue == 'open')
+                    {
+                        $query->orWhere(function($query){
+                            $query->open();
+                        });
+                    }
+                    else if($statusFilterValue == \App\Helpers\StatusesHelper::AVAILABLE)
+                    {
+                        $query->orWhere(function($query){
+                            $query->available();
+                        });
+                    }
+                    else
+                    {
+                        $query->orWhere('status', $this->input);
+                    }
+                }
+
+            }, 'Status', 'status')->multipleSelect([
                 \App\Helpers\StatusesHelper::AVAILABLE => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::AVAILABLE),
+                'open' => 'Open',
                 \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
                 \App\Helpers\StatusesHelper::ALLOTTED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::ALLOTTED),
                 \App\Helpers\StatusesHelper::POSSESSED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::POSSESSED),

@@ -17,14 +17,12 @@
                     <th>Property Number (Allotment)</th>
                     <th>Booking Date</th>
                     <th>Dealer Commission <br>(Paid or Payable)</th>
-                    <th class="text-right">Downpayment Received</th>
                     <th class="text-right">Form Processing Fee Received</th>
                     <th class="text-right">Other Receipts</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    $total_down_payment_received = 0;
                     $total_form_processing_fee_received = 0;
                     $total_instalment_receipts = 0;
                     $total_dealer_commission_amount = 0;
@@ -35,7 +33,6 @@
                     <td>{{$row->property_number}}</td>
                     <td>{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
                     <td>{{number_format($row->dealer_commission_amount, 2)}}</td>
-                    <td class="text-right">{{number_format($row->down_payment_received, 2)}}</td>
                     <td class="text-right">{{number_format($row->form_processing_fee_received, 2)}}</td>
                     <td>
                         <?php
@@ -65,7 +62,6 @@
                     </td>
                 </tr>
                 <?php
-                    $total_down_payment_received += $row->down_payment_received;
                     $total_form_processing_fee_received += $row->form_processing_fee_received;
                     $total_instalment_receipts += $propertyFileInstalmentReceiptsTotal;
                     $total_dealer_commission_amount += $row->dealer_commission_amount;
@@ -76,7 +72,6 @@
                     <td></td>
                     <td></td>
                     <td>{{number_format($total_dealer_commission_amount, 2)}}</td>
-                    <td class="text-right">{{number_format($total_down_payment_received, 2)}}</td>
                     <td class="text-right">{{number_format($total_form_processing_fee_received, 2)}}</td>
                     <td class="text-right">{{number_format($total_instalment_receipts, 2)}}</td>
                 </tr>

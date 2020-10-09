@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class CommonModel extends Model
 {
     protected $appends = ['text_for_select'];
-    protected static $relationMethods = [];
+    protected static $isDeleteAllowed = false;
 
     public static function boot()
     {
         parent::boot();
         self::creating(function ($model) {
+            $lastObj = self::orderBy('id', 'desc')->first();
+            if($lastObj != null)
+            {
+                $model->id = $lastObj->id + 1;
+            }
             $model->created_by = \Auth::guard('admin')->user()->id;
         });
 
@@ -23,11 +28,16 @@ class CommonModel extends Model
         });
 
         self::deleting(function ($model) {
-            foreach (self::$relationMethods as $relationMethod) {
-                if ($model->$relationMethod()->count() > 0) {
-                    return false;
-                }
+            if(!self::$isDeleteAllowed)
+            {
+                throw new \Exception("Delete not allowed", 1);
             }
+            
+            // foreach (self::$relationMethods as $relationMethod) {
+            //     if ($model->$relationMethod()->count() > 0) {
+            //         return false;
+            //     }
+            // }
         });
     }
 

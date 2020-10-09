@@ -9,6 +9,7 @@ class StatusesHelper
     public const BOOKED = 'booked';
     public const ALLOTTED = 'allotted';
     public const POSSESSED = 'possessed';
+    public const OPEN = 'open';
 
     public static function statusTitle($status)
     {
@@ -27,6 +28,9 @@ class StatusesHelper
                 break;
             case StatusesHelper::POSSESSED :
                 return 'Possessed';
+                break;
+            case StatusesHelper::OPEN :
+                return 'Open';
                 break;
                 
             default:

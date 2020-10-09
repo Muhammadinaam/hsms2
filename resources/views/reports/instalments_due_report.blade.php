@@ -17,6 +17,8 @@
                     <th>Booking Date</th>
                     <th>Holder Name</th>
                     <th>Holder Phone</th>
+                    <th>Dealer Name</th>
+                    <th>Dealer Phone</th>
                     <th>Type</th>
                     <th class="text-right">Count</th>
                     <th class="text-right">Amount</th>
@@ -44,6 +46,8 @@
                             <td>{{ $booking_date }}</td>
                             <td>{{$row->holder_name}}</td>
                             <td>{{$row->holder_phone}}</td>
+                            <td>{{$row->dealer_name}}</td>
+                            <td>{{$row->dealer_phone}}</td>
                             <td>{{$row->payment_plan_type_name}}</td>
                             <td class="text-right">{{$count}}</td>
                             <td class="text-right">{{number_format($due_amount, 2)}}</td>
@@ -52,7 +56,7 @@
                     @endforeach
                     @if($total_due_amount != 0)
                     <tr class="bg-info">
-                        <td colspan=6>
+                        <td colspan=8>
                             <b>Total</b>
                         </td>
                         <td class="text-right">
