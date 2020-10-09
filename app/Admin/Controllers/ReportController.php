@@ -236,8 +236,7 @@ class ReportController
                         $report_data[] = [
                             'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
                             'date' => \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
-                                ->addDays($i * $paymentPlanDetail->days_between_each_payment)
-                                ->format('d-M-Y'),
+                                ->addDays($i * $paymentPlanDetail->days_between_each_payment),
                             'amount' => $paymentPlanDetail->amount
                         ];
                     }

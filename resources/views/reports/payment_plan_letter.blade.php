@@ -71,7 +71,7 @@
     <tr>
         <td>{{$loop->index + 1}}</td>
         <td>{{$row['payment_plan_type']}}</td>
-        <td>{{$row['date']}}</td>
+        <td>{{$row['date']->format('d-M-Y')}}</td>
         <td class="text-right">{{number_format($row['amount'], 2)}}</td>
     </tr>
     <?php

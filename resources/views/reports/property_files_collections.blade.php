@@ -53,9 +53,9 @@
                                 <td>
                                     <b>Total</b>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     {{number_format($propertyFileInstalmentReceiptsTotal, 2)}}
-                                </td class="text-right">
+                                </td >
                             </tr>
                         </table>
                         @endif
