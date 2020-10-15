@@ -101,6 +101,8 @@ class BookingController extends AdminController
                 $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
                 $old_property_file->sold_by_dealer_id = null;
                 $old_property_file->holder_id = null;
+                $old_property_file->property_number = null;
+                $old_property_file->block_id = null;
                 $old_property_file->save();
             }
         });
@@ -126,6 +128,9 @@ class BookingController extends AdminController
                 $property_file->dealer_id = null;
             }
             $property_file->holder_id = $model->customer_id;
+
+            $property_file->property_number = $model->property_number;
+            $property_file->block_id = $model->block_id;
 
             $property_file->save();
 
@@ -163,8 +168,22 @@ class BookingController extends AdminController
 
         $form->divider('Property Information');
 
-        $form->decimal('marlas', __('Marlas'))
-        ->rules('required');
+        $marlas_options = [];
+        foreach (\App\PropertyMarla::all() as $propertyMarla) {
+            $marlas_options[$propertyMarla->id] = $propertyMarla->marlas;
+        }
+        $form->select('marlas', __('Marlas'))
+            ->options($marlas_options)
+            ->rules('required');
+
+        $form->text('property_number', __('Property Number'));
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'block_id', 
+            __('Block'), 
+            'admin/blocks/create', 
+            '\App\Block');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 

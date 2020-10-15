@@ -186,15 +186,15 @@ class ReportController
         $report_data = 
         \DB::table('bookings')
             ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
-            ->leftJoin('allotments', 'allotments.booking_id', '=', 'bookings.id')
             ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
             ->select(
                 'bookings.date',
                 'bookings.property_file_id', 
+                'property_files.property_number', 
                 'property_files.file_number', 
+                'property_files.marlas', 
                 'bookings.form_processing_fee_received',
                 'bookings.dealer_commission_amount',
-                'allotments.property_number',
             )
             ->get();
 
@@ -233,13 +233,36 @@ class ReportController
                 {
                     for($i = 0; $i < $paymentPlanDetail->number_of_payments; $i++)
                     {
+                        $date = \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
+                            ->addDays($i * $paymentPlanDetail->days_between_each_payment);
                         $report_data[] = [
-                            'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
-                            'date' => \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
-                                ->addDays($i * $paymentPlanDetail->days_between_each_payment),
+                            'instalment_payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
+                            'date' => $date,
+                            'due_date' => $date->addDays($paymentPlanDetail->paymentPlanType->due_days),
                             'amount' => $paymentPlanDetail->amount
                         ];
                     }
+                }
+
+                $instalment_receipts = \DB::table('instalment_receipts')
+                    ->where('property_file_id', request()->property_file)
+                    ->join('instalment_receipt_details', 'instalment_receipt_details.instalment_receipt_id', '=', 'instalment_receipts.id')
+                    ->join('payment_plan_types', 'payment_plan_types.id', '=', 'instalment_receipt_details.payment_plan_type_id')
+                    ->select(
+                        'payment_plan_types.name as payment_plan_type',
+                        'instalment_receipts.date',
+                        'instalment_receipt_details.amount',
+                        'instalment_receipts.id'
+                    )
+                    ->get();
+
+                foreach ($instalment_receipts as $instalment_receipt) {
+                    $report_data[] = [
+                        'receipt_number' => $instalment_receipt->id,
+                        'receipt_payment_plan_type' => $instalment_receipt->payment_plan_type,
+                        'date' => \Carbon\Carbon::parse($instalment_receipt->date),
+                        'receipt_amount' => $instalment_receipt->amount
+                    ];
                 }
 
                 $report_data = collect($report_data)->sortBy('date');

@@ -30,7 +30,7 @@ class AllotmentController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('date', __('Date of allotment'));
         $grid->column('booking.text_for_select', __('Booking'));
-        $grid->column('property_number', __('Property Number'));
+        // $grid->column('property_number', __('Property Number'));
         $grid->column('block.text_for_select', __('Block'));
         $grid->column('status', __('Allotment Status'));
 
@@ -102,15 +102,15 @@ class AllotmentController extends AdminController
             {
                 $previous_booking = $allotment->booking;
                 $previous_property_file = $previous_booking->propertyFile;     
-                $previous_property_file->property_number = null;
-                $previous_property_file->block_id = null;
+                // $previous_property_file->property_number = null;
+                // $previous_property_file->block_id = null;
                 $previous_property_file->save();
             }
 
             $new_booking = \App\Booking::find($form->booking_id);
             $new_property_file = $new_booking->propertyFile;     
-            $new_property_file->property_number = $form->property_number;
-            $new_property_file->block_id = $form->block_id;
+            // $new_property_file->property_number = $form->property_number;
+            // $new_property_file->block_id = $form->block_id;
             $new_property_file->save();
         });
 
@@ -127,14 +127,14 @@ class AllotmentController extends AdminController
             'admin/bookings/create', 
             '\App\Booking');
 
-        $form->text('property_number', __('Property Number'));
+        // $form->text('property_number', __('Property Number'));
 
-        \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'block_id', 
-            __('Block'), 
-            'admin/blocks/create', 
-            '\App\Block');
+        // \App\Helpers\SelectHelper::buildAjaxSelect(
+        //     $form, 
+        //     'block_id', 
+        //     __('Block'), 
+        //     'admin/blocks/create', 
+        //     '\App\Block');
 
         return $form;
     }

@@ -150,7 +150,13 @@ class PropertyFileController extends AdminController
             ->creationRules(['required', "unique:property_files"])
             ->updateRules(['required', "unique:property_files,file_number,{{id}}"]);
 
-        $form->decimal('marlas', __('Marlas'));
+        $marlas_options = [];
+        foreach (\App\PropertyMarla::all() as $propertyMarla) {
+            $marlas_options[$propertyMarla->id] = $propertyMarla->marlas;
+        }
+        $form->select('marlas', __('Marlas'))
+            ->options($marlas_options)
+            ->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 

@@ -109,6 +109,7 @@ class PaymentPlanController extends AdminController
             $form->number('number_of_payments', __('Number of Payments'))->rules('required|numeric|gt:0');
             $form->number('days_between_each_payment', __('Days between each payment'))->rules('required|gt:0');
             $form->date('starting_date', __('Starting Date'))->rules('required');
+            $form->number('due_days', __('Due Days'))->default(7)->rules('required|gt:0');
         })->mode('table');
 
         // $form->html(

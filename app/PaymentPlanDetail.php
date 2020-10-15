@@ -12,6 +12,7 @@ class PaymentPlanDetail extends Model
         'number_of_payments',
         'days_between_each_payment',
         'starting_date',
+        'due_days'
     ];
 
     public function paymentPlanType()

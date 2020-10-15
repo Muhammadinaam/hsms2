@@ -14,9 +14,10 @@
             <thead>
                 <tr>
                     <th>File Number</th>
-                    <th>Property Number (Allotment)</th>
+                    <th>Property Number</th>
+                    <th>Marlas</th>
                     <th>Booking Date</th>
-                    <th>Dealer Commission <br>(Paid or Payable)</th>
+                    <th>Dealer Commission</th>
                     <th class="text-right">Form Processing Fee Received</th>
                     <th class="text-right">Other Receipts</th>
                 </tr>
@@ -31,6 +32,7 @@
                 <tr>
                     <td>{{$row->file_number}}</td>
                     <td>{{$row->property_number}}</td>
+                    <td>{{$row->marlas}}</td>
                     <td>{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
                     <td>{{number_format($row->dealer_commission_amount, 2)}}</td>
                     <td class="text-right">{{number_format($row->form_processing_fee_received, 2)}}</td>

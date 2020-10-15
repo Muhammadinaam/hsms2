@@ -30,6 +30,7 @@ class InstalmentReceiptController extends AdminController
         $grid->column('date', __('Date'))->date('d-M-Y');
         $grid->column('propertyFile.text_for_select', __('Property File'));
         $grid->column('description', __('Description'));
+        $grid->column('fine_amount', __('Fine amount'));
 
         return $grid;
     }
@@ -71,6 +72,7 @@ class InstalmentReceiptController extends AdminController
         });
 
         $form->date('date', __('Date'))->default(date('Y-m-d H:i:s'))->rules('required');
+
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'property_file_id', 
@@ -78,7 +80,9 @@ class InstalmentReceiptController extends AdminController
             '', 
             '\App\PropertyFile')
             ->rules('required');
-        $form->text('description', __('Description'));
+        $form->text('description', __('Description'))->rules('required');
+
+        $form->decimal('fine_amount', __('Fine Amount'))->default(0)->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
@@ -131,6 +135,7 @@ class InstalmentReceiptController extends AdminController
         {
             $total_amount += $instalmentReceiptDetail->amount;
         }
+        $fine_amount = $model->fine_amount;
 
         // DEBIT
         \App\Ledger::insertOrUpdateLedgerEntries(
@@ -139,7 +144,7 @@ class InstalmentReceiptController extends AdminController
             null,
             null,
             'Instalment received - ' . $model->description,
-            +$total_amount
+            +$total_amount + $fine_amount
         );
 
         //  CREDIT
@@ -150,6 +155,16 @@ class InstalmentReceiptController extends AdminController
             $model->property_file_id,
             'Instalment received - ' . $model->description,
             -$total_amount
+        );
+
+        //CREDIT - FINE INcome
+        \App\Ledger::insertOrUpdateLedgerEntries(
+            $ledger_id,
+            \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_FORM_FINE_INCOME)->id,
+            null,
+            null,
+            'Fine received on late Instalment - ' . $model->description,
+            -$fine_amount
         );
     }
 }

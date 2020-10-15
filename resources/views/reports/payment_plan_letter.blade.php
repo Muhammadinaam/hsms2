@@ -59,31 +59,62 @@
 
 <table class="table table-bordered">
     <thead>
-        <th>Sr.</th>
-        <th>Payment Type</th>
         <th>Date</th>
-        <th class="text-right">Amount</th>
+        <th>Instalment Type</th>
+        <th>Due Date</th>
+        <th class="text-right">Instalment Amount</th>
+        <th class="text-right">Received Amount</th>
+        <th>Receipt Type</th>
+        <th>Receipt Number</th>
+        <th>Balance</th>
+        <th class="hidden-print">Action</th>
     </thead>
     <?php
-        $total = 0;
+        $total_amount = 0;
+        $total_receipt_amount = 0;
     ?>
     @foreach($report_data as $row)
-    <tr>
-        <td>{{$loop->index + 1}}</td>
-        <td>{{$row['payment_plan_type']}}</td>
-        <td>{{$row['date']->format('d-M-Y')}}</td>
-        <td class="text-right">{{number_format($row['amount'], 2)}}</td>
-    </tr>
     <?php
-        $total += $row['amount'];
+        $total_amount += isset($row['amount']) ? $row['amount'] : 0;
+        $total_receipt_amount += isset($row['receipt_amount']) ? $row['receipt_amount'] : 0;
     ?>
+    <tr>
+        <td>{{$row['date']->format('d-M-Y')}}</td>
+        <td>{{isset($row['instalment_payment_plan_type']) ? $row['instalment_payment_plan_type'] : '' }}</td>
+        <td>{{isset($row['due_date']) ? $row['due_date']->format('d-M-Y') : ''}}</td>
+        <td class="text-right">{{isset($row['amount']) ? number_format($row['amount'], 2) : ''}}</td>
+        <td class="text-right">{{isset($row['receipt_amount']) ? number_format($row['receipt_amount'], 2) : ''}}</td>
+        <td>{{isset($row['receipt_payment_plan_type']) ? $row['receipt_payment_plan_type'] : '' }}</td>
+        <td>{{isset($row['receipt_number']) ? $row['receipt_number'] : '' }}</td>
+        <td>
+            {{number_format($total_amount - $total_receipt_amount, 2)}}
+        </td>
+        <td class="hidden-print">
+            <button class="btn btn-default">
+                Print Challan
+            </button>
+        </td>
+    </tr>
     @endforeach
     <tr style="font-weight: bold;" class="bg-info">
         <td>Total</td>
         <td></td>
         <td></td>
         <td class="text-right">
-            {{number_format($total, 2)}}
+            {{number_format($total_amount, 2)}}
         </td>
+        <td class="text-right">
+            {{number_format($total_receipt_amount, 2)}}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
     </tr>
 </table>
+
+<script>
+    $(document).ready(function(){
+        $('[name="property_file"]').select2();
+    })
+</script>

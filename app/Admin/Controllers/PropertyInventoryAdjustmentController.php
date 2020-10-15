@@ -102,7 +102,15 @@ class PropertyInventoryAdjustmentController extends AdminController
         ];
 
         $form->text('remarks', __('Remarks'))->rules('required');
-        $form->decimal('marlas', __('Marlas'))->rules('required');
+
+        $marlas_options = [];
+        foreach (\App\PropertyMarla::all() as $propertyMarla) {
+            $marlas_options[$propertyMarla->id] = $propertyMarla->marlas;
+        }
+        $form->select('marlas', __('Marlas'))
+            ->options($marlas_options)
+            ->rules('required');
+
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
             'property_type_id', 

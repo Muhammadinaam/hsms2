@@ -13,6 +13,7 @@ class AccountHead extends CommonModel
     const IDT_PROPERTY_SALES_INCOME = 'property_sales_income';
     const IDT_PROPERTY_SALES_COST = 'property_sales_cost';
     const IDT_FORM_PROCESSING_FEE_INCOME = 'form_processing_fee_income';
+    const IDT_FORM_FINE_INCOME = 'fine_income';
     const IDT_DEALER_COMMISSION_EXPENSE = 'dealer_commission_expense';
     const IDT_BOOKING_CANCELLATION = 'booking_cancellation';
 
