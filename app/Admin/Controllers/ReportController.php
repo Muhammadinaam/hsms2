@@ -2,17 +2,15 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Controllers\Controller;
-use Encore\Admin\Layout\Content;
 use DB;
+use Encore\Admin\Layout\Content;
 
 class ReportController
 {
     public function showLedger(Content $content)
     {
         $report_data = [];
-        if(request()->account != '')
-        {
+        if (request()->account != '') {
             $report_data = DB::table('ledger_entries')
                 ->leftJoin('account_heads', 'ledger_entries.account_head_id', '=', 'account_heads.id')
                 ->leftJoin('ledgers', 'ledger_entries.ledger_id', '=', 'ledgers.id')
@@ -43,10 +41,10 @@ class ReportController
             ->leftJoin('property_files', 'ledger_entries.property_file_id', 'property_files.id')
             ->leftJoin('people as file_people', 'property_files.holder_id', '=', 'file_people.id')
             ->select(
-                DB::raw( 'if(file_people.name is not null, file_people.name, people.name) as person_name' ),
-                DB::raw( 'if(file_people.system_id is not null, file_people.system_id, people.system_id) as system_id' ),
-                DB::raw( 'if(file_people.person_type is not null, file_people.person_type, people.person_type) as person_type' ),
-                DB::raw( 'sum(ledger_entries.amount) as amount' )
+                DB::raw('if(file_people.name is not null, file_people.name, people.name) as person_name'),
+                DB::raw('if(file_people.system_id is not null, file_people.system_id, people.system_id) as system_id'),
+                DB::raw('if(file_people.person_type is not null, file_people.person_type, people.person_type) as person_type'),
+                DB::raw('sum(ledger_entries.amount) as amount')
             )
             ->groupBy('person_name', 'system_id', 'person_type')
             ->whereNotNull('people.name')
@@ -62,8 +60,7 @@ class ReportController
     public function receivablesPayablesDetailReport(Content $content)
     {
         $report_data = [];
-        if(request()->person != '')
-        {
+        if (request()->person != '') {
             $report_data = DB::table('ledger_entries')
                 ->leftJoin('people', 'ledger_entries.person_id', '=', 'people.id')
                 ->leftJoin('property_files', 'ledger_entries.property_file_id', 'property_files.id')
@@ -109,8 +106,7 @@ class ReportController
     {
         $report_data = \App\PropertyFile::whereNotNull('dealer_id');
 
-        if(request()->person != '')
-        {
+        if (request()->person != '') {
             $report_data = $report_data->where('dealer_id', request()->person);
         }
         $report_data = $report_data->with('dealer')->get()->groupBy('dealer_id');
@@ -128,32 +124,32 @@ class ReportController
         $instalment_receipt_details = \DB::table('instalment_receipt_details')
             ->join('instalment_receipts', 'instalment_receipts.id', '=', 'instalment_receipt_details.instalment_receipt_id')
             ->select(
-                'instalment_receipts.property_file_id', 
+                'instalment_receipts.property_file_id',
                 'instalment_receipt_details.payment_plan_type_id',
                 \DB::raw('sum(instalment_receipt_details.amount) as amount'),
                 \DB::raw('count(instalment_receipt_details.amount) as receipt_count'),
             )
             ->groupBy([
                 'instalment_receipts.property_file_id',
-                'instalment_receipt_details.payment_plan_type_id'
+                'instalment_receipt_details.payment_plan_type_id',
             ])
             ->where('instalment_receipts.date', '<=', $now);
 
         $report_data = \DB::table('property_files')
             ->leftJoin('people as holders', 'property_files.holder_id', '=', 'holders.id')
             ->leftJoin('people as dealers', 'property_files.dealer_id', '=', 'dealers.id')
-            ->leftJoin('payment_plan_schedules', function($join) use ($now){
+            ->leftJoin('payment_plan_schedules', function ($join) use ($now) {
                 $join->on('property_files.id', '=', 'payment_plan_schedules.property_file_id')
                     ->whereDate('payment_plan_schedules.date', '<=', $now);
             })
-            ->leftJoinSub($instalment_receipt_details, 'instalment_receipt_details', function($join) {
+            ->leftJoinSub($instalment_receipt_details, 'instalment_receipt_details', function ($join) {
                 $join->on('property_files.id', '=', 'instalment_receipt_details.property_file_id')
                     ->on('payment_plan_schedules.payment_plan_type_id', '=', 'instalment_receipt_details.payment_plan_type_id');
             })
             ->leftJoin('payment_plan_types', 'payment_plan_types.id', '=', 'payment_plan_schedules.payment_plan_type_id')
             ->select(
                 'property_files.id as property_file_id',
-                'property_files.file_number', 
+                'property_files.file_number',
                 'holders.name as holder_name',
                 'holders.phone as holder_phone',
                 'dealers.name as dealer_name',
@@ -167,11 +163,11 @@ class ReportController
             ->groupBy([
                 'property_files.id',
                 'payment_plan_types.name',
-                'property_files.file_number', 
+                'property_files.file_number',
                 'holders.name',
                 'holders.phone',
                 'dealers.name',
-                'dealers.phone'
+                'dealers.phone',
             ])
             ->get();
 
@@ -181,25 +177,24 @@ class ReportController
             ->row(view('reports.instalments_due_report', compact('report_data')));
     }
 
-    public function propertyFilesCollections(Content $content) 
+    public function propertyFilesCollections(Content $content)
     {
-        $report_data = 
+        $report_data =
         \DB::table('bookings')
             ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
             ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
             ->select(
                 'bookings.date',
-                'bookings.property_file_id', 
-                'property_files.property_number', 
-                'property_files.file_number', 
-                'property_files.marlas', 
+                'bookings.property_file_id',
+                'property_files.property_number',
+                'property_files.file_number',
+                'property_files.marlas',
                 'bookings.form_processing_fee_received',
                 'bookings.dealer_commission_amount',
             )
             ->get();
 
-        foreach($report_data as $row)
-        {
+        foreach ($report_data as $row) {
             $row->instalmentReceipts = \DB::table('instalment_receipts')
                 ->where('property_file_id', $row->property_file_id)
                 ->join('instalment_receipt_details', 'instalment_receipt_details.instalment_receipt_id', '=', 'instalment_receipts.id')
@@ -214,35 +209,33 @@ class ReportController
             ->row(view('reports.property_files_collections', compact('report_data')));
     }
 
-    public function paymentPlanLetter(Content $content) 
+    public function paymentPlanLetter(Content $content)
     {
         $report_data = [];
         $message = '';
 
-        if(request()->property_file != '')
-        {
+        if (request()->property_file != '') {
             $payment_plan = \App\PaymentPlan::where('property_file_id', request()->property_file)->first();
 
-            if($payment_plan == null)
-            {
+            if ($payment_plan == null) {
                 $message = 'No payment plan attached with property file';
-            }
-            else
-            {
-                foreach($payment_plan->paymentPlanDetails as $paymentPlanDetail)
-                {
-                    for($i = 0; $i < $paymentPlanDetail->number_of_payments; $i++)
-                    {
+            } else {
+                foreach ($payment_plan->paymentPlanDetails as $paymentPlanDetail) {
+                    for ($i = 0; $i < $paymentPlanDetail->number_of_payments; $i++) {
                         $date = \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
                             ->addDays($i * $paymentPlanDetail->days_between_each_payment);
                         $report_data[] = [
-                            'instalment_payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
+                            'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
                             'date' => $date,
                             'due_date' => $date->addDays($paymentPlanDetail->paymentPlanType->due_days),
-                            'amount' => $paymentPlanDetail->amount
+                            'amount' => $paymentPlanDetail->amount,
+                            'receipt_amount' => 0,
+                            'receipt_numbers' => [],
                         ];
                     }
                 }
+
+                $report_data = collect($report_data)->sortBy('date')->toArray();
 
                 $instalment_receipts = \DB::table('instalment_receipts')
                     ->where('property_file_id', request()->property_file)
@@ -254,22 +247,28 @@ class ReportController
                         'instalment_receipt_details.amount',
                         'instalment_receipts.id'
                     )
+                    ->orderBy('instalment_receipts.date', 'asc')
                     ->get();
 
-                foreach ($instalment_receipts as $instalment_receipt) {
-                    $report_data[] = [
-                        'receipt_number' => $instalment_receipt->id,
-                        'receipt_payment_plan_type' => $instalment_receipt->payment_plan_type,
-                        'date' => \Carbon\Carbon::parse($instalment_receipt->date),
-                        'receipt_amount' => $instalment_receipt->amount
-                    ];
+                foreach ($report_data as $report_data_index => $report_row) {
+                    foreach ($instalment_receipts as $instalment_receipts_index => $instalment_receipt) {
+                        $balance = $report_row['amount'] > $report_row['receipt_amount'];
+                        if (
+                            $report_row['payment_plan_type'] == $instalment_receipt->payment_plan_type &&
+                            $balance > 0
+                        ) {
+                            $to_be_allocated = $balance < $instalment_receipt->amount ? $balance : $instalment_receipt->amount;
+                            $report_data[$report_data_index]['receipt_amount'] += $to_be_allocated;
+                            $instalment_receipts[$instalment_receipts_index]->amount -= $to_be_allocated;
+                            if ($to_be_allocated > 0) {
+                                $report_data[$report_data_index]['receipt_numbers'][] = $instalment_receipt->id;
+                            }
+                        }
+                    }
                 }
 
-                $report_data = collect($report_data)->sortBy('date');
             }
-        }
-        else
-        {
+        } else {
             $message = 'Please select property file';
         }
 

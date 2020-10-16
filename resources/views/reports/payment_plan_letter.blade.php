@@ -40,6 +40,8 @@
         if(request()->property_file != '') 
         {
             $property_file = \App\PropertyFile::find(request()->property_file);
+            $booking = \App\Booking::where('property_file_id', request()->property_file)
+                ->where('status', '<>', \App\Helpers\StatusesHelper::CANCELLED)->first();
             $holder = $property_file->holder;
             $dealer = $property_file->dealer;
         }
@@ -54,19 +56,21 @@
             Dealer Name: {{ $dealer->name }} <br>
             Dealer Phone: {{ $dealer->phone }} <br>
         @endif
+        @if(isset($booking) && $booking != null)
+            Booking Date: {{\Carbon\Carbon::parse($booking->date)->format('d-M-Y')}}
+        @endif
     @endif
 </p>
 
 <table class="table table-bordered">
     <thead>
-        <th>Date</th>
-        <th>Instalment Type</th>
-        <th>Due Date</th>
-        <th class="text-right">Instalment Amount</th>
-        <th class="text-right">Received Amount</th>
-        <th>Receipt Type</th>
-        <th>Receipt Number</th>
-        <th>Balance</th>
+        <th class="text-center">Instalment Type</th>
+        <th class="text-center">Date</th>
+        <th class="text-center">Due Date</th>
+        <th class="text-center">Instalment Amount</th>
+        <th class="text-center">Received Amount</th>
+        <th class="text-center">Receipt Number</th>
+        <th class="text-center">Balance</th>
         <th class="hidden-print">Action</th>
     </thead>
     <?php
@@ -79,14 +83,13 @@
         $total_receipt_amount += isset($row['receipt_amount']) ? $row['receipt_amount'] : 0;
     ?>
     <tr>
+        <td>{{isset($row['payment_plan_type']) ? $row['payment_plan_type'] : '' }}</td>
         <td>{{$row['date']->format('d-M-Y')}}</td>
-        <td>{{isset($row['instalment_payment_plan_type']) ? $row['instalment_payment_plan_type'] : '' }}</td>
         <td>{{isset($row['due_date']) ? $row['due_date']->format('d-M-Y') : ''}}</td>
         <td class="text-right">{{isset($row['amount']) ? number_format($row['amount'], 2) : ''}}</td>
         <td class="text-right">{{isset($row['receipt_amount']) ? number_format($row['receipt_amount'], 2) : ''}}</td>
-        <td>{{isset($row['receipt_payment_plan_type']) ? $row['receipt_payment_plan_type'] : '' }}</td>
-        <td>{{isset($row['receipt_number']) ? $row['receipt_number'] : '' }}</td>
-        <td>
+        <td class="text-right">{{isset($row['receipt_numbers']) ? implode(', ', $row['receipt_numbers']) : '' }}</td>
+        <td class="text-right">
             {{number_format($total_amount - $total_receipt_amount, 2)}}
         </td>
         <td class="hidden-print">
