@@ -191,6 +191,9 @@ class ReportController
                 'property_files.marlas',
                 'bookings.form_processing_fee_received',
                 'bookings.dealer_commission_amount',
+                'bookings.booking_type',
+                'bookings.cash_price',
+                'bookings.installment_price',
             )
             ->get();
 

@@ -17,6 +17,7 @@
                     <th>Property Number</th>
                     <th>Marlas</th>
                     <th>Booking Date</th>
+                    <th>Sale Price</th>
                     <th>Dealer Commission</th>
                     <th class="text-right">Form Processing Fee Received</th>
                     <th class="text-right">Other Receipts</th>
@@ -27,6 +28,7 @@
                     $total_form_processing_fee_received = 0;
                     $total_instalment_receipts = 0;
                     $total_dealer_commission_amount = 0;
+                    $total_sale_price = 0;
                 ?>
                 @foreach($report_data as $row)
                 <tr>
@@ -34,6 +36,7 @@
                     <td>{{$row->property_number}}</td>
                     <td>{{$row->marlas}}</td>
                     <td>{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
+                    <td>{{$row->booking_type == 'Cash' ? number_format($row->cash_price, 2) : number_format($row->installment_price, 2)}}</td>
                     <td>{{number_format($row->dealer_commission_amount, 2)}}</td>
                     <td class="text-right">{{number_format($row->form_processing_fee_received, 2)}}</td>
                     <td>
@@ -67,12 +70,15 @@
                     $total_form_processing_fee_received += $row->form_processing_fee_received;
                     $total_instalment_receipts += $propertyFileInstalmentReceiptsTotal;
                     $total_dealer_commission_amount += $row->dealer_commission_amount;
+                    $total_sale_price += $row->booking_type == 'Cash' ? $row->cash_price : $row->installment_price;
                 ?>
                 @endforeach
                 <tr style="font-weight: bold;" class="bg-info">
                     <td>Total</td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td>{{number_format($total_sale_price, 2)}}</td>
                     <td>{{number_format($total_dealer_commission_amount, 2)}}</td>
                     <td class="text-right">{{number_format($total_form_processing_fee_received, 2)}}</td>
                     <td class="text-right">{{number_format($total_instalment_receipts, 2)}}</td>
