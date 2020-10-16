@@ -224,10 +224,12 @@ class ReportController
                     for ($i = 0; $i < $paymentPlanDetail->number_of_payments; $i++) {
                         $date = \Carbon\Carbon::parse($paymentPlanDetail->starting_date)
                             ->addDays($i * $paymentPlanDetail->days_between_each_payment);
+                        $due_date = clone $date;
+                        $due_date = $due_date->addDays($paymentPlanDetail->due_days);
                         $report_data[] = [
                             'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
                             'date' => $date,
-                            'due_date' => $date->addDays($paymentPlanDetail->due_days),
+                            'due_date' => $due_date,
                             'amount' => $paymentPlanDetail->amount,
                             'receipt_amount' => 0,
                             'receipt_ids' => [],
