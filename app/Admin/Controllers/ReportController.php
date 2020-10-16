@@ -227,7 +227,7 @@ class ReportController
                         $report_data[] = [
                             'payment_plan_type' => $paymentPlanDetail->paymentPlanType->name,
                             'date' => $date,
-                            'due_date' => $date->addDays($paymentPlanDetail->paymentPlanType->due_days),
+                            'due_date' => $date->addDays($paymentPlanDetail->due_days),
                             'amount' => $paymentPlanDetail->amount,
                             'receipt_amount' => 0,
                             'receipt_ids' => [],
