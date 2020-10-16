@@ -454,6 +454,7 @@ class ComposerStaticInitcc30884f714a102253aa20ea5f16c5f4
         'AddPaymentPlanTypeIdColumn' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_164505_add_payment_plan_type_id_column.php',
         'AddPaymentPlanTypeMenuAndPermissions' => __DIR__ . '/../..' . '/database/migrations/2020_08_31_144233_add_payment_plan_type_menu_and_permissions.php',
         'AddPropertyMarlaMenu' => __DIR__ . '/../..' . '/database/migrations/2020_10_15_074605_add_property_marla_menu.php',
+        'AddReceiptNumberColumn' => __DIR__ . '/../..' . '/database/migrations/2020_10_16_181143_add_receipt_number_column.php',
         'AddTwoNewReports' => __DIR__ . '/../..' . '/database/migrations/2020_10_06_061031_add_two_new_reports.php',
         'App\\AccountHead' => __DIR__ . '/../..' . '/app/AccountHead.php',
         'App\\Admin\\Controllers\\AccountHeadController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AccountHeadController.php',

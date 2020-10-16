@@ -80,9 +80,15 @@ class InstalmentReceiptController extends AdminController
             '', 
             '\App\PropertyFile')
             ->rules('required');
+
         $form->text('description', __('Description'))->rules('required');
+        
+        $form->text('receipt_number', __('Recript Number'))
+        ->rules('required')
+        ->help('Bank receipt number or Cheque number');
 
         $form->decimal('fine_amount', __('Fine Amount'))->default(0)->rules('required');
+
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 

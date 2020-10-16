@@ -230,6 +230,7 @@ class ReportController
                             'due_date' => $date->addDays($paymentPlanDetail->paymentPlanType->due_days),
                             'amount' => $paymentPlanDetail->amount,
                             'receipt_amount' => 0,
+                            'receipt_ids' => [],
                             'receipt_numbers' => [],
                         ];
                     }
@@ -245,7 +246,8 @@ class ReportController
                         'payment_plan_types.name as payment_plan_type',
                         'instalment_receipts.date',
                         'instalment_receipt_details.amount',
-                        'instalment_receipts.id'
+                        'instalment_receipts.id',
+                        'instalment_receipts.receipt_number',
                     )
                     ->orderBy('instalment_receipts.date', 'asc')
                     ->get();
@@ -261,7 +263,8 @@ class ReportController
                             $report_data[$report_data_index]['receipt_amount'] += $to_be_allocated;
                             $instalment_receipts[$instalment_receipts_index]->amount -= $to_be_allocated;
                             if ($to_be_allocated > 0) {
-                                $report_data[$report_data_index]['receipt_numbers'][] = $instalment_receipt->id;
+                                $report_data[$report_data_index]['receipt_ids'][] = $instalment_receipt->id;
+                                $report_data[$report_data_index]['receipt_numbers'][] = $instalment_receipt->receipt_number;
                             }
                         }
                     }

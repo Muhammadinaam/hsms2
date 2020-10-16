@@ -3,14 +3,12 @@
 namespace App\Admin\Controllers;
 
 use App\Booking;
+use App\Helpers\GeneralHelpers;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
+use Encore\Admin\Admin;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Helpers\UpdateHelpers;
-use Illuminate\Support\MessageBag;
-use App\Helpers\BookingStatusConstants;
-use App\Helpers\GeneralHelpers;
 
 class BookingController extends AdminController
 {
@@ -37,7 +35,7 @@ class BookingController extends AdminController
         $grid->column('booking_type', __('Booking Type'));
         $grid->column('dealer.text_for_select', __('Dealer'));
         $grid->column('dealer_commission_amount', __('Dealer commission'));
-        $grid->column('status', __('Booking Status'))->display(function($status){
+        $grid->column('status', __('Booking Status'))->display(function ($status) {
             return \App\Helpers\StatusesHelper::statusTitle($status);
         })->filter([
             \App\Helpers\StatusesHelper::BOOKED => \App\Helpers\StatusesHelper::statusTitle(\App\Helpers\StatusesHelper::BOOKED),
@@ -45,7 +43,7 @@ class BookingController extends AdminController
         ]);
 
         \App\Helpers\GeneralHelpers::setGridRowActions($grid, false, true, true, true);
-        
+
         return $grid;
     }
 
@@ -64,7 +62,7 @@ class BookingController extends AdminController
         $show->field('customer_amount_received', __('Amount received'));
         $show->field('dealer_id', __('Dealer id'));
         $show->field('dealer_commission_amount', __('Dealer commission amount'));
-        
+
         return $show;
     }
 
@@ -76,28 +74,25 @@ class BookingController extends AdminController
     protected function form()
     {
         $form = new Form(new Booking);
-        $id = isset(request()->route()->parameters()['booking']) ? 
-            request()->route()->parameters()['booking'] : null;
+        $id = isset(request()->route()->parameters()['booking']) ?
+        request()->route()->parameters()['booking'] : null;
         $booking = \App\Booking::find($id);
 
         $form->saving(function (Form $form) use ($id, $booking) {
-            
-            if($booking != null && !$booking->isEditableOrCancellable())
-            {
+
+            if ($booking != null && !$booking->isEditableOrCancellable()) {
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Update', 'Status of Booking is [' . \App\Helpers\StatusesHelper::statusTitle($booking->status) . ']. It cannot be changed now.');
             }
 
             $new_property_file = \App\PropertyFile::find($form->property_file_id);
             $old_property_file = $booking != null ? $booking->propertyfile : null;
 
-            if($new_property_file->dealer_id != null && 
-                $new_property_file->dealer_id != $form->dealer_id)
-            {
-                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. ['.$new_property_file->dealer->text_for_select.']');
+            if ($new_property_file->dealer_id != null &&
+                $new_property_file->dealer_id != $form->dealer_id) {
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. [' . $new_property_file->dealer->text_for_select . ']');
             }
 
-            if($old_property_file != null)
-            {
+            if ($old_property_file != null) {
                 $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
                 $old_property_file->sold_by_dealer_id = null;
                 $old_property_file->holder_id = null;
@@ -107,7 +102,7 @@ class BookingController extends AdminController
             }
         });
 
-        $form->saved(function(Form $form) {
+        $form->saved(function (Form $form) {
 
             $model = $form->model();
             $property_file = $model->propertyFile;
@@ -122,9 +117,8 @@ class BookingController extends AdminController
             $property_file->installment_price = $model->installment_price;
             $property_file->cost = $model->cost;
 
-            if($property_file->dealer_id != null)
-            {
-                $property_file->sold_by_dealer_id = $property_file->dealer_id; 
+            if ($property_file->dealer_id != null) {
+                $property_file->sold_by_dealer_id = $property_file->dealer_id;
                 $property_file->dealer_id = null;
             }
             $property_file->holder_id = $model->customer_id;
@@ -140,37 +134,36 @@ class BookingController extends AdminController
         $form->divider('Customer and File Information');
 
         $form->date('date', __('Date'))->default(date('Y-m-d H:i:s'))
-        ->rules('required');
+            ->rules('required');
 
-        $property_file_where = 'status = \''. \App\Helpers\StatusesHelper::AVAILABLE . '\' ';
-        if($booking != null)
-        {
+        $property_file_where = 'status = \'' . \App\Helpers\StatusesHelper::AVAILABLE . '\' ';
+        if ($booking != null) {
             $property_file_where .= ' OR id = \'' . $booking->property_file_id . '\'';
         }
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'property_file_id', 
-            __('Property File'), 
-            '', 
+            $form,
+            'property_file_id',
+            __('Property File'),
+            '',
             '\App\PropertyFile',
             $property_file_where)
             ->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'customer_id', 
-            __('Customer'), 
-            'admin/people/create', 
+            $form,
+            'customer_id',
+            __('Customer'),
+            'admin/people/create',
             '\App\Person',
-            'person_type = \'' .\App\Person::PERSON_TYPE_CUSTOMER. '\' ')
+            'person_type = \'' . \App\Person::PERSON_TYPE_CUSTOMER . '\' ')
             ->rules('required');
 
         $form->divider('Property Information');
 
         $marlas_options = [];
         foreach (\App\PropertyMarla::all() as $propertyMarla) {
-            $marlas_options[$propertyMarla->id] = $propertyMarla->marlas;
+            $marlas_options[$propertyMarla->marlas] = $propertyMarla->marlas;
         }
         $form->select('marlas', __('Marlas'))
             ->options($marlas_options)
@@ -179,25 +172,25 @@ class BookingController extends AdminController
         $form->text('property_number', __('Property Number'));
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'block_id', 
-            __('Block'), 
-            'admin/blocks/create', 
+            $form,
+            'block_id',
+            __('Block'),
+            'admin/blocks/create',
             '\App\Block');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'property_type_id', 
-            __('Property type'), 
-            'admin/property-types/create', 
+            $form,
+            'property_type_id',
+            __('Property type'),
+            'admin/property-types/create',
             '\App\PropertyType')
             ->rules('required');
 
         $yes_no_states = [
-            'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
+            'on' => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
             'off' => ['value' => 0, 'text' => 'No', 'color' => 'secondary'],
         ];
-            
+
         $form->switch('is_farmhouse', __('Farmhouse'))->states($yes_no_states);
 
         $form->divider('Preference Location');
@@ -211,9 +204,6 @@ class BookingController extends AdminController
         $form->decimal('installment_price', __('Installment price'))->rules('required');
         $form->decimal('cost', __('Cost'))->rules('required');
 
-
-        
-
         $form->divider('Booking Type');
 
         $form->select('booking_type', __('Booking Type'))
@@ -226,29 +216,29 @@ class BookingController extends AdminController
             );
 
         $form->divider('Form Processing Fee');
-            
+
         $form->decimal('form_processing_fee_received', __('Form / Processing fee received'))
-        ->rules('required');
+            ->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'form_processing_fee_received_account_id', 
-            __('Form / Processing fee received account'), 
-            'admin/account-heads/create', 
+            $form,
+            'form_processing_fee_received_account_id',
+            __('Form / Processing fee received account'),
+            'admin/account-heads/create',
             '\App\AccountHead',
-            'type = \''. \App\AccountHead::CASH_BANK .'\'')
+            'type = \'' . \App\AccountHead::CASH_BANK . '\'')
             ->help('Cash or Bank Account in which amount received will be debited')
             ->rules('required');
-        
+
         $form->divider('Dealer / Commission Information');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
-            $form, 
-            'dealer_id', 
-            __('Dealer'), 
-            'admin/people/create', 
+            $form,
+            'dealer_id',
+            __('Dealer'),
+            'admin/people/create',
             '\App\Person',
-            'person_type = \'' .\App\Person::PERSON_TYPE_DEALER. '\' ');
+            'person_type = \'' . \App\Person::PERSON_TYPE_DEALER . '\' ');
 
         $form->decimal('dealer_commission_amount', __('Dealer commission amount'));
 
@@ -258,24 +248,34 @@ class BookingController extends AdminController
                 ->creationRules(['required'])
                 ->updateRules([]);
         })->mode('table');
-        
+
+        /*
+        $script = <<<SCRIPT
+        $(document).ready(function(){
+            $("[name='property_file_id']").change(function(e){
+                alert(e.target.value);
+            })
+        })
+        SCRIPT;
+        Admin::script($script);
+        */
+
         return $form;
     }
 
     public static function postToLedger(\App\Booking $model)
     {
-        if($model->id == null)
-        {
-            throw new \Exception("Booking not saved correctly", 1);   
+        if ($model->id == null) {
+            throw new \Exception("Booking not saved correctly", 1);
         }
 
         $project_id = $model->propertyFile->project_id;
         $phase_id = $model->propertyFile->phase_id;
         $ledger_id = \App\Ledger::insertOrUpdateLedger(
-            $project_id, 
-            $phase_id, 
-            $model->date, 
-            \App\Ledger::CUSTOMER_BOOKING, 
+            $project_id,
+            $phase_id,
+            $model->date,
+            \App\Ledger::CUSTOMER_BOOKING,
             $model->id
         );
 
@@ -285,8 +285,7 @@ class BookingController extends AdminController
         $file = \App\PropertyFile::find($model->property_file_id);
         $sale_price = $model->booking_type == \App\Booking::BOOKING_TYPE_INSTALLMENT ? $file->installment_price : $file->cash_price;
 
-        if($sale_price == 0)
-        {
+        if ($sale_price == 0) {
             throw new \Exception("Sale price is 0", 1);
         }
 

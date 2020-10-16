@@ -176,7 +176,7 @@ class Form implements Renderable
         'table'          => Field\Table::class,
         'timezone'       => Field\Timezone::class,
         'keyValue'       => Field\KeyValue::class,
-        'list'           => Field\ListField::class,
+        'list'           => Field\ListField::class
     ];
 
     /**

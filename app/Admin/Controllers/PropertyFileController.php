@@ -152,7 +152,7 @@ class PropertyFileController extends AdminController
 
         $marlas_options = [];
         foreach (\App\PropertyMarla::all() as $propertyMarla) {
-            $marlas_options[$propertyMarla->id] = $propertyMarla->marlas;
+            $marlas_options[$propertyMarla->marlas] = $propertyMarla->marlas;
         }
         $form->select('marlas', __('Marlas'))
             ->options($marlas_options)
