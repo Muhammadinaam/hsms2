@@ -41,7 +41,7 @@
                             $propertyFileInstalmentReceiptsTotal = 0;
                         ?>
                         @if(count($row->instalmentReceipts) > 0)
-                        <table>
+                        <table class="table table-bordered">
                             @foreach($row->instalmentReceipts as $instalmentReceipt)
                             <?php
                                 $propertyFileInstalmentReceiptsTotal += $instalmentReceipt->amount;
