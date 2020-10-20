@@ -19,6 +19,7 @@ return array(
     'AddPaymentMenu' => $baseDir . '/database/migrations/2020_09_11_015553_add_payment_menu.php',
     'AddPaymentPlanTypeIdColumn' => $baseDir . '/database/migrations/2020_08_31_164505_add_payment_plan_type_id_column.php',
     'AddPaymentPlanTypeMenuAndPermissions' => $baseDir . '/database/migrations/2020_08_31_144233_add_payment_plan_type_menu_and_permissions.php',
+    'AddPropertyInventoryReportMenu' => $baseDir . '/database/migrations/2020_10_20_152345_add_property_inventory_report_menu.php',
     'AddPropertyMarlaMenu' => $baseDir . '/database/migrations/2020_10_15_074605_add_property_marla_menu.php',
     'AddReceiptNumberColumn' => $baseDir . '/database/migrations/2020_10_16_181143_add_receipt_number_column.php',
     'AddTwoNewReports' => $baseDir . '/database/migrations/2020_10_06_061031_add_two_new_reports.php',

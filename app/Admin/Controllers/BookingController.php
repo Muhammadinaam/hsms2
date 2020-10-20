@@ -100,33 +100,14 @@ class BookingController extends AdminController
                 $old_property_file->block_id = null;
                 $old_property_file->save();
             }
+
+            $this->updateNewPropertyFile($new_property_file, $form);
         });
 
         $form->saved(function (Form $form) {
 
             $model = $form->model();
             $property_file = $model->propertyFile;
-
-            $property_file->marlas = $model->marlas;
-            $property_file->property_type_id = $model->property_type_id;
-            $property_file->is_farmhouse = $model->is_farmhouse;
-            $property_file->is_corner = $model->is_corner;
-            $property_file->is_facing_park = $model->is_facing_park;
-            $property_file->is_on_boulevard = $model->is_on_boulevard;
-            $property_file->cash_price = $model->cash_price;
-            $property_file->installment_price = $model->installment_price;
-            $property_file->cost = $model->cost;
-
-            if ($property_file->dealer_id != null) {
-                $property_file->sold_by_dealer_id = $property_file->dealer_id;
-                $property_file->dealer_id = null;
-            }
-            $property_file->holder_id = $model->customer_id;
-
-            $property_file->property_number = $model->property_number;
-            $property_file->block_id = $model->block_id;
-
-            $property_file->save();
 
             self::postToLedger($form->model());
         });
@@ -169,14 +150,15 @@ class BookingController extends AdminController
             ->options($marlas_options)
             ->rules('required');
 
-        $form->text('property_number', __('Property Number'));
+        $form->text('property_number', __('Property Number'))->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form,
             'block_id',
             __('Block'),
             'admin/blocks/create',
-            '\App\Block');
+            '\App\Block')
+            ->rules('required');
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form,
@@ -261,6 +243,30 @@ class BookingController extends AdminController
         */
 
         return $form;
+    }
+
+    public function updateNewPropertyFile($property_file, $form)
+    {
+        $property_file->marlas = $form->marlas;
+        $property_file->property_type_id = $form->property_type_id;
+        $property_file->is_farmhouse = $form->is_farmhouse == 'on';
+        $property_file->is_corner = $form->is_corner == 'on';
+        $property_file->is_facing_park = $form->is_facing_park == 'on';
+        $property_file->is_on_boulevard = $form->is_on_boulevard == 'on';
+        $property_file->cash_price = $form->cash_price;
+        $property_file->installment_price = $form->installment_price;
+        $property_file->cost = $form->cost;
+
+        if ($property_file->dealer_id != null) {
+            $property_file->sold_by_dealer_id = $property_file->dealer_id;
+            $property_file->dealer_id = null;
+        }
+        $property_file->holder_id = $form->customer_id;
+
+        $property_file->property_number = $form->property_number;
+        $property_file->block_id = $form->block_id;
+
+        $property_file->save();
     }
 
     public static function postToLedger(\App\Booking $model)

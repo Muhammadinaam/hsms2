@@ -285,4 +285,12 @@ class ReportController
             ->description('Payment Plan Letter')
             ->row(view('reports.payment_plan_letter', compact('report_data', 'message')));
     }
+
+    public function propertyInventory(Content $content)
+    {
+        return $content
+            ->title('Payment Inventory')
+            ->description('Payment Inventory')
+            ->row(view('reports.property_inventory_report'));
+    }
 }

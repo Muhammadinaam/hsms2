@@ -91,42 +91,5 @@ $files_with_possession_given_infobox = new InfoBox(
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header with-borders">
-                <h3 class="box-title">Property Inventory</h3>
-            </div>
-            <div class="box-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <th>Project</th>
-                        <th>Phase</th>
-                        <th>Marlas</th>
-                        <th>Property Type</th>
-                        <th>Farmhouse</th>
-                        <th>Corner</th>
-                        <th>Facing park</th>
-                        <th>On boulevard</th>
-                        <th>Quantity</th>
-                    </thead>
-                    <tbody>
-                        @foreach($propertyInventory as $propertyInventoryRow)
-                        <tr>
-                            <td>{{$propertyInventoryRow->project_name}}</td>
-                            <td>{{$propertyInventoryRow->phase_name}}</td>
-                            <td>{{$propertyInventoryRow->marlas}}</td>
-                            <td>{{$propertyInventoryRow->property_type_name}}</td>
-                            <td>{{$propertyInventoryRow->is_farmhouse == 1 ? 'Yes' : 'No'}}</td>
-                            <td>{{$propertyInventoryRow->is_corner == 1 ? 'Yes' : 'No'}}</td>
-                            <td>{{$propertyInventoryRow->is_facing_park == 1 ? 'Yes' : 'No'}}</td>
-                            <td>{{$propertyInventoryRow->is_on_boulevard == 1 ? 'Yes' : 'No'}}</td>
-                            <td>{{$propertyInventoryRow->quantity}}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+@component('reports.property_inventory_report_partial')
+@endcomponent
