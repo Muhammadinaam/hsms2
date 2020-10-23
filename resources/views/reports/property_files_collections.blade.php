@@ -44,7 +44,15 @@
                             $propertyFileInstalmentReceiptsTotal = 0;
                         ?>
                         @if(count($row->instalmentReceipts) > 0)
-                        <table class="table table-bordered">
+                            @foreach($row->instalmentReceipts as $instalmentReceipt)
+                            <?php
+                                $propertyFileInstalmentReceiptsTotal += $instalmentReceipt->amount;
+                            ?>
+                            @endforeach
+                            <div class="text-right">
+                                {{number_format($propertyFileInstalmentReceiptsTotal, 2)}}
+                            </div>
+                        <!-- <table class="table table-bordered">
                             @foreach($row->instalmentReceipts as $instalmentReceipt)
                             <?php
                                 $propertyFileInstalmentReceiptsTotal += $instalmentReceipt->amount;
@@ -62,7 +70,7 @@
                                     {{number_format($propertyFileInstalmentReceiptsTotal, 2)}}
                                 </td >
                             </tr>
-                        </table>
+                        </table> -->
                         @endif
                     </td>
                 </tr>
