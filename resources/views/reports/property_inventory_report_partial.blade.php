@@ -71,7 +71,7 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                         <tr>
                             <td>{{$propertyInventoryRow->project_name}}</td>
                             <td>{{$propertyInventoryRow->phase_name}}</td>
-                            <td>{{$propertyInventoryRow->marlas}}</td>
+                            <td>{{ floatval($propertyInventoryRow->marlas + 0) }}</td>
                             <td>{{$propertyInventoryRow->property_type_name}}</td>
                             <td>{{$propertyInventoryRow->is_farmhouse == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_corner == 1 ? 'Yes' : 'No'}}</td>

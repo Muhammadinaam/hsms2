@@ -34,10 +34,10 @@
                 <tr>
                     <td>{{$row->file_number}}</td>
                     <td>{{$row->block}} ({{$row->property_number}})</td>
-                    <td>{{$row->marlas}}</td>
-                    <td>{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
-                    <td>{{$row->booking_type == 'Cash' ? number_format($row->cash_price, 2) : number_format($row->installment_price, 2)}}</td>
-                    <td>{{number_format($row->dealer_commission_amount, 2)}}</td>
+                    <td class="text-center">{{floatval($row->marlas)}}</td>
+                    <td class="text-center">{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
+                    <td class="text-right">{{$row->booking_type == 'Cash' ? number_format($row->cash_price, 2) : number_format($row->installment_price, 2)}}</td>
+                    <td class="text-right">{{number_format($row->dealer_commission_amount, 2)}}</td>
                     <td class="text-right">{{number_format($row->form_processing_fee_received, 2)}}</td>
                     <td>
                         <?php
