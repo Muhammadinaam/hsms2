@@ -86,8 +86,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{{number_format($total_sale_price, 2)}}</td>
-                    <td>{{number_format($total_dealer_commission_amount, 2)}}</td>
+                    <td class="text-right">{{number_format($total_sale_price, 2)}}</td>
+                    <td class="text-right">{{number_format($total_dealer_commission_amount, 2)}}</td>
                     <td class="text-right">{{number_format($total_form_processing_fee_received, 2)}}</td>
                     <td class="text-right">{{number_format($total_instalment_receipts/2, 2)}}</td>
                 </tr>
