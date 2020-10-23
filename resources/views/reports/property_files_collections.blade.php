@@ -10,17 +10,17 @@
     </div><!-- /.box-header -->
     
     <div class="box-body" style="display: block;">
-        <table class="table table-condensed table-bordered">
+        <table style="font-size: 10px;" class="table table-condensed table-bordered">
             <thead>
                 <tr>
                     <th>File Number</th>
-                    <th>Property Number</th>
+                    <th>Block</th>
                     <th>Marlas</th>
                     <th>Booking Date</th>
-                    <th>Sale Price</th>
-                    <th>Dealer Commission</th>
-                    <th class="text-right">Form Processing Fee Received</th>
-                    <th class="text-right">Other Receipts</th>
+                    <th>Price</th>
+                    <th>Rebate</th>
+                    <th class="text-right">Processing Fee</th>
+                    <th class="text-right">Receipts</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,7 +33,7 @@
                 @foreach($report_data as $row)
                 <tr>
                     <td>{{$row->file_number}}</td>
-                    <td>{{$row->property_number}}</td>
+                    <td>{{$row->block}} ({{$row->property_number}})</td>
                     <td>{{$row->marlas}}</td>
                     <td>{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
                     <td>{{$row->booking_type == 'Cash' ? number_format($row->cash_price, 2) : number_format($row->installment_price, 2)}}</td>

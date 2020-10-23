@@ -182,11 +182,13 @@ class ReportController
         $report_data =
         \DB::table('bookings')
             ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
+            ->leftJoin('blocks', 'blocks.id', '=', 'property_files.block_id')
             ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
             ->select(
                 'bookings.date',
                 'bookings.property_file_id',
                 'property_files.property_number',
+                'blocks.name as block',
                 'property_files.file_number',
                 'property_files.marlas',
                 'bookings.form_processing_fee_received',

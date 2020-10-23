@@ -12,7 +12,9 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
     'is_corner',
     'is_facing_park',
     'is_on_boulevard',
-    \DB::raw('sum(quantity) as quantity')
+    \DB::raw('sum(if(quantity>0,quantity,0)) as total_quantity'),
+    \DB::raw('sum(if(quantity<0,-quantity,0)) as sold_quantity'),
+    \DB::raw('sum(quantity) as balance_quantity')
 )
 ->groupBy(
     'project_name',
@@ -44,7 +46,9 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                         <th>Corner</th>
                         <th>Facing park</th>
                         <th>On boulevard</th>
-                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Sold</th>
+                        <th>Balance</th>
                     </thead>
                     <tbody>
                         @foreach($propertyInventory as $propertyInventoryRow)
@@ -57,7 +61,9 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                             <td>{{$propertyInventoryRow->is_corner == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_facing_park == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_on_boulevard == 1 ? 'Yes' : 'No'}}</td>
-                            <td>{{$propertyInventoryRow->quantity}}</td>
+                            <td>{{$propertyInventoryRow->total_quantity}}</td>
+                            <td>{{$propertyInventoryRow->sold_quantity}}</td>
+                            <td>{{$propertyInventoryRow->balance_quantity}}</td>
                         </tr>
                         @endforeach
                     </tbody>
