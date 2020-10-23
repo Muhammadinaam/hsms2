@@ -12,11 +12,26 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
     'is_corner',
     'is_facing_park',
     'is_on_boulevard',
-    \DB::raw('sum(if(quantity>0,quantity,0)) as total_quantity'),
-    \DB::raw('sum(if(quantity<0,-quantity,0)) as sold_quantity'),
+    \DB::raw('sum(if( quantity>0 , quantity , 0 )) as total_quantity'),
+    \DB::raw('sum(if( quantity<0 , -quantity , 0 )) as booked_quantity'),
+    \DB::raw(
+        '(select count(*) from property_files where dealer_id is not null '.
+        'and property_files.project_id = projects.id '.
+        'and property_files.phase_id = phases.id '.
+        'and property_files.property_type_id = property_types.id '.
+        'and property_files.marlas = property_inventory_ledgers.marlas '.
+        'and property_files.is_farmhouse = property_inventory_ledgers.is_farmhouse '.
+        'and property_files.is_corner = property_inventory_ledgers.is_corner '.
+        'and property_files.is_facing_park = property_inventory_ledgers.is_facing_park '.
+        'and property_files.is_on_boulevard = property_inventory_ledgers.is_on_boulevard '.
+        ')as open_quantity '
+    ),
     \DB::raw('sum(quantity) as balance_quantity')
 )
 ->groupBy(
+    'projects.id',
+    'phases.id',
+    'property_types.id',
     'project_name',
     'phase_name',
     'property_type_name',
@@ -47,7 +62,8 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                         <th>Facing park</th>
                         <th>On boulevard</th>
                         <th>Total</th>
-                        <th>Sold</th>
+                        <th>Booked</th>
+                        <th>Open</th>
                         <th>Balance</th>
                     </thead>
                     <tbody>
@@ -62,7 +78,8 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                             <td>{{$propertyInventoryRow->is_facing_park == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_on_boulevard == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->total_quantity}}</td>
-                            <td>{{$propertyInventoryRow->sold_quantity}}</td>
+                            <td>{{$propertyInventoryRow->booked_quantity}}</td>
+                            <td>{{$propertyInventoryRow->open_quantity}}</td>
                             <td>{{$propertyInventoryRow->balance_quantity}}</td>
                         </tr>
                         @endforeach
