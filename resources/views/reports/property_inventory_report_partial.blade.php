@@ -80,7 +80,7 @@ $propertyInventory = \DB::table('property_inventory_ledgers')
                             <td>{{$propertyInventoryRow->total_quantity}}</td>
                             <td>{{$propertyInventoryRow->booked_quantity}}</td>
                             <td>{{$propertyInventoryRow->open_quantity}}</td>
-                            <td>{{$propertyInventoryRow->balance_quantity}}</td>
+                            <td>{{$propertyInventoryRow->balance_quantity - $propertyInventoryRow->open_quantity}}</td>
                         </tr>
                         @endforeach
                     </tbody>
