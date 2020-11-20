@@ -140,6 +140,7 @@ class BookingController extends AdminController
             'person_type = \'' . \App\Person::PERSON_TYPE_CUSTOMER . '\' ')
             ->rules('required');
 
+        /*
         $form->divider('Property Information');
 
         $marlas_options = [];
@@ -179,6 +180,7 @@ class BookingController extends AdminController
         $form->switch('is_corner', __('Corner'))->states($yes_no_states);
         $form->switch('is_facing_park', __('Facing park'))->states($yes_no_states);
         $form->switch('is_on_boulevard', __('On boulevard'))->states($yes_no_states);
+        */
 
         $form->divider('Price and Cost Information');
 

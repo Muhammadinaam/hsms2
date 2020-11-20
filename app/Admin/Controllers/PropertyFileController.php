@@ -30,6 +30,7 @@ class PropertyFileController extends AdminController
         $grid->column('phase.name', __('Phase'));
         
         $grid->column('file_number', __('File number'));
+        $grid->column('property_number', __('Property number'));
         $grid->column('marlas', __('Marlas'));
 
         $grid->column('propertyType.name', __('Property Type'));
@@ -145,6 +146,10 @@ class PropertyFileController extends AdminController
             'admin/phases/create', 
             '\App\Phase')
             ->rules('required');
+
+        $form->text('property_number', __('Property number'))
+            ->creationRules(['required', "unique:property_files"])
+            ->updateRules(['required', "unique:property_files,property_number,{{id}}"]);
 
         $form->text('file_number', __('File number'))
             ->creationRules(['required', "unique:property_files"])
