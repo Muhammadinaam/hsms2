@@ -37,7 +37,7 @@ $propertyInventory = \DB::table('property_files')
                         <th>Project</th>
                         <th>Phase</th>
                         <th>Block</th>
-                        <th>Marlas</th>
+                        <th>Size</th>
                         <th>Property Type</th>
                         <th>Farmhouse</th>
                         <th>Corner</th>
@@ -52,7 +52,7 @@ $propertyInventory = \DB::table('property_files')
                             <td>{{$propertyInventoryRow->project_name}}</td>
                             <td>{{$propertyInventoryRow->phase_name}}</td>
                             <td>{{$propertyInventoryRow->block_name}}</td>
-                            <td>{{ floatval($propertyInventoryRow->marlas + 0) }}</td>
+                            <td>{{ $propertyInventoryRow->marlas }}</td>
                             <td>{{$propertyInventoryRow->property_type_name}}</td>
                             <td>{{$propertyInventoryRow->is_farmhouse == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_corner == 1 ? 'Yes' : 'No'}}</td>

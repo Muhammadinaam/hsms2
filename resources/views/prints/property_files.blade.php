@@ -14,7 +14,7 @@
     <div class="text-center">
         <span class="sub-title round-border bg-gray p1">
             @if($model->marlas != null && $model->marlas != '' && $model->marlas != 0)
-            {{ $model->marlas + 0 }} Marlas - 
+            Size: {{ $model->marlas }} - 
             @endif
             @if($model->propertyType != null)
             {{ $model->propertyType->name }} Plot
