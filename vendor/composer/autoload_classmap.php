@@ -3688,6 +3688,7 @@ return array(
     'Ramsey\\Uuid\\UuidInterface' => $vendorDir . '/ramsey/uuid/src/UuidInterface.php',
     'RemoveDescriptionColumnInstalmentReceiptsTable' => $baseDir . '/database/migrations/2020_08_31_171546_remove_description_column_instalment_receipts_table.php',
     'RemoveDownpaymentFromBooking' => $baseDir . '/database/migrations/2020_10_09_093108_remove_downpayment_from_booking.php',
+    'RemovePropertyInventoryAdjustments' => $baseDir . '/database/migrations/2020_11_24_002234_remove_property_inventory_adjustments.php',
     'RemoveReceiptPaymentMenu' => $baseDir . '/database/migrations/2020_08_21_220223_remove_receipt_payment_menu.php',
     'SebastianBergmann\\CodeCoverage\\CodeCoverage' => $vendorDir . '/phpunit/php-code-coverage/src/CodeCoverage.php',
     'SebastianBergmann\\CodeCoverage\\CoveredCodeNotExecutedException' => $vendorDir . '/phpunit/php-code-coverage/src/Exception/CoveredCodeNotExecutedException.php',

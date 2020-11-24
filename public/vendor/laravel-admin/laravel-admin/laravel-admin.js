@@ -131,7 +131,17 @@ $('#totop').on('click', function (e) {
     $('html,body').animate({scrollTop: 0}, 500);
 });
 
+function hideEmptyMenus() {
+    $.each($('.treeview'), function(index, element) {
+        if ( $(element).find('.treeview-menu > li').length == 0 ) {
+            $(element).hide();
+        }
+    })
+}
+
 (function ($) {
+
+    hideEmptyMenus();
 
     var Grid = function () {
         this.selects = {};

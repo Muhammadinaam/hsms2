@@ -20,3 +20,6 @@
 
 Encore\Admin\Form::forget(['map', 'editor']);
 Admin::js('js/helpers.js');
+Admin::js('jquery-ui-1.12.1/jquery-ui.min.js');
+Admin::js('pivottable/dist/pivot.min.js');
+Admin::css('pivottable/dist/pivot.min.css');

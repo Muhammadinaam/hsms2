@@ -3,6 +3,7 @@
 namespace Encore\Admin\Auth\Database;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 trait HasPermissions
 {
@@ -38,6 +39,11 @@ trait HasPermissions
             return true;
         }
 
+        Log::debug(true);
+        Log::debug(false);
+        Log::debug($ability);
+        Log::debug($this->roles->pluck('permissions')->flatten()->pluck('slug'));
+        Log::debug($this->roles->pluck('permissions')->flatten()->pluck('slug')->contains($ability));
         return $this->roles->pluck('permissions')->flatten()->pluck('slug')->contains($ability);
     }
 

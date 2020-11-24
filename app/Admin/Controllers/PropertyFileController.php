@@ -30,6 +30,7 @@ class PropertyFileController extends AdminController
         $grid->column('phase.name', __('Phase'));
         
         $grid->column('file_number', __('File number'));
+        $grid->column('block.name', __('Block'));
         $grid->column('property_number', __('Property number'));
         $grid->column('marlas', __('Marlas'));
 
@@ -145,6 +146,14 @@ class PropertyFileController extends AdminController
             __('Phase'), 
             'admin/phases/create', 
             '\App\Phase')
+            ->rules('required');
+
+        \App\Helpers\SelectHelper::buildAjaxSelect(
+            $form, 
+            'block_id', 
+            __('Block'), 
+            'admin/blocks/create', 
+            '\App\Block')
             ->rules('required');
 
         $form->text('property_number', __('Property number'))

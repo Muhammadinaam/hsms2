@@ -41,32 +41,6 @@ $files_with_possession_given_infobox = new InfoBox(
     \App\PropertyFile::where('status', \App\Helpers\StatusesHelper::POSSESSED)
     ->count());
 
-    $propertyInventory = \DB::table('property_inventory_ledgers')
-        ->join('projects', 'projects.id', '=', 'property_inventory_ledgers.project_id')
-        ->join('phases', 'phases.id', '=', 'property_inventory_ledgers.phase_id')
-        ->join('property_types', 'property_types.id', '=', 'property_inventory_ledgers.property_type_id')
-        ->select(
-            'projects.name as project_name',
-            'phases.name as phase_name',
-            'property_types.name as property_type_name',
-            'marlas',
-            'is_farmhouse',
-            'is_corner',
-            'is_facing_park',
-            'is_on_boulevard',
-            \DB::raw('sum(quantity) as quantity')
-        )
-        ->groupBy(
-            'project_name',
-            'phase_name',
-            'property_type_name',
-            'marlas',
-            'is_farmhouse',
-            'is_corner',
-            'is_facing_park',
-            'is_on_boulevard',
-        )
-        ->get();
 
 ?>
 
