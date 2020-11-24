@@ -34,7 +34,7 @@
 <p class="text-center">{{$message}}</p>
 @endif
 
-<h3>Payment Plan</h3>
+<h3>Profile</h3>
 <p>
     <?php
         if(request()->property_file != '') 

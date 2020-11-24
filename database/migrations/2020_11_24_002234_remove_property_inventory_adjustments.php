@@ -40,7 +40,7 @@ class RemovePropertyInventoryAdjustments extends Migration
 
             $table->string('remarks');
 
-            $table->decimal("marlas", 30, 2)->nullable();
+            $table->string("marlas")->nullable();
             $table->bigInteger('property_type_id')->nullable();
             $table->boolean("is_farmhouse")->default(false);
             $table->boolean("is_corner")->default(false);
@@ -62,7 +62,7 @@ class RemovePropertyInventoryAdjustments extends Migration
 
             $table->datetime("date");
 
-            $table->decimal("marlas", 30, 2)->nullable();
+            $table->string("marlas")->nullable();
             $table->bigInteger('property_type_id')->nullable();
             $table->boolean("is_farmhouse")->default(false);
             $table->boolean("is_corner")->default(false);

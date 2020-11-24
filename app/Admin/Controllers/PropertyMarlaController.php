@@ -57,7 +57,7 @@ class PropertyMarlaController extends AdminController
     {
         $form = new Form(new PropertyMarla);
 
-        $form->decimal('marlas', __('Marlas'))->rules('required');
+        $form->text('marlas', __('Marlas'))->rules('required');
 
         return $form;
     }

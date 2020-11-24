@@ -54,7 +54,6 @@ Route::group([
     $router->get('payment-plan-letter', 'ReportController@paymentPlanLetter');
     $router->get('property-inventory', 'ReportController@propertyInventory');
 
-    $router->resource('property-inventory-adjustments', PropertyInventoryAdjustmentController::class);
     $router->resource('property-marlas', PropertyMarlaController::class);
     
     $router->resource('instalment-receipts', InstalmentReceiptController::class);
