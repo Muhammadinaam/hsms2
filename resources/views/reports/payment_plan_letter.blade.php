@@ -1,7 +1,7 @@
 @component('components.report_header')
 @endcomponent
 
-<div class="box box-default box-solid hidden-print">
+<div style="font-size: 10px;" class="box box-default box-solid hidden-print">
     <div class="box-header with-border">
         <h3 class="box-title">Filter</h3>
         <div class="box-tools pull-right">
