@@ -21,12 +21,12 @@ class CreateBookingsTable extends Migration
             $table->bigInteger("property_file_id");
 
 
-            $table->decimal("marlas", 30, 2);
+            $table->string("marlas")->nullable();
             $table->bigInteger('property_type_id');
-            $table->boolean("is_farmhouse")->default(false);
-            $table->boolean("is_corner")->default(false);
-            $table->boolean("is_facing_park")->default(false);
-            $table->boolean("is_on_boulevard")->default(false);
+            $table->boolean("is_farmhouse")->nullable();
+            $table->boolean("is_corner")->nullable();
+            $table->boolean("is_facing_park")->nullable();
+            $table->boolean("is_on_boulevard")->nullable();
             $table->decimal("cash_price", 30, 2);
             $table->decimal("installment_price", 30, 2);
             $table->decimal("cost", 30, 2);
