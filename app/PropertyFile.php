@@ -123,4 +123,11 @@ class PropertyFile extends CommonModelWithStatuses
 
         return $holder != null ? $holder : $dealer;
     }
+
+    public function getCurrentDealerAttribute()
+    {
+        $sold_by_dealer = $this->soldByDealer;
+        $dealer = $this->dealer;
+        return $sold_by_dealer != null ? $sold_by_dealer : $dealer;
+    }
 }
