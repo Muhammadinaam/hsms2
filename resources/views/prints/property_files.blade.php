@@ -16,8 +16,9 @@
         <tr>
             <td>File No.
                 <b>
-                    {{$model->file_number}}
+                    {{$model->file_number}} <br>
                 </b>
+                File Status: <b>{{ \App\Helpers\StatusesHelper::statusTitle($model->status)}}</b>
             </td>
             <td class="text-right">
                 Plot Number: 
@@ -216,7 +217,12 @@
     </div>
     
     <br>
-    <div class="round-border p3">
+    <p>
+    This allotment is provisional and subject to the acceptance of the terms and conditions.
+    <br><br>
+    The Management of New Depalpur City Housing Scheme reserves the right to cancel / alter the location and dimensions until physical possession of the plot is handed over.
+    </p>
+    <!-- <div class="round-border p3">
         <span class="round-border bg-gray p1">
             Other Information
         </span>
@@ -237,6 +243,6 @@
             </p>
         </div>
         
-    </div>
+    </div> -->
 
 @endsection
