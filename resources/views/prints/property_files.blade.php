@@ -11,16 +11,6 @@
     </p>
 
     <br>
-    <div class="text-center">
-        <span class="sub-title round-border bg-gray p1">
-            @if($model->marlas != null && $model->marlas != '' && $model->marlas != 0)
-            Size: {{ $model->marlas }} - 
-            @endif
-            @if($model->propertyType != null)
-            {{ $model->propertyType->name }} Plot
-            @endif
-        </span>
-    </div>
 
     <table class="full-width">
         <tr>
@@ -30,10 +20,18 @@
                 </b>
             </td>
             <td class="text-right">
-                Plot: 
+                Plot Number: 
                 <b>
                     @if($model->property_number != null)
                     {{$model->property_number}}
+                    @else
+                    _______
+                    @endif
+                </b> <br>
+                Plot Size: 
+                <b>
+                    @if($model->marlas != null)
+                    {{$model->marlas}}
                     @else
                     _______
                     @endif
@@ -53,7 +51,7 @@
     <br>
     <div class="round-border p3">
         <span class="round-border bg-gray p1">
-            Preference Location 10%
+            Preference Location
         </span>
 
         <table style="margin-top: 15px;" class="full-width">
