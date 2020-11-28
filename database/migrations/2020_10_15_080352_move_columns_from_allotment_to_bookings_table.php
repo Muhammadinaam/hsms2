@@ -14,8 +14,8 @@ class MoveColumnsFromAllotmentToBookingsTable extends Migration
     public function up()
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->string('property_number');
-            $table->bigInteger('block_id');
+            $table->string('property_number')->nullable();
+            $table->bigInteger('block_id')->nullable();
         });
 
         Schema::table('allotments', function (Blueprint $table) {

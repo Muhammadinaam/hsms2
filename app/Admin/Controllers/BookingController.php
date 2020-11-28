@@ -382,26 +382,5 @@ class BookingController extends AdminController
             -$commission_amount
         );
 
-        // property inventory
-        \App\PropertyInventoryLedger::where('entry_type', \App\PropertyInventoryLedger::BOOKING)
-            ->where('entry_id', $model->id)
-            ->delete();
-
-        $propertyInventoryLedger = new \App\PropertyInventoryLedger();
-        $propertyInventoryLedger->date = $model->date;
-        $propertyInventoryLedger->entry_id = $model->id;
-        $propertyInventoryLedger->entry_type = \App\PropertyInventoryLedger::BOOKING;
-        $propertyInventoryLedger->project_id = $project_id;
-        $propertyInventoryLedger->phase_id = $phase_id;
-        $propertyInventoryLedger->remarks = 'Customer booking';
-        $propertyInventoryLedger->marlas = $model->marlas;
-        $propertyInventoryLedger->property_type_id = $model->property_type_id;
-        $propertyInventoryLedger->is_farmhouse = $model->is_farmhouse;
-        $propertyInventoryLedger->is_corner = $model->is_corner;
-        $propertyInventoryLedger->is_facing_park = $model->is_facing_park;
-        $propertyInventoryLedger->is_on_boulevard = $model->is_on_boulevard;
-        $propertyInventoryLedger->quantity = -1;
-        $propertyInventoryLedger->save();
-
     }
 }
