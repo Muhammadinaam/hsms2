@@ -22,7 +22,7 @@ class CreateBookingsTable extends Migration
 
 
             $table->string("marlas")->nullable();
-            $table->bigInteger('property_type_id');
+            $table->bigInteger('property_type_id')->nullable();
             $table->boolean("is_farmhouse")->nullable();
             $table->boolean("is_corner")->nullable();
             $table->boolean("is_facing_park")->nullable();
