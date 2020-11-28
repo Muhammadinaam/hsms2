@@ -64,7 +64,7 @@
                         <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
                     </tr>
                     <tr>
-                        <td>Date:</td><td>{{$property_file->booking != null ? \Carbon\Carbon::parse($property_file->booking->date)->format('d-M-Y') : ''}}</td>
+                        <td>Booking Date:</td><td>{{$property_file->booking != null ? \Carbon\Carbon::parse($property_file->booking->date)->format('d-M-Y') : ''}}</td>
                         <td>Dealer:</td><td>{{$property_file->current_dealer != null ? $property_file->current_dealer->business_name : '-'}}</td>
                     </tr>
                 </table>
