@@ -16,8 +16,8 @@
                 <label>Property File</label>
                 <select class="form-control" name="property_file">
                     <option value="">-</option>
-                    @foreach(\App\PropertyFile::orderBy('file_number')->get() as $property_file)
-                    <option value="{{$property_file->id}}" {{$property_file->id == request()->property_file ? 'selected' : ''}}> {{$property_file->file_number}}</option>
+                    @foreach(\App\PropertyFile::orderBy('file_number')->get() as $p_file)
+                    <option value="{{$p_file->id}}" {{$p_file->id == request()->property_file ? 'selected' : ''}}> {{$p_file->file_number}}</option>
                     @endforeach
                 </select>
             </div>
