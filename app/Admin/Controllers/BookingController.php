@@ -249,12 +249,13 @@ class BookingController extends AdminController
 
     public function updateNewPropertyFile($property_file, $form)
     {
-        $property_file->marlas = $form->marlas;
-        $property_file->property_type_id = $form->property_type_id;
-        $property_file->is_farmhouse = $form->is_farmhouse == 'on';
-        $property_file->is_corner = $form->is_corner == 'on';
-        $property_file->is_facing_park = $form->is_facing_park == 'on';
-        $property_file->is_on_boulevard = $form->is_on_boulevard == 'on';
+        // $property_file->marlas = $form->marlas;
+        // $property_file->property_type_id = $form->property_type_id;
+        // $property_file->is_farmhouse = $form->is_farmhouse == 'on';
+        // $property_file->is_corner = $form->is_corner == 'on';
+        // $property_file->is_facing_park = $form->is_facing_park == 'on';
+        // $property_file->is_on_boulevard = $form->is_on_boulevard == 'on';
+        
         $property_file->cash_price = $form->cash_price;
         $property_file->installment_price = $form->installment_price;
         $property_file->cost = $form->cost;
