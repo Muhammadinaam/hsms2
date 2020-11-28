@@ -38,7 +38,7 @@
 
 @if(isset($property_file))
 <div class="">
-    <table class="table">
+    <table style="font-size: 10px;" class="table table-small table-sm table-condensed">
         <tr>
             <td>
                 <table class="table">
