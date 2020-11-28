@@ -255,6 +255,8 @@ class BookingController extends AdminController
         // $property_file->is_corner = $form->is_corner == 'on';
         // $property_file->is_facing_park = $form->is_facing_park == 'on';
         // $property_file->is_on_boulevard = $form->is_on_boulevard == 'on';
+        // $property_file->property_number = $form->property_number;
+        // $property_file->block_id = $form->block_id;
         
         $property_file->cash_price = $form->cash_price;
         $property_file->installment_price = $form->installment_price;
@@ -265,9 +267,6 @@ class BookingController extends AdminController
             $property_file->dealer_id = null;
         }
         $property_file->holder_id = $form->customer_id;
-
-        $property_file->property_number = $form->property_number;
-        $property_file->block_id = $form->block_id;
 
         $property_file->save();
     }
