@@ -1,7 +1,7 @@
 @component('components.report_header')
 @endcomponent
 
-<div style="font-size: 12px;" class="box box-default box-solid hidden-print">
+<div style="font-size: 10px;" class="box box-default box-solid hidden-print">
     <div class="box-header with-border">
         <h3 class="box-title">Filter</h3>
         <div class="box-tools pull-right">
@@ -38,7 +38,7 @@
 
 @if(isset($property_file))
 <div class="">
-    <table style="font-size: 12px;" class="table table-small table-sm table-condensed">
+    <table style="font-size: 10px;" class="table table-bordered table-small table-sm table-condensed">
         <tr>
             <td>
                 <table class="table">
@@ -52,19 +52,19 @@
             <td>
                 <table class="table">
                     <tr>
-                        <td>Customer Name:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->name : ''}}</td>
+                        <td>Name:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->name : ''}}</td>
                         <td>Block:</td><td>{{$property_file->block != null ? $property_file->block->name : ''}}</td>
                     </tr>
                     <tr>
-                        <td>Customer Address:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->address : ''}}</td>
+                        <td>Address:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->address : ''}}</td>
                         <td>Plot Number:</td><td>{{$property_file->property_number}}</td>
                     </tr>
                     <tr>
-                        <td>Customer Contact:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->phone : ''}}</td>
+                        <td>Contact:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->phone : ''}}</td>
                         <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
                     </tr>
                     <tr>
-                        <td>Booking Date:</td><td>{{$property_file->booking != null ? \Carbon\Carbon::parse($property_file->booking->date)->format('d-M-Y') : ''}}</td>
+                        <td>Date:</td><td>{{$property_file->booking != null ? \Carbon\Carbon::parse($property_file->booking->date)->format('d-M-Y') : ''}}</td>
                         <td>Dealer:</td><td>{{$property_file->current_dealer != null ? $property_file->current_dealer->business_name : '-'}}</td>
                     </tr>
                 </table>
@@ -88,7 +88,7 @@
     ?>
 </p>
 
-<table style="font-size: 12px;" class="table table-bordered table-small table-sm table-condensed">
+<table style="font-size: 10px;" class="table table-bordered table-small table-sm table-condensed">
     <thead>
         <th class="text-center">Instalment Type</th>
         <th class="text-center">Date</th>
