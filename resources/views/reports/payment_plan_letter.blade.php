@@ -43,7 +43,6 @@
             <td>
                 <table class="table">
                     <tr>
-                        <td>Customer Picture:</td>
                         <td>
                             <img width="100px" src="{{$property_file->current_holder != null ? asset('uploads/' . $property_file->current_holder->picture) : ''}}">
                         </td>

@@ -79,7 +79,7 @@
 
         <table style="margin-top: 15px;" class="full-width">
             <tr>
-                <td>Picture:</td> 
+                <td></td> 
                 <td>
                     @if($model->holder_id != null)
                     <img src="{{asset('uploads/'. $model->holder->picture)}}" style="max-width: 80px;">
