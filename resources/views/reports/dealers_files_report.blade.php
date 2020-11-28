@@ -42,22 +42,32 @@
         <table class="table table-condensed table-bordered">
             <thead>
                 <tr>
-                    <th>Dealer</th>
+                    <!-- <th>Dealer</th> -->
                     <th>File Number</th>
+                    <th>Block</th>
+                    <th>Plot Size</th>
+                    <th>Plot Number</th>
+                    <th>Collection (Receipts)</th>
+                    <th>Rebate</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($report_data as $dealer_id => $dealer_files)
                 <tr class="bg-info">
-                    <td colspan="100">
-                        <b>{{\App\Person::find($dealer_id)->name}}, {{\App\Person::find($dealer_id)->business_name}}</b>
+                    <td colspan="100" class="text-center">
+                        <h3>{{\App\Person::find($dealer_id)->name}}, {{\App\Person::find($dealer_id)->business_name}}</h3>
                         (Total Files: {{count($dealer_files)}})
                     </td>
                 </tr>
                     @foreach($dealer_files as $dealer_file)
                     <tr>
-                        <td>{{$dealer_file->dealer->text_for_select}}</td>
-                        <td>{{$dealer_file->file_number}}</td>
+                        <!-- <td>{{$dealer_file->dealer->text_for_select}}</td> -->
+                        <td class="text-center">{{$dealer_file->file_number}}</td>
+                        <td class="text-center">{{$dealer_file->block->name}}</td>
+                        <td class="text-center">{{$dealer_file->marlas}}</td>
+                        <td class="text-center">{{$dealer_file->property_number}}</td>
+                        <td class="text-center">{{$dealer_file->total_installment_receipts}}</td>
+                        <td class="text-center">{{$dealer_file->booking != null ? $dealer_file->booking->dealer_commission_amount : '-'}}</td>
                     </tr>
                     @endforeach
                 @endforeach

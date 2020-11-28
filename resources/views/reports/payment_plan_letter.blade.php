@@ -34,7 +34,29 @@
 <p class="text-center">{{$message}}</p>
 @endif
 
-<h3>Profile</h3>
+<h3>Customer Profile (Payment Plan)</h3>
+
+@if(isset($property_file))
+<table class="table table-bordered">
+    <tr>
+        <td>Customer Name:</td><td>{{$property_file->holder != null ? $property_file->holder->name : ''}}</td>
+        <td>Block:</td><td>{{$property_file->block != null ? $property_file->block->name : ''}}</td>
+    </tr>
+    <tr>
+        <td>Customer Address:</td><td>{{$property_file->holder != null ? $property_file->holder->address : ''}}</td>
+        <td>Plot Number:</td><td>{{$property_file->property_number}}</td>
+    </tr>
+    <tr>
+        <td>Customer Contact:</td><td>{{$property_file->holder != null ? $property_file->holder->phone : ''}}</td>
+        <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
+    </tr>
+    <tr>
+        <td>Booking Date:</td><td>{{$property_file->booking != null ? $property_file->booking->date : ''}}</td>
+        <td>Dealer:</td><td>{{$property_file->dealer != null ? $property_file->dealer->name : ''}}</td>
+    </tr>
+</table>
+@endif
+
 <p>
     <?php
         if(request()->property_file != '') 

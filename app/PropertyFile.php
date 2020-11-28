@@ -49,6 +49,11 @@ class PropertyFile extends CommonModelWithStatuses
         return $this->belongsTo('\App\Project');
     }
 
+    public function booking()
+    {
+        return $this->hasOne('\App\Booking');
+    }
+
     public function phase()
     {
         return $this->belongsTo('\App\Phase');
@@ -91,5 +96,23 @@ class PropertyFile extends CommonModelWithStatuses
         return $query->where('status', \App\Helpers\StatusesHelper::AVAILABLE)
         ->whereNull('holder_id')
         ->whereNotNull('dealer_id');
+    }
+
+    public function instalmentReceipts()
+    {
+        return $this->hasMany('\App\InstalmentReceipt');
+    }
+
+    public function getTotalInstallmentReceiptsAttribute()
+    {
+        $total = 0;
+
+        foreach ($this->instalmentReceipts as $instalmentReceipt) {
+            foreach ($instalmentReceipt->instalmentReceiptDetails as $instalmentReceiptDetail) {
+                $total += $instalmentReceiptDetail->amount;
+            }
+        }
+
+        return $total;
     }
 }

@@ -218,6 +218,7 @@ class ReportController
     {
         $report_data = [];
         $message = '';
+        $property_file = \App\PropertyFile::find(request()->property_file);
 
         if (request()->property_file != '') {
             $payment_plan = \App\PaymentPlan::where('property_file_id', request()->property_file)->first();
@@ -285,7 +286,7 @@ class ReportController
         return $content
             ->title('Payment Plan Letter')
             ->description('Payment Plan Letter')
-            ->row(view('reports.payment_plan_letter', compact('report_data', 'message')));
+            ->row(view('reports.payment_plan_letter', compact('report_data', 'message', 'property_file')));
     }
 
     public function propertyInventory(Content $content)
