@@ -115,4 +115,12 @@ class PropertyFile extends CommonModelWithStatuses
 
         return $total;
     }
+
+    public function getCurrentHolderAttribute()
+    {
+        $dealer = $this->dealer;
+        $holder = $this->holder;
+
+        return $holder != null ? $holder : $dealer;
+    }
 }

@@ -37,24 +37,43 @@
 <h3>Customer Profile (Payment Plan)</h3>
 
 @if(isset($property_file))
-<table class="table table-bordered">
-    <tr>
-        <td>Customer Name:</td><td>{{$property_file->holder != null ? $property_file->holder->name : ''}}</td>
-        <td>Block:</td><td>{{$property_file->block != null ? $property_file->block->name : ''}}</td>
-    </tr>
-    <tr>
-        <td>Customer Address:</td><td>{{$property_file->holder != null ? $property_file->holder->address : ''}}</td>
-        <td>Plot Number:</td><td>{{$property_file->property_number}}</td>
-    </tr>
-    <tr>
-        <td>Customer Contact:</td><td>{{$property_file->holder != null ? $property_file->holder->phone : ''}}</td>
-        <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
-    </tr>
-    <tr>
-        <td>Booking Date:</td><td>{{$property_file->booking != null ? $property_file->booking->date : ''}}</td>
-        <td>Dealer:</td><td>{{$property_file->dealer != null ? $property_file->dealer->name : ''}}</td>
-    </tr>
-</table>
+<div class="">
+    <table class="table">
+        <tr>
+            <td>
+                <table class="table">
+                    <tr>
+                        <td>Customer Picture:</td>
+                        <td>
+                            <img width="100px" src="{{$property_file->current_holder != null ? asset('uploads/' . $property_file->current_holder->picture) : ''}}">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="table">
+                    <tr>
+                        <td>Customer Name:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->name : ''}}</td>
+                        <td>Block:</td><td>{{$property_file->block != null ? $property_file->block->name : ''}}</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Address:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->address : ''}}</td>
+                        <td>Plot Number:</td><td>{{$property_file->property_number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Contact:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->phone : ''}}</td>
+                        <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
+                    </tr>
+                    <tr>
+                        <td>Booking Date:</td><td>{{$property_file->booking != null ? $property_file->booking->date : ''}}</td>
+                        <td>Dealer:</td><td>{{$property_file->dealer != null ? $property_file->dealer->name : ''}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</div>
 @endif
 
 <p>
@@ -68,20 +87,6 @@
             $dealer = $property_file->dealer;
         }
     ?>
-    @if(isset($property_file))
-    Property {{ $property_file->text_for_select }} <br>
-        @if(isset($holder))
-            Holder Name: {{ $holder->name }} <br>
-            Holder Phone: {{ $holder->phone }} <br>
-        @endif
-        @if(isset($dealer))
-            Dealer Name: {{ $dealer->name }} <br>
-            Dealer Phone: {{ $dealer->phone }} <br>
-        @endif
-        @if(isset($booking) && $booking != null)
-            Booking Date: {{\Carbon\Carbon::parse($booking->date)->format('d-M-Y')}}
-        @endif
-    @endif
 </p>
 
 <table class="table table-bordered">
