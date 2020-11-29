@@ -180,8 +180,8 @@ class ReportController
     public function propertyFilesCollections(Content $content)
     {
         $report_data =
-        \DB::table('bookings')
-            ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
+        \DB::table('property_files')
+            ->leftJoin('bookings', 'bookings.property_file_id', '=', 'property_files.id')
             ->leftJoin('blocks', 'blocks.id', '=', 'property_files.block_id')
             ->leftJoin('property_types', 'property_types.id', '=', 'property_files.property_type_id')
             ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
