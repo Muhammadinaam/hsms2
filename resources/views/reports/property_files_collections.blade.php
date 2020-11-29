@@ -34,9 +34,9 @@
                 ?>
                 @foreach($report_data as $row)
                 <tr>
-                    <td>{{$row->file_number}}</td>
+                    <td class="text-center">{{$row->file_number}}</td>
                     <td>{{$row->block}}</td>
-                    <td>{{$row->property_number}}</td>
+                    <td class="text-center">{{$row->property_number}}</td>
                     <td class="text-center">{{$row->marlas}}</td>
                     <td class="text-center">{{$row->property_type}}</td>
                     <td class="text-center">{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
