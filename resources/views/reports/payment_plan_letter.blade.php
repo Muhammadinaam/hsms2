@@ -37,6 +37,7 @@
 <h3>Customer Profile (Payment Plan)</h3>
 
 @if(isset($property_file))
+<h4>File Number: {{$property_file->file_number}}</h4>
 <div class="">
     <table style="font-size: 10px;" class="table table-bordered table-small table-sm table-condensed">
         <tr>
