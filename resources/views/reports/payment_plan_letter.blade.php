@@ -68,6 +68,21 @@
                         <td>Booking Date:</td><td>{{$property_file->booking != null ? \Carbon\Carbon::parse($property_file->booking->date)->format('d-M-Y') : ''}}</td>
                         <td>Dealer:</td><td>{{$property_file->current_dealer != null ? $property_file->current_dealer->business_name : '-'}}</td>
                     </tr>
+                    <tr>
+                        <td>Property Type:</td><td>{{$property_file->propertyType != null ? $property_file->propertyType->name : ''}}</td>
+                        <td>Preference Location:</td>
+                            <td>
+                                <span>Boulevard &nbsp;
+                                    <i class="{{ $property_file->is_on_boulevard == 1 ? 'fa fa-check-square-o' : 'fa fa-minus-square-o' }}"></i>
+                                </span> &nbsp; &nbsp; &nbsp; &nbsp;
+                                <span>Facing Park &nbsp;
+                                    <i class="{{ $property_file->is_facing_park == 1 ? 'fa fa-check-square-o' : 'fa fa-minus-square-o' }}"></i>
+                                </span> &nbsp; &nbsp; &nbsp; &nbsp;
+                                <span>Corner &nbsp;
+                                    <i class="{{ $property_file->is_corner == 1 ? 'fa fa-check-square-o' : 'fa fa-minus-square-o' }}"></i>
+                                </span>
+                            </td>
+                    </tr>
                 </table>
             </td>
         </tr>
