@@ -15,7 +15,9 @@
                 <tr>
                     <th>File Number</th>
                     <th>Block</th>
-                    <th>Marlas</th>
+                    <th>Property No.</th>
+                    <th>Plot Size</th>
+                    <th>Property Type</th>
                     <th>Booking Date</th>
                     <th>Price</th>
                     <th>Rebate</th>
@@ -33,8 +35,10 @@
                 @foreach($report_data as $row)
                 <tr>
                     <td>{{$row->file_number}}</td>
-                    <td>{{$row->block}} ({{$row->property_number}})</td>
-                    <td class="text-center">{{floatval($row->marlas)}}</td>
+                    <td>{{$row->block}}</td>
+                    <td>{{$row->property_number}}</td>
+                    <td class="text-center">{{$row->marlas}}</td>
+                    <td class="text-center">{{$row->property_type}}</td>
                     <td class="text-center">{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
                     <td class="text-right">{{$row->booking_type == 'Cash' ? number_format($row->cash_price, 2) : number_format($row->installment_price, 2)}}</td>
                     <td class="text-right">{{number_format($row->dealer_commission_amount, 2)}}</td>

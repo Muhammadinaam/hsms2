@@ -183,6 +183,7 @@ class ReportController
         \DB::table('bookings')
             ->join('property_files', 'bookings.property_file_id', '=', 'property_files.id')
             ->leftJoin('blocks', 'blocks.id', '=', 'property_files.block_id')
+            ->leftJoin('property_types', 'property_types.id', '=', 'property_files.property_type_id')
             ->where('bookings.status', '<>', \App\Helpers\StatusesHelper::CANCELLED)
             ->select(
                 'bookings.date',
@@ -196,6 +197,7 @@ class ReportController
                 'bookings.booking_type',
                 'bookings.cash_price',
                 'bookings.installment_price',
+                'property_types.name as property_type'
             )
             ->get();
 
