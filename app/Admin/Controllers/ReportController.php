@@ -111,7 +111,9 @@ class ReportController
         }
         $report_data = $report_data->with(['dealer', 'soldByDealer'])->get();//->groupBy('dealer_id');
         foreach ($report_data as $index => $report_item) {
-            $report_data[$index]->dealer_id_or_sold_by_dealer_id = $report_item->dealer_id;
+            $report_data[$index]->dealer_id_or_sold_by_dealer_id = 
+                $report_item->dealer_id != null && $report_item->dealer_id != '' ? $report_item->dealer_id : 
+                $report_item->sold_by_dealer_id;
         }
 
         $report_data->groupBy('dealer_id_or_sold_by_dealer_id');
