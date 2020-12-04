@@ -62,7 +62,6 @@
                 </tr>
                     @foreach($dealer_files as $dealer_file)
                     <tr>
-                        <!-- <td>{{$dealer_file->dealer->text_for_select}}</td> -->
                         <td class="text-center">{{$dealer_file->file_number}}</td>
                         <td class="text-center">{{ $dealer_file->block != null ? $dealer_file->block->name : ''}}</td>
                         <td class="text-center">{{$dealer_file->marlas}}</td>
