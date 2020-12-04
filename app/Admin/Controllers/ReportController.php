@@ -116,8 +116,8 @@ class ReportController
                 $report_item->sold_by_dealer_id;
         }
 
-        $report_data->groupBy('dealer_id_or_sold_by_dealer_id');
-
+        $report_data = $report_data->groupBy('dealer_id_or_sold_by_dealer_id');
+dd($report_data);
         return $content
             ->title('Dealers Files Report')
             ->description('Report of Files Given to Dealers')
