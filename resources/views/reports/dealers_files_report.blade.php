@@ -49,6 +49,7 @@
                     <th>Plot Number</th>
                     <th>Collection (Receipts)</th>
                     <th>Rebate</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
                         <td class="text-center">{{$dealer_file->property_number}}</td>
                         <td class="text-center">{{$dealer_file->total_installment_receipts}}</td>
                         <td class="text-center">{{$dealer_file->booking != null ? $dealer_file->booking->dealer_commission_amount : '-'}}</td>
+                        <td class="text-center">{{$dealer_file->getOpenOrOtherStatus()}}</td>
                     </tr>
                     @endforeach
                 @endforeach
