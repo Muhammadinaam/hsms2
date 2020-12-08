@@ -74,11 +74,11 @@
         </tr>
         @endforeach
         <tr class="tr-bordered" style="font-weight: bold;">
-            <td>Fine</td>
+            <td>Fine (if any)</td>
             <td class="text-right">{{number_format($model->fine_amount, 2)}}</td>
         </tr>
         <tr class="tr-bordered" style="font-weight: bold;">
-            <td>Total</td>
+            <td>Total Amount</td>
             <td class="text-right">{{number_format($total + $model->fine_amount, 2)}}</td>
         </tr>
     </table>
@@ -93,9 +93,12 @@
         Prepared By
     </span> -->
 
+    <br><br><br>
     <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
-    <!-- <span style="border-top: 1px solid black; padding-top: 3px">
-        Received By
-    </span> -->
+    <div style="text-align: right;">
+        <span style="border-top: 1px solid black; padding-top: 3px">
+            Received By
+        </span>
+    </div>
 
 @endsection
