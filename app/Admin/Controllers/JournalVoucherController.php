@@ -33,6 +33,13 @@ class JournalVoucherController extends AdminController
 
         \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
 
+        $grid->filter(function($filter){
+        
+            // Add a column filter
+            $filter->date('date', __('Date'));
+        
+        });
+
         return $grid;
     }
 

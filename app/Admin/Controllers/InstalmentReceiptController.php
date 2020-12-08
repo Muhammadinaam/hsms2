@@ -32,6 +32,23 @@ class InstalmentReceiptController extends AdminController
         $grid->column('description', __('Description'));
         $grid->column('fine_amount', __('Fine amount'));
 
+        \App\Helpers\GeneralHelpers::setGridRowActions($grid, true, true, true, true);
+
+        $grid->filter(function($filter){
+        
+            // Add a column filter
+            $filter->date('date', __('Date'));
+
+            $filter->where(function ($query) {
+
+                $query->whereHas('propertyFile', function ($query) {
+                    $query->where('file_number', 'like', "%{$this->input}%");
+                });
+            
+            }, 'File Number');
+        
+        });
+
         return $grid;
     }
 

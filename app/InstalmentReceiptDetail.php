@@ -12,4 +12,9 @@ class InstalmentReceiptDetail extends Model
         'amount',
         'payment_plan_type_id'
     ];
+
+    public function paymentPlanType()
+    {
+        return $this->belongsTo('\App\PaymentPlanType');
+    }
 }

@@ -15,4 +15,14 @@ class InstalmentReceipt extends CommonModel
     {
         return $this->hasMany('\App\InstalmentReceiptDetail');
     }
+
+    public function project()
+    {
+        return $this->belongsTo('\App\Project');
+    }
+
+    public function phase()
+    {
+        return $this->belongsTo('\App\Phase');
+    }
 }
