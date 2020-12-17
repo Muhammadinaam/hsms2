@@ -21,6 +21,7 @@ $propertyInventory = \DB::table('property_files')
         'property_files.holder_id',
         'property_files.dealer_id',
         'property_files.property_number',
+        'property_files.file_number',
         'dealers.name as dealer_name',
         'dealers.business_name as dealer_business_name',
         'holders.name as holder_name',
@@ -50,6 +51,7 @@ $propertyInventory = \DB::table('property_files')
                         <th>Size</th>
                         <th>Property Type</th>
                         <th>Property Number</th>
+                        <th>File Number</th>
                         <th>Farmhouse</th>
                         <th>Corner</th>
                         <th>Facing park</th>
@@ -69,6 +71,7 @@ $propertyInventory = \DB::table('property_files')
                             <td>{{ $propertyInventoryRow->marlas }}</td>
                             <td>{{$propertyInventoryRow->property_type_name}}</td>
                             <td>{{$propertyInventoryRow->property_number}}</td>
+                            <td>{{$propertyInventoryRow->file_number}}</td>
                             <td>{{$propertyInventoryRow->is_farmhouse == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_corner == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->is_facing_park == 1 ? 'Yes' : 'No'}}</td>
