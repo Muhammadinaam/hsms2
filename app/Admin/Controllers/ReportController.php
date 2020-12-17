@@ -104,15 +104,35 @@ class ReportController
 
     public function dealersFilesReport(Content $content)
     {
-        $report_data = [];
-        $dealer_id = request()->person;
+        $report_data = new \App\PropertyFile();
+        $dealer_id = request()->dealer;
+        $file_number = request()->file_number;
+        $property_marla = request()->property_marla;
+        $property_number = request()->property_number;
+        $block = request()->block;
 
-        if (request()->person != '') {
-            $report_data = \App\PropertyFile::where('dealer_id', $dealer_id)
+        if ($dealer_id != '') {
+            $report_data = $report_data->where('dealer_id', $dealer_id)
                 ->orWhere('sold_by_dealer_id', $dealer_id);
-
-            $report_data = $report_data->get();
         }
+
+        if ($file_number != '') {
+            $report_data = $report_data->where('file_number', 'like', '%'.$file_number.'%' );
+        }
+
+        if ($property_marla != '') {
+            $report_data = $report_data->where('marlas', $property_marla);
+        }
+
+        if ($property_number != '') {
+            $report_data = $report_data->where('property_number', $property_number);
+        }
+
+        if ($block != '') {
+            $report_data = $report_data->where('block_id', $block);
+        }
+
+        $report_data = $report_data->get();
 
         return $content
             ->title('Dealers Files Report')
