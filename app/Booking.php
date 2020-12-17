@@ -27,7 +27,7 @@ class Booking extends CommonModelWithStatuses
             ->where(function($query) use ($search_term) {
 
                 $query->orWhereHas('propertyFile', function($query) use ($search_term) {
-                    $query->orWhere('file_number', 'like', '%'.$search_term.'%');
+                    $query->where('file_number', 'like', '%'.$search_term.'%');
                 })
                 
                 ->orWhereHas('customer', function($query) use ($search_term) {
