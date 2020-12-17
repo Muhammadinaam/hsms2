@@ -30,6 +30,7 @@
     </div><!-- /.box-body -->
 </div>
 
+@if(request()->person != null && request()->person != '')
 <div class="box box-primary box-solid">
     <div class="box-header with-border">
         <h3 class="box-title">Dealers Files Report</h3>
@@ -77,3 +78,6 @@
 
     </div><!-- /.box-body -->
 </div>
+@else
+<h3 class="text-center">Please select Person</h3>
+@endif

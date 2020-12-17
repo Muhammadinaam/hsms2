@@ -62,6 +62,13 @@ class PropertyFileController extends AdminController
             // Add a column filter
             $filter->like('file_number', 'File Number');
 
+            $filter->like('block.name', 'Block');
+            $filter->like('property_number', 'Property Number');
+            $filter->like('marlas', 'Size');
+            $filter->like('holder.name', 'Holder Name');
+            $filter->like('dealer.name', 'Dealer Name');
+            $filter->like('soldByDealer.name', 'Sold By Dealer Name');
+
             $filter->where(function ($query) {
 
                 foreach ($this->input as $statusFilterValue) {

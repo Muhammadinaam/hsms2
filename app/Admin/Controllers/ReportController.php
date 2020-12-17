@@ -107,7 +107,9 @@ class ReportController
         $report_data = \App\PropertyFile::whereNotNull('dealer_id')->orWhereNotNull('sold_by_dealer_id');
 
         if (request()->person != '') {
-            $report_data = $report_data->where('dealer_id', request()->person)->orWhere('sold_by_dealer_id');
+            $report_data = $report_data
+                ->where('dealer_id', request()->person)
+                ->orWhere('sold_by_dealer_id', request()->person);
         }
         $report_data = $report_data->with(['dealer', 'soldByDealer'])->get();//->groupBy('dealer_id');
         foreach ($report_data as $index => $report_item) {
