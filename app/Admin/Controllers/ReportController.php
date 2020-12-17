@@ -104,17 +104,14 @@ class ReportController
 
     public function dealersFilesReport(Content $content)
     {
-        $report_data = \App\PropertyFile::whereNotNull('dealer_id')->orWhereNotNull('sold_by_dealer_id');
+        $report_data = [];
         $dealer_id = request()->person;
 
         if (request()->person != '') {
-            $report_data = $report_data
-                ->where('dealer_id', $dealer_id)
+            $report_data = \App\PropertyFile::where('dealer_id', $dealer_id)
                 ->orWhere('sold_by_dealer_id', $dealer_id);
 
             $report_data = $report_data->get();
-        } else {
-            $report_data = [];
         }
 
         return $content
