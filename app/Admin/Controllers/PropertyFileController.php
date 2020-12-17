@@ -184,7 +184,8 @@ class PropertyFileController extends AdminController
             'property_type_id', 
             __('Property type'), 
             'admin/property-types/create', 
-            '\App\PropertyType');
+            '\App\PropertyType')
+            ->rules('required');
 
         $yes_no_states = [
             'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
