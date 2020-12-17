@@ -308,25 +308,5 @@ class BookingCancellationController extends AdminController
             );
         }
 
-        // property inventory
-        \App\PropertyInventoryLedger::where('entry_type', \App\PropertyInventoryLedger::BOOKING_CANCELLATION)
-            ->where('entry_id', $model->id)
-            ->delete();
-
-        $propertyInventoryLedger = new \App\PropertyInventoryLedger();
-        $propertyInventoryLedger->date = $model->date;
-        $propertyInventoryLedger->entry_id = $model->id;
-        $propertyInventoryLedger->entry_type = \App\PropertyInventoryLedger::BOOKING_CANCELLATION;
-        $propertyInventoryLedger->project_id = $project_id;
-        $propertyInventoryLedger->phase_id = $phase_id;
-        $propertyInventoryLedger->remarks = 'Customer booking cancellation';
-        $propertyInventoryLedger->marlas = $booking->marlas;
-        $propertyInventoryLedger->property_type_id = $booking->property_type_id;
-        $propertyInventoryLedger->is_farmhouse = $booking->is_farmhouse;
-        $propertyInventoryLedger->is_corner = $booking->is_corner;
-        $propertyInventoryLedger->is_facing_park = $booking->is_facing_park;
-        $propertyInventoryLedger->is_on_boulevard = $booking->is_on_boulevard;
-        $propertyInventoryLedger->quantity = 1;
-        $propertyInventoryLedger->save();
     }
 }
