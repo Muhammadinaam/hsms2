@@ -105,25 +105,22 @@ class ReportController
     public function dealersFilesReport(Content $content)
     {
         $report_data = \App\PropertyFile::whereNotNull('dealer_id')->orWhereNotNull('sold_by_dealer_id');
+        $dealer_id = request()->person;
 
         if (request()->person != '') {
             $report_data = $report_data
-                ->where('dealer_id', request()->person)
-                ->orWhere('sold_by_dealer_id', request()->person);
-        }
-        $report_data = $report_data->with(['dealer', 'soldByDealer'])->get();//->groupBy('dealer_id');
-        foreach ($report_data as $index => $report_item) {
-            $report_data[$index]->dealer_id_or_sold_by_dealer_id = 
-                $report_item->dealer_id != null && $report_item->dealer_id != '' ? $report_item->dealer_id : 
-                $report_item->sold_by_dealer_id;
+                ->where('dealer_id', $dealer_id)
+                ->orWhere('sold_by_dealer_id', $dealer_id);
+
+            $report_data = $report_data->get();
+        } else {
+            $report_data = [];
         }
 
-        $report_data = $report_data->groupBy('dealer_id_or_sold_by_dealer_id');
-// dd($report_data);
         return $content
             ->title('Dealers Files Report')
             ->description('Report of Files Given to Dealers')
-            ->row(view('reports.dealers_files_report', compact('report_data')));
+            ->row(view('reports.dealers_files_report', compact('report_data', 'dealer_id')));
     }
 
     public function instalmentsDueReport(Content $content)

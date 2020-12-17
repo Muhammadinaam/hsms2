@@ -54,24 +54,22 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($report_data as $dealer_id => $dealer_files)
                 <tr class="bg-info">
                     <td colspan="100" class="text-center">
                         <h3>{{\App\Person::find($dealer_id)->name}}, {{\App\Person::find($dealer_id)->business_name}}</h3>
-                        (Total Files: {{count($dealer_files)}})
+                        (Total Files: {{count($report_data)}})
                     </td>
                 </tr>
-                    @foreach($dealer_files as $dealer_file)
-                    <tr>
-                        <td class="text-center">{{$dealer_file->file_number}}</td>
-                        <td class="text-center">{{ $dealer_file->block != null ? $dealer_file->block->name : ''}}</td>
-                        <td class="text-center">{{$dealer_file->marlas}}</td>
-                        <td class="text-center">{{$dealer_file->property_number}}</td>
-                        <td class="text-center">{{$dealer_file->total_installment_receipts}}</td>
-                        <td class="text-center">{{$dealer_file->booking != null ? $dealer_file->booking->dealer_commission_amount : '-'}}</td>
-                        <td class="text-center">{{$dealer_file->getOpenOrOtherStatus()}}</td>
-                    </tr>
-                    @endforeach
+                @foreach($report_data as $dealer_file)
+                <tr>
+                    <td class="text-center">{{$dealer_file->file_number}}</td>
+                    <td class="text-center">{{ $dealer_file->block != null ? $dealer_file->block->name : ''}}</td>
+                    <td class="text-center">{{$dealer_file->marlas}}</td>
+                    <td class="text-center">{{$dealer_file->property_number}}</td>
+                    <td class="text-center">{{$dealer_file->total_installment_receipts}}</td>
+                    <td class="text-center">{{$dealer_file->booking != null ? $dealer_file->booking->dealer_commission_amount : '-'}}</td>
+                    <td class="text-center">{{$dealer_file->getOpenOrOtherStatus()}}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
