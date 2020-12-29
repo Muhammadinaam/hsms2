@@ -88,8 +88,10 @@ class BookingController extends AdminController
             $old_property_file = $booking != null ? $booking->propertyfile : null;
 
             $total_ratio = 0 + $form->main_partner_ratio;
-            foreach($form->partnershipDetails as $partnershipDetails) {
-                $total_ratio += $partnershipDetails['ratio'];
+            if($form->partnershipDetails != null) {
+                foreach($form->partnershipDetails as $partnershipDetails) {
+                    $total_ratio += $partnershipDetails['ratio'];
+                }
             }
 
             if($total_ratio != 100) {
