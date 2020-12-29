@@ -166,7 +166,7 @@ class PropertyFileController extends AdminController
 
         $form->text('property_number', __('Property number'))
             ->rules(['required', Rule::unique('property_files')->where(function($query) use ($form) {
-                // dd($form->model()->id);
+                dd($form->model()->id);
                 return $query->where('block_id', request()->block_id)
                     ->where('id', $form->model()->id);
             })]);
