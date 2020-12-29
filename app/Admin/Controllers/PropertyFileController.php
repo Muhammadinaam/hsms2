@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Validation\Rule;
 
 class PropertyFileController extends AdminController
 {
@@ -164,8 +165,11 @@ class PropertyFileController extends AdminController
             ->rules('required');
 
         $form->text('property_number', __('Property number'))
-            ->creationRules(['required', "unique:property_files"])
-            ->updateRules(['required', "unique:property_files,property_number,{{id}}"]);
+            ->rules(['required', Rule::unique('property_files')->where(function($query) use ($form) {
+                // dd($form->model()->id);
+                return $query->where('block_id', request()->block_id)
+                    ->where('id', '<>', $form->model()->id);
+            })]);
 
         $form->text('file_number', __('File number'))
             ->creationRules(['required', "unique:property_files"])
