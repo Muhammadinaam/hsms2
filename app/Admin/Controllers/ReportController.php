@@ -134,6 +134,10 @@ class ReportController
 
         $report_data = $report_data->get();
 
+        // if ($dealer_id == '') {
+        //     $report_data = [];
+        // }
+
         return $content
             ->title('Dealers Files Report')
             ->description('Report of Files Given to Dealers')

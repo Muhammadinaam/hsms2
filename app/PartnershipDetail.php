@@ -11,4 +11,9 @@ class PartnershipDetail extends Model
         'partner_id',
         'ratio'
     ];
+
+    public function partner()
+    {
+        return $this->belongsTo('\App\Person', 'partner_id');
+    }
 }

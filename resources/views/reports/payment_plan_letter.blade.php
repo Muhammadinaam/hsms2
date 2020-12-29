@@ -53,8 +53,24 @@
             <td>
                 <table class="table">
                     <tr>
-                        <td>Name:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->name : ''}}</td>
+                        <td>Name:</td>
+                            <td>
+                                {{$property_file->current_holder != null ? $property_file->current_holder->name : ''}}
+                                @if($property_file->booking != null)
+                                    &nbsp;({{$property_file->booking->main_partner_ratio}}%)
+                                @endif
+                            </td>
                         <td>Block:</td><td>{{$property_file->block != null ? $property_file->block->name : ''}}</td>
+                    </tr>
+                    <tr>
+                        <td>Partners</td>
+                        <td colspan="3">
+                            @if($property_file->booking != null)
+                                @foreach($property_file->booking->partnershipDetails as $partnershipDetails)
+                                {{$partnershipDetails->partner->name}} ({{$partnershipDetails->ratio}}%), 
+                                @endforeach
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <td>Address:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->address : ''}}</td>
