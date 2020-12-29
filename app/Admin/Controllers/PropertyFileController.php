@@ -155,6 +155,8 @@ class PropertyFileController extends AdminController
 
             $property_file_with_duplicate_property_number = $property_file_with_duplicate_property_number->get();
 
+            dd($property_file_with_duplicate_property_number);
+
             if(count($property_file_with_duplicate_property_number) > 0) {
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Save', 'Property number already taken.');
             }
