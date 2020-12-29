@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends CommonModel
 {
+
     public const PERSON_TYPE_DEALER = 'Dealer';
     public const PERSON_TYPE_CUSTOMER = 'Customer';
     public const PERSON_TYPE_SUPPLIER = 'Supplier';

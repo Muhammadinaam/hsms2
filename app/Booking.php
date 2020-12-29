@@ -55,6 +55,11 @@ class Booking extends CommonModelWithStatuses
         return $this->belongsTo('\App\Person', 'customer_id');
     }
 
+    public function partnershipDetails()
+    {
+        return $this->morphMany('\App\PartnershipDetail', 'parent_entity');
+    }
+
     public function dealer()
     {
         return $this->belongsTo('\App\Person', 'dealer_id');

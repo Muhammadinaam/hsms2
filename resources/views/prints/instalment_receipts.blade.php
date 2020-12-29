@@ -4,7 +4,15 @@
 
     <?php
         $model = \App\InstalmentReceipt::find($entity_id);
+        $copies = ['Customer Copy', 'Office Copy']
     ?>
+
+    @foreach($copies as $copy)
+
+    <br>
+    <div class="text-right">
+        <span class="p2 bg-gray round-border">{{$copy}}</span>
+    </div>
 
     <br><br>
     <p class="title text-center">Instalment Receipt</p>
@@ -36,6 +44,9 @@
                 <table class="padding" style="width: 100%;">
                     <tr>
                         <td>File Number: </td> <td><b>{{$model->propertyFile->file_number}}</b></td>
+                    </tr>
+                    <tr>
+                        <td>Block: </td> <td><b>{{$model->propertyFile->block->name}}</b></td>
                     </tr>
                     <tr>
                         <td>Property Number: </td> <td><b>{{$model->propertyFile->property_number}}</b></td>
@@ -83,6 +94,11 @@
         </tr>
     </table>
 
+    <br>
+    <p>
+        Amount: <strong>{{strtoupper(\App\Helpers\GeneralHelpers::convertNumberToWord($total + $model->fine_amount))}} only</strong>
+    </p>
+
     <br><br><br><br>
 
     <!-- <h4>
@@ -100,5 +116,7 @@
             Received By
         </span>
     </div>
+    <div style='page-break-after:always'></div>
+    @endforeach
 
 @endsection

@@ -113,8 +113,9 @@ class InstalmentReceiptController extends AdminController
             __('Amount received account'), 
             'admin/account-heads/create', 
             '\App\AccountHead',
-            'type = \''. \App\AccountHead::CASH_BANK .'\'')
-            ->help('Cash or Bank Account in which amount received will be debited')
+            // 'type = \''. \App\AccountHead::CASH_BANK .'\''
+            )
+            ->help('Cash or Bank Account (or Discount Account) in which amount received will be debited')
             ->rules('required');
 
         $form->hasMany('instalmentReceiptDetails', __('Instalment Receipt Details'), function (Form\NestedForm $form) {

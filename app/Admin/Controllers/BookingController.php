@@ -87,27 +87,36 @@ class BookingController extends AdminController
             $new_property_file = \App\PropertyFile::find($form->property_file_id);
             $old_property_file = $booking != null ? $booking->propertyfile : null;
 
+            $total_ratio = 0 + $form->main_partner_ratio;
+            foreach($form->partnershipDetails as $partnershipDetails) {
+                $total_ratio += $partnershipDetails['ratio'];
+            }
+
+            if($total_ratio != 100) {
+                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Save', 'Total of partnership ratios should be equal to 100 ');
+            }
+
+
             if ($new_property_file->dealer_id != null &&
                 $new_property_file->dealer_id != $form->dealer_id) {
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. [' . $new_property_file->dealer->text_for_select . ']');
             }
 
-            if ($old_property_file != null) {
-                $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
-                $old_property_file->sold_by_dealer_id = null;
-                $old_property_file->holder_id = null;
-                $old_property_file->property_number = null;
-                $old_property_file->block_id = null;
-                $old_property_file->save();
+            if($old_property_file->id != $new_property_file->id) {
+                if ($old_property_file != null) {
+                    $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
+                    $old_property_file->sold_by_dealer_id = null;
+                    $old_property_file->holder_id = null;
+                    $old_property_file->property_number = null;
+                    $old_property_file->block_id = null;
+                    $old_property_file->save();
+                }
+    
+                $this->updateNewPropertyFile($new_property_file, $form);
             }
-
-            $this->updateNewPropertyFile($new_property_file, $form);
         });
 
         $form->saved(function (Form $form) {
-
-            $model = $form->model();
-            $property_file = $model->propertyFile;
 
             self::postToLedger($form->model());
         });
@@ -139,6 +148,24 @@ class BookingController extends AdminController
             '\App\Person',
             'person_type = \'' . \App\Person::PERSON_TYPE_CUSTOMER . '\' ')
             ->rules('required');
+
+        $form->decimal('main_partner_ratio', __('Customer share ratio'))
+            ->default(100)
+            ->rules('required');
+
+        $form->hasMany('partnershipDetails', __('Partnership Detail'), function (Form\NestedForm $form) {
+            
+            \App\Helpers\SelectHelper::buildAjaxSelect(
+                $form,
+                'partner_id',
+                __('Partner'),
+                'admin/people/create',
+                '\App\Person',
+                '')
+                ->rules('required');
+
+            $form->decimal('ratio', __('Partner share ratio'));
+        })->mode('table');
 
         /*
         $form->divider('Property Information');
@@ -262,10 +289,11 @@ class BookingController extends AdminController
         $property_file->installment_price = $form->installment_price;
         $property_file->cost = $form->cost;
 
-        if ($property_file->dealer_id != null) {
-            $property_file->sold_by_dealer_id = $property_file->dealer_id;
-            $property_file->dealer_id = null;
+        $dealer_id = $property_file->dealer_id != null ? $property_file->dealer_id : $form->dealer_id;
+        if ($dealer_id != null) {
+            $property_file->sold_by_dealer_id = $dealer_id;
         }
+        $property_file->dealer_id = null;
         $property_file->holder_id = $form->customer_id;
 
         $property_file->save();

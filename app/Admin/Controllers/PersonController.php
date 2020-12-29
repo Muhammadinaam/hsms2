@@ -140,7 +140,6 @@ class PersonController extends AdminController
             $form->text('kin_address', __('Kin address'));
             $form->text('kin_phone', __('Kin phone'));
         });
-
         
         return $form;
     }
