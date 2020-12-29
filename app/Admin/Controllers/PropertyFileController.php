@@ -169,7 +169,7 @@ class PropertyFileController extends AdminController
             ->where(function($query) use ($form) {
                 $query = $query->where('block_id', request()->block_id);
 
-                if($id != null) {
+                if($form->model()->id != null) {
                     $query = $query->where('id', '!=', $form->model()->id);
                 }
 
