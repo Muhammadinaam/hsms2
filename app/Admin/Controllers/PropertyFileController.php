@@ -139,29 +139,6 @@ class PropertyFileController extends AdminController
     protected function form()
     {
         $form = new Form(new PropertyFile);
-        $id = isset(request()->route()->parameters()['property_file']) ?
-        request()->route()->parameters()['property_file'] : null;
-        $property_file = \App\PropertyFile::find($id);
-
-        $form->saving(function (Form $form) use ($id, $property_file) {
-
-            $property_file_with_duplicate_property_number = PropertyFile::where('block_id', $form->block_id)
-                ->where('property_number', $form->property_number);
-
-            if($id != null && $id != '') {
-                $property_file_with_duplicate_property_number = $property_file_with_duplicate_property_number
-                    ->where('id', '!=', $id);
-            }
-
-            $property_file_with_duplicate_property_number = $property_file_with_duplicate_property_number->get();
-
-            dd($property_file_with_duplicate_property_number);
-
-            if(count($property_file_with_duplicate_property_number) > 0) {
-                return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Cannot Save', 'Property number already taken.');
-            }
-
-        });
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 
@@ -188,7 +165,11 @@ class PropertyFileController extends AdminController
             ->rules('required');
 
         $form->text('property_number', __('Property number'))
-            ->rules(['required']);
+            ->rules(['required', Rule::unique('property_files')
+            ->ignore($form->model()->id)
+            ->where(function($query) use ($form) {
+                return $query->where('block_id', request()->block_id);;
+            })]);
 
         $form->text('file_number', __('File number'))
             ->creationRules(['required', "unique:property_files"])
