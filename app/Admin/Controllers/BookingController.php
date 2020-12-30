@@ -104,7 +104,7 @@ class BookingController extends AdminController
                 return \App\Helpers\GeneralHelpers::ReturnJsonErrorResponse('Dealer Not Correct', 'Please select dealer to which this File was assigned. i.e. [' . $new_property_file->dealer->text_for_select . ']');
             }
 
-            if($old_property_file->id != $new_property_file->id) {
+            if($old_property_file != null && $new_property_file != null && $old_property_file->id != $new_property_file->id) {
                 if ($old_property_file != null) {
                     $old_property_file->dealer_id = $old_property_file->sold_by_dealer_id;
                     $old_property_file->sold_by_dealer_id = null;
