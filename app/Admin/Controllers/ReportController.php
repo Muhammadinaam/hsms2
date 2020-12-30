@@ -291,7 +291,7 @@ class ReportController
 
                 foreach ($report_data as $report_data_index => $report_row) {
                     foreach ($instalment_receipts as $instalment_receipts_index => $instalment_receipt) {
-                        $balance = $report_row['amount'] > $report_row['receipt_amount'];
+                        $balance = $report_row['amount'] - $report_data[$report_data_index]['receipt_amount'];
                         if (
                             $report_row['payment_plan_type'] == $instalment_receipt->payment_plan_type &&
                             $balance > 0
