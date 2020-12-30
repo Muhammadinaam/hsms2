@@ -113,9 +113,8 @@ class BookingController extends AdminController
                     $old_property_file->block_id = null;
                     $old_property_file->save();
                 }
-    
-                $this->updateNewPropertyFile($new_property_file, $form);
             }
+            $this->updateNewPropertyFile($new_property_file, $form);
         });
 
         $form->saved(function (Form $form) {
