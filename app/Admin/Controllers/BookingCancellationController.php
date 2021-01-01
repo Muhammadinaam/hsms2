@@ -99,8 +99,8 @@ class BookingCancellationController extends AdminController
             $new_property_file->sold_by_dealer_id = null;
             $new_property_file->holder_id = null;
 
-            $new_property_file->property_number = null;
-            $new_property_file->block_id = null;
+            // $new_property_file->property_number = null;
+            // $new_property_file->block_id = null;
 
             $new_property_file->save();
             $ret = $new_booking->setCancelledStatus();
