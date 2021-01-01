@@ -78,23 +78,28 @@ class BookingCancellationController extends AdminController
         $booking_cancellation = \App\BookingCancellation::find($id);
 
         $form->saving(function (Form $form) use ($id, $booking_cancellation) {
+
+            $new_booking = \App\Booking::find($form->booking_id);
+            $new_property_file = $new_booking->propertyFile;
             
             if($booking_cancellation != null && $booking_cancellation->booking != null)
             {
                 $old_booking = $booking_cancellation->booking;
                 $ret = $old_booking->unsetCancelledStatus();
                 $old_property_file = $old_booking->propertyFile;
-                $old_property_file->sold_by_dealer_id = $old_booking->propertyFile->dealer_id;
-                $old_property_file->dealer_id = null;
-                $old_property_file->holder_id = $old_booking->customer_id;
-                $old_property_file->save();
+                
+                if($old_property_file->id != $new_property_file->id) {
+                    $old_property_file->sold_by_dealer_id = $old_booking->propertyFile->dealer_id;
+                    $old_property_file->dealer_id = null;
+                    $old_property_file->holder_id = $old_booking->customer_id;
+                    $old_property_file->save();
+                }
+                
                 if ($ret instanceof Response) {
                     return $ret;
                 }
             }
 
-            $new_booking = \App\Booking::find($form->booking_id);
-            $new_property_file = $new_booking->propertyFile;
             $new_property_file->dealer_id = $new_property_file->sold_by_dealer_id;
             $new_property_file->sold_by_dealer_id = null;
             $new_property_file->holder_id = null;
