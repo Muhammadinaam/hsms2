@@ -14,6 +14,10 @@
             <thead>
                 <tr>
                     <th>File Number</th>
+                    <th>Block</th>
+                    <th>Property Number</th>
+                    <th>Size</th>
+                    <th>Booking Price</th>
                     <th>Booking Date</th>
                     <th>Holder Name</th>
                     <th>Holder Phone</th>
@@ -43,6 +47,10 @@
                         <?php $total_due_amount += $due_amount; ?>
                         <tr>
                             <td>{{$row->file_number}}</td>
+                            <td>{{$row->block_name}}</td>
+                            <td>{{$row->property_number}}</td>
+                            <td>{{$row->marlas}}</td>
+                            <td>{{ number_format($row->booking_type == 'Installment' ? $row->installment_price : $row->cash_price, 2) }}</td>
                             <td>{{ $booking_date }}</td>
                             <td>{{$row->holder_name}}</td>
                             <td>{{$row->holder_phone}}</td>
@@ -56,7 +64,7 @@
                     @endforeach
                     @if($total_due_amount != 0)
                     <tr class="bg-info">
-                        <td colspan=8>
+                        <td colspan=12>
                             <b>Total</b>
                         </td>
                         <td class="text-right">

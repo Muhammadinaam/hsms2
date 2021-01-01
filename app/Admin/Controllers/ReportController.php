@@ -173,6 +173,8 @@ class ReportController
             ->where('instalment_receipts.date', '<=', $now);
 
         $report_data = \DB::table('property_files')
+            ->leftJoin('blocks', 'blocks.id', '=', 'property_files.block_id')
+            ->leftJoin('bookings', 'bookings.property_file_id', '=', 'property_files.id')
             ->leftJoin('people as holders', 'property_files.holder_id', '=', 'holders.id')
             ->leftJoin('people as dealers', 'property_files.dealer_id', '=', 'dealers.id')
             ->leftJoin('payment_plan_schedules', function ($join) use ($now) {
@@ -186,7 +188,13 @@ class ReportController
             ->leftJoin('payment_plan_types', 'payment_plan_types.id', '=', 'payment_plan_schedules.payment_plan_type_id')
             ->select(
                 'property_files.id as property_file_id',
+                'blocks.name as block_name',
                 'property_files.file_number',
+                'property_files.property_number',
+                'bookings.cash_price',
+                'bookings.installment_price',
+                'bookings.booking_type',
+                'property_files.marlas',
                 'holders.name as holder_name',
                 'holders.phone as holder_phone',
                 'dealers.name as dealer_name',
@@ -201,10 +209,16 @@ class ReportController
                 'property_files.id',
                 'payment_plan_types.name',
                 'property_files.file_number',
+                'property_files.property_number',
+                'property_files.marlas',
                 'holders.name',
                 'holders.phone',
                 'dealers.name',
                 'dealers.phone',
+                'blocks.name',
+                'bookings.cash_price',
+                'bookings.installment_price',
+                'bookings.booking_type'
             ])
             ->get();
 
