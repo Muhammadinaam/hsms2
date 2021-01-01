@@ -75,3 +75,9 @@
 
     </div><!-- /.box-body -->
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('[name="person"]').select2();
+    })
+</script>

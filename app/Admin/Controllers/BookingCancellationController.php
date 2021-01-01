@@ -287,7 +287,7 @@ class BookingCancellationController extends AdminController
         {
             // DEALER COMMISSION ENTRY REVERSED
             // COMMISSION EXPENSE DEBIT
-            $commission_amount = $model->dealer_commission_amount != null ? $model->dealer_commission_amount : 0;
+            $commission_amount = $model->dealer_commission_to_be_returned != null ? $model->dealer_commission_to_be_returned : 0;
             \App\Ledger::insertOrUpdateLedgerEntries(
                 $ledger_id,
                 \App\AccountHead::getAccountByIdt(\App\AccountHead::IDT_DEALER_COMMISSION_EXPENSE)->id,
