@@ -31,9 +31,9 @@ class PropertyFile extends CommonModelWithStatuses
         return 'File : ' . $this->file_number . 
         ', Plot Size: ' . $this->marlas . 
         ', Block: ' . ($this->block != null ? $this->block->name : '') . 
-        ', Property Number: ' . $this->property_number . 
-        ', Project: ' . $this->project->name . 
-        ', Phase: ' . $this->phase->name;
+        ', Property Number: ' . $this->property_number;
+        // ', Project: ' . $this->project->name . 
+        // ', Phase: ' . $this->phase->name;
     }
 
     public function getOpenOrOtherStatus()
