@@ -44,6 +44,7 @@
                     <th>Date</th>
                     <th>Entry Type</th>
                     <th>Description</th>
+                    <th>Property File Information</th>
                     <th>Amount</th>
                     <th>Receivable / (Payable)</th>
                 </tr>
@@ -56,12 +57,14 @@
                     <td>{{ \Carbon\Carbon::parse($report_row->date)->format('d-M-Y') }}</td>
                     <td>{{$report_row->entry_type}}</td>
                     <td>{{$report_row->description}}</td>
+                    <td>{{isset($report_row->propertyFile) ? $report_row->propertyFile->text_for_select : ''}}</td>
                     <td>{{abs($report_row->amount)}}</td>
                     <td>{{ $report_row->amount > 0 ? 'Receivable' : 'Payable' }}</td>
                 </tr>
                 @endforeach
                 <tr style="font-weight: bold;" class="bg-info">
                     <td>Total</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td>{{abs($total_amount)}}</td>

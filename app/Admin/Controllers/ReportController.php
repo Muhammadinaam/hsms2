@@ -68,6 +68,7 @@ class ReportController
                 ->leftJoin('ledgers', 'ledger_entries.ledger_id', '=', 'ledgers.id')
                 ->select(
                     'ledgers.date',
+                    'ledgers.entry_id',
                     'ledgers.entry_type',
                     'ledger_entries.description',
                     'ledger_entries.amount'
@@ -76,6 +77,15 @@ class ReportController
                 ->orWhere('file_people.id', '=', request()->person)
                 ->orderBy('ledgers.date', 'asc')
                 ->get();
+        }
+
+        foreach($report_data as $index => $report_row) {
+            $entry_id = $report_row->entry_id;
+            $entry_type = $report_row->entry_type;
+
+            if($entry_type == 'Customer Booking') {
+                $report_data[$index]->propertyFile = \App\Booking::find($entry_id)->propertyFile;
+            }
         }
 
         return $content
