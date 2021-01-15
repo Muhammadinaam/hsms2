@@ -88,7 +88,7 @@ class ReportController
             }
 
             if($entry_type == \App\Ledger::CUSTOMER_BOOKING_CANCELLATION) {
-                $report_data[$index]->propertyFile = \App\BookingCancellation::find($entry_id)->propertyFile;
+                $report_data[$index]->propertyFile = \App\BookingCancellation::find($entry_id)->booking->propertyFile;
             }
         }
 
