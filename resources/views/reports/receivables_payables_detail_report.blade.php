@@ -52,15 +52,17 @@
             <tbody>
                 <?php $total_amount = 0; ?>
                 @foreach($report_data as $report_row)
-                <?php $total_amount += $report_row->amount; ?>
-                <tr class="{{ $report_row->amount > 0 ? 'bg-info' : 'bg-danger' }}">
-                    <td>{{ \Carbon\Carbon::parse($report_row->date)->format('d-M-Y') }}</td>
-                    <td>{{$report_row->entry_type}}</td>
-                    <td>{{$report_row->description}}</td>
-                    <td>{{isset($report_row->propertyFile) ? $report_row->propertyFile->text_for_select : ''}}</td>
-                    <td>{{abs($report_row->amount)}}</td>
-                    <td>{{ $report_row->amount > 0 ? 'Receivable' : 'Payable' }}</td>
-                </tr>
+                    @if($report_row->amount != 0)
+                    <?php $total_amount += $report_row->amount; ?>
+                    <tr class="{{ $report_row->amount > 0 ? 'bg-info' : 'bg-danger' }}">
+                        <td>{{ \Carbon\Carbon::parse($report_row->date)->format('d-M-Y') }}</td>
+                        <td>{{$report_row->entry_type}}</td>
+                        <td>{{$report_row->description}}</td>
+                        <td>{{isset($report_row->propertyFile) ? $report_row->propertyFile->text_for_select : ''}}</td>
+                        <td>{{abs($report_row->amount)}}</td>
+                        <td>{{ $report_row->amount > 0 ? 'Receivable' : 'Payable' }}</td>
+                    </tr>
+                    @endif
                 @endforeach
                 <tr style="font-weight: bold;" class="bg-info">
                     <td>Total</td>
