@@ -83,8 +83,12 @@ class ReportController
             $entry_id = $report_row->entry_id;
             $entry_type = $report_row->entry_type;
 
-            if($entry_type == 'Customer Booking') {
+            if($entry_type == \App\Ledger::CUSTOMER_BOOKING) {
                 $report_data[$index]->propertyFile = \App\Booking::find($entry_id)->propertyFile;
+            }
+
+            if($entry_type == \App\Ledger::CUSTOMER_BOOKING_CANCELLATION) {
+                $report_data[$index]->propertyFile = \App\BookingCancellation::find($entry_id)->propertyFile;
             }
         }
 
