@@ -142,6 +142,10 @@ class ReportController
             $report_data = $report_data->where('block_id', $block);
         }
 
+        $report_data->with(['booking' => function($q){
+            $q->where('status', '<>', \App\Helpers\StatusesHelper::CANCELLED);
+        }]);
+
         $report_data = $report_data->get();
 
         // if ($dealer_id == '') {
