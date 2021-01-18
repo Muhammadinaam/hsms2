@@ -9,6 +9,7 @@ $propertyInventory = \DB::table('property_files')
     ->leftJoin('people as holders', 'holders.id', '=', 'property_files.holder_id')
     ->leftJoin('people as sold_by_dealers', 'sold_by_dealers.id', '=', 'property_files.sold_by_dealer_id')
     ->select(
+        'property_files.id as property_file_id',
         'projects.name as project_name',
         'phases.name as phase_name',
         'blocks.name as block_name',
@@ -58,6 +59,7 @@ $propertyInventory = \DB::table('property_files')
                         <th>On boulevard</th>
                         <th>Open</th>
                         <th>Booked</th>
+                        <th>Status</th>
                         <th>Dealer</th>
                         <th>Sold By Dealer</th>
                         <th>Holder</th>
@@ -78,6 +80,7 @@ $propertyInventory = \DB::table('property_files')
                             <td>{{$propertyInventoryRow->is_on_boulevard == 1 ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->dealer_id == '' ? 'Yes' : 'No'}}</td>
                             <td>{{$propertyInventoryRow->holder_id == '' ? 'Yes' : 'No'}}</td>
+                            <td>{{ \App\PropertyFile::find($propertyInventoryRow->property_file_id)->getOpenOrOtherStatus() }}</td>
                             <td>{{ $propertyInventoryRow->dealer_name == '' ? '' : $propertyInventoryRow->dealer_name . ', ' . $propertyInventoryRow->dealer_business_name }}</td>
                             <td>{{ $propertyInventoryRow->sold_by_dealer_name == '' ? '' : $propertyInventoryRow->sold_by_dealer_name . ', ' . $propertyInventoryRow->sold_by_dealer_business_name }}</td>
                             <td>{{ $propertyInventoryRow->holder_name == '' ? '' : $propertyInventoryRow->holder_name . ', ' . $propertyInventoryRow->holder_business_name }}</td>
