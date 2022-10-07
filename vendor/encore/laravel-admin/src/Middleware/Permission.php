@@ -56,7 +56,6 @@ class Permission
      */
     public function checkRoutePermission(Request $request)
     {
-        // dd($request->method(), \str_replace(\admin_base_path(), '', $request->getPathInfo()) );
         if (!$middleware = collect($request->route()->middleware())->first(function ($middleware) {
             return Str::startsWith($middleware, $this->middlewarePrefix);
         })) {
@@ -85,9 +84,14 @@ class Permission
      */
     protected function shouldPassThrough($request)
     {
-        $excepts = config('admin.auth.excepts', [
+        // 下面这些路由不验证权限
+        $excepts = array_merge(config('admin.auth.excepts', []), [
             'auth/login',
             'auth/logout',
+            '_handle_action_',
+            '_handle_form_',
+            '_handle_selectable_',
+            '_handle_renderable_',
         ]);
 
         return collect($excepts)

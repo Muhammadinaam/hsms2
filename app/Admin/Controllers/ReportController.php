@@ -172,7 +172,7 @@ class ReportController
                 'instalment_receipts.property_file_id',
                 'instalment_receipt_details.payment_plan_type_id',
                 \DB::raw('sum(instalment_receipt_details.amount) as amount'),
-                \DB::raw('count(instalment_receipt_details.amount) as receipt_count'),
+                \DB::raw('count(instalment_receipt_details.amount) as receipt_count')
             )
             ->groupBy([
                 'instalment_receipts.property_file_id',
@@ -316,7 +316,7 @@ class ReportController
                         'instalment_receipts.date',
                         'instalment_receipt_details.amount',
                         'instalment_receipts.id',
-                        'instalment_receipts.receipt_number',
+                        'instalment_receipts.receipt_number'
                     )
                     ->orderBy('instalment_receipts.date', 'asc')
                     ->get();

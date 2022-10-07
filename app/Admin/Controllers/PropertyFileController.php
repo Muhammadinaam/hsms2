@@ -186,8 +186,9 @@ class PropertyFileController extends AdminController
             $marlas_options[$propertyMarla->marlas] = $propertyMarla->marlas;
         }
         $form->select('marlas', __('Marlas'))
-            ->options($marlas_options)
-            ->rules('required');
+            ->options($marlas_options);
+        
+        $form->text('street_number', __('Street No.'));
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 

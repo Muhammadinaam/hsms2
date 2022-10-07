@@ -1,11 +1,10 @@
-@extends( request()->has('without_layout') && request()->without_layout == 'true' ? 'admin::index_without_layout' : 'admin::index', ['header' => $header])
+@extends('admin::index', ['header' => strip_tags($header)])
 
 @section('content')
-    @if( request()->without_layout == null || request()->without_layout == false )
     <section class="content-header">
         <h1>
-            {{ $header ?: trans('admin.title') }}
-            <small>{{ $description ?: trans('admin.description') }}</small>
+            {!! $header ?: trans('admin.title') !!}
+            <small>{!! $description ?: trans('admin.description') !!}</small>
         </h1>
 
         <!-- breadcrumb start -->
@@ -53,7 +52,6 @@
         <!-- breadcrumb end -->
 
     </section>
-    @endif
 
     <section class="content">
 
@@ -62,7 +60,7 @@
         @include('admin::partials.toastr')
 
         @if($_view_)
-            @include($_view_['view'], $_view_['data']);
+            @include($_view_['view'], $_view_['data'])
         @else
             {!! $_content_ !!}
         @endif

@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 abstract class RowAction extends GridAction
 {
-    public $is_new_window = false;
-
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
@@ -28,11 +26,6 @@ abstract class RowAction extends GridAction
      * @var bool
      */
     protected $asColumn = false;
-
-    /**
-     * @var bool
-     */
-    protected $withTrashed = false;
 
     /**
      * Get primary key value of current row.
@@ -123,7 +116,7 @@ abstract class RowAction extends GridAction
 
         $modelClass = str_replace('_', '\\', $request->get('_model'));
 
-        if ($this->withTrashed) {
+        if ($this->modelUseSoftDeletes($modelClass)) {
             return $modelClass::withTrashed()->findOrFail($key);
         }
 
@@ -142,7 +135,7 @@ abstract class RowAction extends GridAction
     public function render()
     {
         if ($href = $this->href()) {
-            return "<a href='{$href}' " . ($this->is_new_window ? 'target="_blank"' : '') . ">{$this->name()}</a>";
+            return "<a href='{$href}'>{$this->name()}</a>";
         }
 
         $this->addScript();

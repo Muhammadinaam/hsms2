@@ -2,15 +2,13 @@
     <div class="box-header with-border">
         <h3 class="box-title">{{ $form->title() }}</h3>
 
-        @if( request()->without_layout == null || request()->without_layout == false )
         <div class="box-tools">
             {!! $form->renderTools() !!}
         </div>
-        @endif
     </div>
     <!-- /.box-header -->
     <!-- form start -->
-    {!! $form->open(['class' => "form-horizontal"]) !!}
+    {!! $form->open() !!}
 
     <div class="box-body">
 
