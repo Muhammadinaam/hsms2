@@ -5,7 +5,6 @@ namespace Encore\Admin\Controllers;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends AdminController
 {
@@ -117,7 +116,7 @@ class UserController extends AdminController
 
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {
-                $form->password = Hash::make($form->password);
+                $form->password = bcrypt($form->password);
             }
         });
 

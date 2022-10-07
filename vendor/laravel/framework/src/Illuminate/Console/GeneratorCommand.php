@@ -46,7 +46,6 @@ abstract class GeneratorCommand extends Command
      * Execute the console command.
      *
      * @return bool|null
-     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function handle()
@@ -154,7 +153,6 @@ abstract class GeneratorCommand extends Command
      *
      * @param  string  $name
      * @return string
-     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function buildClass($name)
@@ -253,11 +251,11 @@ abstract class GeneratorCommand extends Command
      */
     protected function userProviderModel()
     {
-        $config = $this->laravel['config'];
+        $guard = config('auth.defaults.guard');
 
-        $provider = $config->get('auth.guards.'.$config->get('auth.defaults.guard').'.provider');
+        $provider = config("auth.guards.{$guard}.provider");
 
-        return $config->get("auth.providers.{$provider}.model");
+        return config("auth.providers.{$provider}.model");
     }
 
     /**

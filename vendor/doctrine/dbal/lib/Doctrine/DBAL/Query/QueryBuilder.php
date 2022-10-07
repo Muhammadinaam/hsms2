@@ -3,19 +3,13 @@
 namespace Doctrine\DBAL\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\ForwardCompatibility;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\Deprecations\Deprecation;
-
-use function array_filter;
 use function array_key_exists;
 use function array_keys;
 use function array_unshift;
-use function count;
 use function func_get_args;
 use function func_num_args;
 use function implode;
@@ -84,21 +78,21 @@ class QueryBuilder
     /**
      * The complete SQL string for this query.
      *
-     * @var string|null
+     * @var string
      */
     private $sql;
 
     /**
      * The query parameters.
      *
-     * @var array<int, mixed>|array<string, mixed>
+     * @var mixed[]
      */
     private $params = [];
 
     /**
      * The parameter type map of this query.
      *
-     * @var array<int, int|string|Type|null>|array<string, int|string|Type|null>
+     * @var int[]|string[]
      */
     private $paramTypes = [];
 
@@ -121,14 +115,14 @@ class QueryBuilder
      *
      * @var int
      */
-    private $firstResult = 0;
+    private $firstResult = null;
 
     /**
      * The maximum number of results to retrieve or NULL to retrieve all results.
      *
      * @var int|null
      */
-    private $maxResults;
+    private $maxResults = null;
 
     /**
      * The counter of bound parameters used with {@see bindValue).
@@ -201,19 +195,18 @@ class QueryBuilder
     /**
      * Executes this query using the bound parameters and their types.
      *
-     * @return ForwardCompatibility\Result|int|string
+     * Uses {@see Connection::executeQuery} for select statements and {@see Connection::executeUpdate}
+     * for insert, update and delete statements.
      *
-     * @throws Exception
+     * @return ResultStatement|int
      */
     public function execute()
     {
         if ($this->type === self::SELECT) {
-            return ForwardCompatibility\Result::ensure(
-                $this->connection->executeQuery($this->getSQL(), $this->params, $this->paramTypes)
-            );
+            return $this->connection->executeQuery($this->getSQL(), $this->params, $this->paramTypes);
         }
 
-        return $this->connection->executeStatement($this->getSQL(), $this->params, $this->paramTypes);
+        return $this->connection->executeUpdate($this->getSQL(), $this->params, $this->paramTypes);
     }
 
     /**
@@ -238,7 +231,6 @@ class QueryBuilder
             case self::INSERT:
                 $sql = $this->getSQLForInsert();
                 break;
-
             case self::DELETE:
                 $sql = $this->getSQLForDelete();
                 break;
@@ -270,9 +262,9 @@ class QueryBuilder
      *         ->setParameter(':user_id', 1);
      * </code>
      *
-     * @param int|string           $key   Parameter position or name
-     * @param mixed                $value Parameter value
-     * @param int|string|Type|null $type  Parameter type
+     * @param string|int      $key   The parameter position or name.
+     * @param mixed           $value The parameter value.
+     * @param string|int|null $type  One of the {@link \Doctrine\DBAL\ParameterType} constants.
      *
      * @return $this This QueryBuilder instance.
      */
@@ -301,8 +293,8 @@ class QueryBuilder
      *         ));
      * </code>
      *
-     * @param array<int, mixed>|array<string, mixed>                               $params Parameters to set
-     * @param array<int, int|string|Type|null>|array<string, int|string|Type|null> $types  Parameter types
+     * @param mixed[]        $params The query parameters to set.
+     * @param int[]|string[] $types  The query parameters types to set.
      *
      * @return $this This QueryBuilder instance.
      */
@@ -317,7 +309,7 @@ class QueryBuilder
     /**
      * Gets all defined query parameters for the query being constructed indexed by parameter index or name.
      *
-     * @return array<int, mixed>|array<string, mixed> The currently defined query parameters
+     * @return mixed[] The currently defined query parameters indexed by parameter index or name.
      */
     public function getParameters()
     {
@@ -339,8 +331,7 @@ class QueryBuilder
     /**
      * Gets all defined query parameter types for the query being constructed indexed by parameter index or name.
      *
-     * @return array<int, int|string|Type|null>|array<string, int|string|Type|null> The currently defined
-     *                                                                              query parameter types
+     * @return int[]|string[] The currently defined query parameter types indexed by parameter index or name.
      */
     public function getParameterTypes()
     {
@@ -350,9 +341,9 @@ class QueryBuilder
     /**
      * Gets a (previously set) query parameter type of the query being constructed.
      *
-     * @param int|string $key The key of the bound parameter type
+     * @param mixed $key The key (index or name) of the bound parameter type.
      *
-     * @return int|string|Type|null The value of the bound parameter type
+     * @return mixed The value of the bound parameter type.
      */
     public function getParameterType($key)
     {
@@ -403,7 +394,7 @@ class QueryBuilder
      * Gets the maximum number of results the query object was set to retrieve (the "limit").
      * Returns NULL if all results will be returned.
      *
-     * @return int|null The maximum number of results.
+     * @return int The maximum number of results.
      */
     public function getMaxResults()
     {
@@ -434,12 +425,7 @@ class QueryBuilder
         $this->state = self::STATE_DIRTY;
 
         if ($append) {
-            if (
-                $sqlPartName === 'orderBy'
-                || $sqlPartName === 'groupBy'
-                || $sqlPartName === 'select'
-                || $sqlPartName === 'set'
-            ) {
+            if ($sqlPartName === 'orderBy' || $sqlPartName === 'groupBy' || $sqlPartName === 'select' || $sqlPartName === 'set') {
                 foreach ($sqlPart as $part) {
                     $this->sqlParts[$sqlPartName][] = $part;
                 }
@@ -464,8 +450,6 @@ class QueryBuilder
      * Specifies an item that is to be returned in the query result.
      * Replaces any previously specified selections, if any.
      *
-     * USING AN ARRAY ARGUMENT IS DEPRECATED. Pass each value as an individual argument.
-     *
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->select('u.id', 'p.id')
@@ -473,26 +457,16 @@ class QueryBuilder
      *         ->leftJoin('u', 'phonenumbers', 'p', 'u.id = p.user_id');
      * </code>
      *
-     * @param string|string[]|null $select The selection expression. USING AN ARRAY OR NULL IS DEPRECATED.
-     *                                     Pass each value as an individual argument.
+     * @param mixed $select The selection expressions.
      *
      * @return $this This QueryBuilder instance.
      */
-    public function select($select = null/*, string ...$selects*/)
+    public function select($select = null)
     {
         $this->type = self::SELECT;
 
         if (empty($select)) {
             return $this;
-        }
-
-        if (is_array($select)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::select is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $selects = is_array($select) ? $select : func_get_args();
@@ -512,7 +486,7 @@ class QueryBuilder
      *
      * @return $this This QueryBuilder instance.
      */
-    public function distinct(): self
+    public function distinct() : self
     {
         $this->sqlParts['distinct'] = true;
 
@@ -522,8 +496,6 @@ class QueryBuilder
     /**
      * Adds an item that is to be returned in the query result.
      *
-     * USING AN ARRAY ARGUMENT IS DEPRECATED. Pass each value as an individual argument.
-     *
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->select('u.id')
@@ -532,26 +504,16 @@ class QueryBuilder
      *         ->leftJoin('u', 'phonenumbers', 'u.id = p.user_id');
      * </code>
      *
-     * @param string|string[]|null $select The selection expression. USING AN ARRAY OR NULL IS DEPRECATED.
-     *                                     Pass each value as an individual argument.
+     * @param mixed $select The selection expression.
      *
      * @return $this This QueryBuilder instance.
      */
-    public function addSelect($select = null/*, string ...$selects*/)
+    public function addSelect($select = null)
     {
         $this->type = self::SELECT;
 
         if (empty($select)) {
             return $this;
-        }
-
-        if (is_array($select)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::addSelect is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $selects = is_array($select) ? $select : func_get_args();
@@ -830,7 +792,7 @@ class QueryBuilder
     public function where($predicates)
     {
         if (! (func_num_args() === 1 && $predicates instanceof CompositeExpression)) {
-            $predicates = CompositeExpression::and(...func_get_args());
+            $predicates = new CompositeExpression(CompositeExpression::TYPE_AND, func_get_args());
         }
 
         return $this->add('where', $predicates);
@@ -857,16 +819,13 @@ class QueryBuilder
     public function andWhere($where)
     {
         $args  = func_get_args();
-        $args  = array_filter($args); // https://github.com/doctrine/dbal/issues/4282
         $where = $this->getQueryPart('where');
 
         if ($where instanceof CompositeExpression && $where->getType() === CompositeExpression::TYPE_AND) {
-            if (count($args) > 0) {
-                $where = $where->with(...$args);
-            }
+            $where->addMultiple($args);
         } else {
             array_unshift($args, $where);
-            $where = CompositeExpression::and(...$args);
+            $where = new CompositeExpression(CompositeExpression::TYPE_AND, $args);
         }
 
         return $this->add('where', $where, true);
@@ -893,16 +852,13 @@ class QueryBuilder
     public function orWhere($where)
     {
         $args  = func_get_args();
-        $args  = array_filter($args); // https://github.com/doctrine/dbal/issues/4282
         $where = $this->getQueryPart('where');
 
         if ($where instanceof CompositeExpression && $where->getType() === CompositeExpression::TYPE_OR) {
-            if (count($args) > 0) {
-                $where = $where->with(...$args);
-            }
+            $where->addMultiple($args);
         } else {
             array_unshift($args, $where);
-            $where = CompositeExpression::or(...$args);
+            $where = new CompositeExpression(CompositeExpression::TYPE_OR, $args);
         }
 
         return $this->add('where', $where, true);
@@ -912,8 +868,6 @@ class QueryBuilder
      * Specifies a grouping over the results of the query.
      * Replaces any previously specified groupings, if any.
      *
-     * USING AN ARRAY ARGUMENT IS DEPRECATED. Pass each value as an individual argument.
-     *
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->select('u.name')
@@ -921,24 +875,14 @@ class QueryBuilder
      *         ->groupBy('u.id');
      * </code>
      *
-     * @param string|string[] $groupBy The grouping expression. USING AN ARRAY IS DEPRECATED.
-     *                                 Pass each value as an individual argument.
+     * @param mixed $groupBy The grouping expression.
      *
      * @return $this This QueryBuilder instance.
      */
-    public function groupBy($groupBy/*, string ...$groupBys*/)
+    public function groupBy($groupBy)
     {
         if (empty($groupBy)) {
             return $this;
-        }
-
-        if (is_array($groupBy)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::groupBy is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $groupBy = is_array($groupBy) ? $groupBy : func_get_args();
@@ -949,8 +893,6 @@ class QueryBuilder
     /**
      * Adds a grouping expression to the query.
      *
-     * USING AN ARRAY ARGUMENT IS DEPRECATED. Pass each value as an individual argument.
-     *
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->select('u.name')
@@ -959,24 +901,14 @@ class QueryBuilder
      *         ->addGroupBy('u.createdAt');
      * </code>
      *
-     * @param string|string[] $groupBy The grouping expression. USING AN ARRAY IS DEPRECATED.
-     *                                 Pass each value as an individual argument.
+     * @param mixed $groupBy The grouping expression.
      *
      * @return $this This QueryBuilder instance.
      */
-    public function addGroupBy($groupBy/*, string ...$groupBys*/)
+    public function addGroupBy($groupBy)
     {
         if (empty($groupBy)) {
             return $this;
-        }
-
-        if (is_array($groupBy)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3837',
-                'Passing an array for the first argument to QueryBuilder::addGroupBy is deprecated, ' .
-                'pass each value as an individual variadic argument instead.'
-            );
         }
 
         $groupBy = is_array($groupBy) ? $groupBy : func_get_args();
@@ -1045,7 +977,7 @@ class QueryBuilder
     public function having($having)
     {
         if (! (func_num_args() === 1 && $having instanceof CompositeExpression)) {
-            $having = CompositeExpression::and(...func_get_args());
+            $having = new CompositeExpression(CompositeExpression::TYPE_AND, func_get_args());
         }
 
         return $this->add('having', $having);
@@ -1062,14 +994,13 @@ class QueryBuilder
     public function andHaving($having)
     {
         $args   = func_get_args();
-        $args   = array_filter($args); // https://github.com/doctrine/dbal/issues/4282
         $having = $this->getQueryPart('having');
 
         if ($having instanceof CompositeExpression && $having->getType() === CompositeExpression::TYPE_AND) {
-            $having = $having->with(...$args);
+            $having->addMultiple($args);
         } else {
             array_unshift($args, $having);
-            $having = CompositeExpression::and(...$args);
+            $having = new CompositeExpression(CompositeExpression::TYPE_AND, $args);
         }
 
         return $this->add('having', $having);
@@ -1086,14 +1017,13 @@ class QueryBuilder
     public function orHaving($having)
     {
         $args   = func_get_args();
-        $args   = array_filter($args); // https://github.com/doctrine/dbal/issues/4282
         $having = $this->getQueryPart('having');
 
         if ($having instanceof CompositeExpression && $having->getType() === CompositeExpression::TYPE_OR) {
-            $having = $having->with(...$args);
+            $having->addMultiple($args);
         } else {
             array_unshift($args, $having);
-            $having = CompositeExpression::or(...$args);
+            $having = new CompositeExpression(CompositeExpression::TYPE_OR, $args);
         }
 
         return $this->add('having', $having);
@@ -1240,11 +1170,11 @@ class QueryBuilder
     }
 
     /**
-     * @param array<string,true> $knownAliases
+     * @param string[] $knownAliases
      *
      * @throws QueryException
      */
-    private function verifyAllAliasesAreKnown(array $knownAliases): void
+    private function verifyAllAliasesAreKnown(array $knownAliases) : void
     {
         foreach ($this->sqlParts['join'] as $fromAlias => $joins) {
             if (! isset($knownAliases[$fromAlias])) {
@@ -1258,7 +1188,7 @@ class QueryBuilder
      */
     private function isLimitQuery()
     {
-        return $this->maxResults !== null || $this->firstResult !== 0;
+        return $this->maxResults !== null || $this->firstResult !== null;
     }
 
     /**
@@ -1280,8 +1210,7 @@ class QueryBuilder
      */
     private function getSQLForUpdate()
     {
-        $table = $this->sqlParts['from']['table']
-            . ($this->sqlParts['from']['alias'] ? ' ' . $this->sqlParts['from']['alias'] : '');
+        $table = $this->sqlParts['from']['table'] . ($this->sqlParts['from']['alias'] ? ' ' . $this->sqlParts['from']['alias'] : '');
 
         return 'UPDATE ' . $table
             . ' SET ' . implode(', ', $this->sqlParts['set'])
@@ -1295,11 +1224,9 @@ class QueryBuilder
      */
     private function getSQLForDelete()
     {
-        $table = $this->sqlParts['from']['table']
-            . ($this->sqlParts['from']['alias'] ? ' ' . $this->sqlParts['from']['alias'] : '');
+        $table = $this->sqlParts['from']['table'] . ($this->sqlParts['from']['alias'] ? ' ' . $this->sqlParts['from']['alias'] : '');
 
-        return 'DELETE FROM ' . $table
-            . ($this->sqlParts['where'] !== null ? ' WHERE ' . ((string) $this->sqlParts['where']) : '');
+        return 'DELETE FROM ' . $table . ($this->sqlParts['where'] !== null ? ' WHERE ' . ((string) $this->sqlParts['where']) : '');
     }
 
     /**
@@ -1335,9 +1262,9 @@ class QueryBuilder
      *
      * @link http://www.zetacomponents.org
      *
-     * @param mixed                $value
-     * @param int|string|Type|null $type
-     * @param string               $placeHolder The name to bind with. The string must start with a colon ':'.
+     * @param mixed  $value
+     * @param mixed  $type
+     * @param string $placeHolder The name to bind with. The string must start with a colon ':'.
      *
      * @return string the placeholder name used.
      */
@@ -1347,7 +1274,6 @@ class QueryBuilder
             $this->boundCounter++;
             $placeHolder = ':dcValue' . $this->boundCounter;
         }
-
         $this->setParameter(substr($placeHolder, 1), $value, $type);
 
         return $placeHolder;
@@ -1370,8 +1296,8 @@ class QueryBuilder
      *     ->orWhere('u.username = ' . $qb->createPositionalParameter('Bar', ParameterType::STRING))
      * </code>
      *
-     * @param mixed                $value
-     * @param int|string|Type|null $type
+     * @param mixed $value
+     * @param int   $type
      *
      * @return string
      */
@@ -1384,8 +1310,8 @@ class QueryBuilder
     }
 
     /**
-     * @param string             $fromAlias
-     * @param array<string,true> $knownAliases
+     * @param string   $fromAlias
+     * @param string[] $knownAliases
      *
      * @return string
      *
@@ -1400,13 +1326,11 @@ class QueryBuilder
                 if (array_key_exists($join['joinAlias'], $knownAliases)) {
                     throw QueryException::nonUniqueAlias($join['joinAlias'], array_keys($knownAliases));
                 }
-
                 $sql .= ' ' . strtoupper($join['joinType'])
                     . ' JOIN ' . $join['joinTable'] . ' ' . $join['joinAlias'];
                 if ($join['joinCondition'] !== null) {
                     $sql .= ' ON ' . $join['joinCondition'];
                 }
-
                 $knownAliases[$join['joinAlias']] = true;
             }
 

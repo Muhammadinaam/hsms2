@@ -7,7 +7,6 @@ use Illuminate\Redis\Connections\PhpRedisClusterConnection;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Redis as RedisFacade;
-use Illuminate\Support\Str;
 use LogicException;
 use Redis;
 use RedisCluster;
@@ -23,13 +22,9 @@ class PhpRedisConnector implements Connector
      */
     public function connect(array $config, array $options)
     {
-        $connector = function () use ($config, $options) {
-            return $this->createClient(array_merge(
-                $config, $options, Arr::pull($config, 'options', [])
-            ));
-        };
-
-        return new PhpRedisConnection($connector(), $connector, $config);
+        return new PhpRedisConnection($this->createClient(array_merge(
+            $config, $options, Arr::pull($config, 'options', [])
+        )));
     }
 
     /**
@@ -57,7 +52,7 @@ class PhpRedisConnector implements Connector
      */
     protected function buildClusterConnectionString(array $server)
     {
-        return $this->formatHost($server).':'.$server['port'].'?'.Arr::query(Arr::only($server, [
+        return $server['host'].':'.$server['port'].'?'.Arr::query(Arr::only($server, [
             'database', 'password', 'prefix', 'read_timeout',
         ]));
     }
@@ -75,9 +70,7 @@ class PhpRedisConnector implements Connector
         return tap(new Redis, function ($client) use ($config) {
             if ($client instanceof RedisFacade) {
                 throw new LogicException(
-                        extension_loaded('redis')
-                                ? 'Please remove or rename the Redis facade alias in your "app" configuration file in order to avoid collision with the PHP Redis extension.'
-                                : 'Please make sure the PHP Redis extension is installed and enabled.'
+                    'Please remove or rename the Redis facade alias in your "app" configuration file in order to avoid collision with the PHP Redis extension.'
                 );
             }
 
@@ -98,10 +91,6 @@ class PhpRedisConnector implements Connector
             if (! empty($config['read_timeout'])) {
                 $client->setOption(Redis::OPT_READ_TIMEOUT, $config['read_timeout']);
             }
-
-            if (! empty($config['scan'])) {
-                $client->setOption(Redis::OPT_SCAN, $config['scan']);
-            }
         });
     }
 
@@ -117,7 +106,7 @@ class PhpRedisConnector implements Connector
         $persistent = $config['persistent'] ?? false;
 
         $parameters = [
-            $this->formatHost($config),
+            $config['host'],
             $config['port'],
             Arr::get($config, 'timeout', 0.0),
             $persistent ? Arr::get($config, 'persistent_id', null) : null,
@@ -156,29 +145,6 @@ class PhpRedisConnector implements Connector
             if (! empty($options['prefix'])) {
                 $client->setOption(RedisCluster::OPT_PREFIX, $options['prefix']);
             }
-
-            if (! empty($options['scan'])) {
-                $client->setOption(RedisCluster::OPT_SCAN, $options['scan']);
-            }
-
-            if (! empty($options['failover'])) {
-                $client->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $options['failover']);
-            }
         });
-    }
-
-    /**
-     * Format the host using the scheme if available.
-     *
-     * @param  array  $options
-     * @return string
-     */
-    protected function formatHost(array $options)
-    {
-        if (isset($options['scheme'])) {
-            return Str::start($options['host'], "{$options['scheme']}://");
-        }
-
-        return $options['host'];
     }
 }

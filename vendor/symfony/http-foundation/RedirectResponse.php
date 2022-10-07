@@ -34,11 +34,6 @@ class RedirectResponse extends Response
      */
     public function __construct(?string $url, int $status = 302, array $headers = [])
     {
-        if (null === $url) {
-            @trigger_error(sprintf('Passing a null url when instantiating a "%s" is deprecated since Symfony 4.4.', __CLASS__), \E_USER_DEPRECATED);
-            $url = '';
-        }
-
         parent::__construct('', $status, $headers);
 
         $this->setTargetUrl($url);
@@ -87,7 +82,7 @@ class RedirectResponse extends Response
      */
     public function setTargetUrl($url)
     {
-        if ('' === ($url ?? '')) {
+        if (empty($url)) {
             throw new \InvalidArgumentException('Cannot redirect to an empty URL.');
         }
 
@@ -98,14 +93,14 @@ class RedirectResponse extends Response
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="0;url=\'%1$s\'" />
+        <meta http-equiv="refresh" content="0;url=%1$s" />
 
         <title>Redirecting to %1$s</title>
     </head>
     <body>
         Redirecting to <a href="%1$s">%1$s</a>.
     </body>
-</html>', htmlspecialchars($url, \ENT_QUOTES, 'UTF-8')));
+</html>', htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
 
         $this->headers->set('Location', $url);
 

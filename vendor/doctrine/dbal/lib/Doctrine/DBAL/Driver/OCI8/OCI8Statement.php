@@ -2,19 +2,26 @@
 
 namespace Doctrine\DBAL\Driver\OCI8;
 
-use Doctrine\DBAL\Driver\FetchUtils;
-use Doctrine\DBAL\Driver\OCI8\Exception\NonTerminatedStringLiteral;
-use Doctrine\DBAL\Driver\OCI8\Exception\UnknownParameterIndex;
-use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Driver\Statement as StatementInterface;
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\Driver\StatementIterator;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
 use InvalidArgumentException;
 use IteratorAggregate;
 use PDO;
-use ReturnTypeWillChange;
-
+use const OCI_ASSOC;
+use const OCI_B_BIN;
+use const OCI_B_BLOB;
+use const OCI_BOTH;
+use const OCI_D_LOB;
+use const OCI_FETCHSTATEMENT_BY_COLUMN;
+use const OCI_FETCHSTATEMENT_BY_ROW;
+use const OCI_NUM;
+use const OCI_RETURN_LOBS;
+use const OCI_RETURN_NULLS;
+use const OCI_TEMP_BLOB;
+use const PREG_OFFSET_CAPTURE;
+use const SQLT_CHR;
 use function array_key_exists;
 use function assert;
 use function count;
@@ -34,28 +41,13 @@ use function oci_num_rows;
 use function oci_parse;
 use function preg_match;
 use function preg_quote;
+use function sprintf;
 use function substr;
-
-use const OCI_ASSOC;
-use const OCI_B_BIN;
-use const OCI_B_BLOB;
-use const OCI_BOTH;
-use const OCI_D_LOB;
-use const OCI_FETCHSTATEMENT_BY_COLUMN;
-use const OCI_FETCHSTATEMENT_BY_ROW;
-use const OCI_NUM;
-use const OCI_RETURN_LOBS;
-use const OCI_RETURN_NULLS;
-use const OCI_TEMP_BLOB;
-use const PREG_OFFSET_CAPTURE;
-use const SQLT_CHR;
 
 /**
  * The OCI8 implementation of the Statement interface.
- *
- * @deprecated Use {@link Statement} instead
  */
-class OCI8Statement implements IteratorAggregate, StatementInterface, Result
+class OCI8Statement implements IteratorAggregate, Statement
 {
     /** @var resource */
     protected $_dbh;
@@ -106,8 +98,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
     /**
      * Creates a new OCI8Statement that uses the given connection handle and SQL statement.
      *
-     * @internal The statement can be only instantiated by its driver connection.
-     *
      * @param resource $dbh   The connection handle.
      * @param string   $query The SQL query.
      */
@@ -135,8 +125,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
      * The algorithm uses a state machine with two possible states: InLiteral and NotInLiteral.
      * Question marks inside literal strings are therefore handled correctly by this method.
      * This comes at a cost, the whole sql statement has to be looped over.
-     *
-     * @internal
      *
      * @param string $statement The SQL statement to convert.
      *
@@ -168,8 +156,11 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
             }
         } while ($result);
 
-        if ($currentLiteralDelimiter !== null) {
-            throw NonTerminatedStringLiteral::new($tokenOffset - 1);
+        if ($currentLiteralDelimiter) {
+            throw new OCI8Exception(sprintf(
+                'The statement contains non-terminated string literal starting at offset %d',
+                $tokenOffset - 1
+            ));
         }
 
         $fragments[] = substr($statement, $fragmentOffset);
@@ -182,14 +173,12 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
      * Finds next placeholder or opening quote.
      *
      * @param string             $statement               The SQL statement to parse
-     * @param int                $tokenOffset             The offset to start searching from
+     * @param string             $tokenOffset             The offset to start searching from
      * @param int                $fragmentOffset          The offset to build the next fragment from
-     * @param string[]           $fragments               Fragments of the original statement
-     *                                                    not containing placeholders
+     * @param string[]           $fragments               Fragments of the original statement not containing placeholders
      * @param string|null        $currentLiteralDelimiter The delimiter of the current string literal
      *                                                    or NULL if not currently in a literal
-     * @param array<int, string> $paramMap                Mapping of the original parameter positions
-     *                                                    to their named replacements
+     * @param array<int, string> $paramMap                Mapping of the original parameter positions to their named replacements
      *
      * @return bool Whether the token was found
      */
@@ -229,12 +218,10 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
      * Finds closing quote
      *
      * @param string $statement               The SQL statement to parse
-     * @param int    $tokenOffset             The offset to start searching from
+     * @param string $tokenOffset             The offset to start searching from
      * @param string $currentLiteralDelimiter The delimiter of the current string literal
      *
      * @return bool Whether the token was found
-     *
-     * @param-out string|null $currentLiteralDelimiter
      */
     private static function findClosingQuote(
         $statement,
@@ -251,7 +238,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
             return false;
         }
 
-        $currentLiteralDelimiter = null;
+        $currentLiteralDelimiter = false;
         ++$tokenOffset;
 
         return true;
@@ -293,7 +280,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
     {
         if (is_int($param)) {
             if (! isset($this->_paramMap[$param])) {
-                throw UnknownParameterIndex::new($param);
+                throw new OCI8Exception(sprintf('Could not find variable mapping with index %d, in the SQL statement', $param));
             }
 
             $param = $this->_paramMap[$param];
@@ -301,6 +288,10 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
         if ($type === ParameterType::LARGE_OBJECT) {
             $lob = oci_new_descriptor($this->_dbh, OCI_D_LOB);
+
+            $class = 'OCI-Lob';
+            assert($lob instanceof $class);
+
             $lob->writeTemporary($variable, OCI_TEMP_BLOB);
 
             $variable =& $lob;
@@ -320,7 +311,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
     /**
      * Converts DBAL parameter type to oci8 parameter type
      */
-    private function convertParameterType(int $type): int
+    private function convertParameterType(int $type) : int
     {
         switch ($type) {
             case ParameterType::BINARY:
@@ -336,12 +327,17 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use free() instead.
      */
     public function closeCursor()
     {
-        $this->free();
+        // not having the result means there's nothing to close
+        if (! $this->result) {
+            return true;
+        }
+
+        oci_cancel($this->_sth);
+
+        $this->result = false;
 
         return true;
     }
@@ -356,8 +352,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated The error information is available via exceptions.
      */
     public function errorCode()
     {
@@ -371,8 +365,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated The error information is available via exceptions.
      */
     public function errorInfo()
     {
@@ -414,8 +406,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use one of the fetch- or iterate-related methods.
      */
     public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null)
     {
@@ -426,10 +416,7 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use iterateNumeric(), iterateAssociative() or iterateColumn() instead.
      */
-    #[ReturnTypeWillChange]
     public function getIterator()
     {
         return new StatementIterator($this);
@@ -437,8 +424,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use fetchNumeric(), fetchAssociative() or fetchOne() instead.
      */
     public function fetch($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
@@ -470,8 +455,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use fetchAllNumeric(), fetchAllAssociative() or fetchFirstColumn() instead.
      */
     public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null)
     {
@@ -526,8 +509,6 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use fetchOne() instead.
      */
     public function fetchColumn($columnIndex = 0)
     {
@@ -552,104 +533,5 @@ class OCI8Statement implements IteratorAggregate, StatementInterface, Result
     public function rowCount()
     {
         return oci_num_rows($this->_sth) ?: 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchNumeric()
-    {
-        return $this->doFetch(OCI_NUM);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAssociative()
-    {
-        return $this->doFetch(OCI_ASSOC);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchOne()
-    {
-        return FetchUtils::fetchOne($this);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAllNumeric(): array
-    {
-        return $this->doFetchAll(OCI_NUM, OCI_FETCHSTATEMENT_BY_ROW);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAllAssociative(): array
-    {
-        return $this->doFetchAll(OCI_ASSOC, OCI_FETCHSTATEMENT_BY_ROW);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchFirstColumn(): array
-    {
-        return $this->doFetchAll(OCI_NUM, OCI_FETCHSTATEMENT_BY_COLUMN)[0];
-    }
-
-    public function free(): void
-    {
-        // not having the result means there's nothing to close
-        if (! $this->result) {
-            return;
-        }
-
-        oci_cancel($this->_sth);
-
-        $this->result = false;
-    }
-
-    /**
-     * @return mixed|false
-     */
-    private function doFetch(int $mode)
-    {
-        // do not try fetching from the statement if it's not expected to contain the result
-        // in order to prevent exceptional situation
-        if (! $this->result) {
-            return false;
-        }
-
-        return oci_fetch_array(
-            $this->_sth,
-            $mode | OCI_RETURN_NULLS | OCI_RETURN_LOBS
-        );
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function doFetchAll(int $mode, int $fetchStructure): array
-    {
-        // do not try fetching from the statement if it's not expected to contain the result
-        // in order to prevent exceptional situation
-        if (! $this->result) {
-            return [];
-        }
-
-        oci_fetch_all(
-            $this->_sth,
-            $result,
-            0,
-            -1,
-            $mode | OCI_RETURN_NULLS | $fetchStructure | OCI_RETURN_LOBS
-        );
-
-        return $result;
     }
 }

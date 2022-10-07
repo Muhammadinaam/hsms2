@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
 
 class UserSettingTest extends TestCase
 {
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 

@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
 
     var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
@@ -12,11 +12,11 @@
 
         className: csscls('sqlqueries'),
 
-        onFilterClick: function (el) {
+        onFilterClick: function(el) {
             $(el).toggleClass(csscls('excluded'));
 
             var excludedLabels = [];
-            this.$toolbar.find(csscls('.filter') + csscls('.excluded')).each(function () {
+            this.$toolbar.find(csscls('.filter') + csscls('.excluded')).each(function() {
                 excludedLabels.push(this.rel);
             });
 
@@ -25,53 +25,18 @@
             this.set('exclude', excludedLabels);
         },
 
-        onCopyToClipboard: function (el) {
-            var code = $(el).parent('li').find('code').get(0);
-            var copy = function () {
-                try {
-                    document.execCommand('copy');
-                    alert('Query copied to the clipboard');
-                } catch (err) {
-                    console.log('Oops, unable to copy');
-                }
-            };
-            var select = function (node) {
-                if (document.selection) {
-                    var range = document.body.createTextRange();
-                    range.moveToElementText(node);
-                    range.select();
-                } else if (window.getSelection) {
-                    var range = document.createRange();
-                    range.selectNodeContents(node);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                copy();
-                window.getSelection().removeAllRanges();
-            };
-            select(code);
-        },
-
-        render: function () {
+        render: function() {
             this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
 
             this.$toolbar = $('<div></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
             var filters = [], self = this;
 
-            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function (li, stmt) {
+            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, stmt) {
                 if (stmt.type === 'transaction') {
                     $('<strong />').addClass(csscls('sql')).addClass(csscls('name')).text(stmt.sql).appendTo(li);
                 } else {
                     $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(stmt.sql, 'sql')).appendTo(li);
-                }
-                if (stmt.width_percent) {
-                    $('<div></div>').addClass(csscls('bg-measure')).append(
-                        $('<div></div>').addClass(csscls('value')).css({
-                            left: stmt.start_percent + '%',
-                            width: Math.max(stmt.width_percent, 0.01) + '%',
-                        })
-                    ).appendTo(li);
                 }
                 if (stmt.duration_str) {
                     $('<span title="Duration" />').addClass(csscls('duration')).text(stmt.duration_str).appendTo(li);
@@ -94,10 +59,9 @@
                             .addClass(csscls('filter'))
                             .text(stmt.connection)
                             .attr('rel', stmt.connection)
-                            .on('click', function () {
-                                self.onFilterClick(this); })
+                            .on('click', function() { self.onFilterClick(this); })
                             .appendTo(self.$toolbar);
-                        if (filters.length > 1) {
+                        if (filters.length>1) {
                             self.$toolbar.show();
                             self.$list.$el.css("margin-bottom","20px");
                         }
@@ -106,16 +70,6 @@
                 if (typeof(stmt.is_success) != 'undefined' && !stmt.is_success) {
                     li.addClass(csscls('error'));
                     li.append($('<span />').addClass(csscls('error')).text("[" + stmt.error_code + "] " + stmt.error_message));
-                }
-                if (stmt.show_copy) {
-                    $('<span title="Copy to clipboard" />')
-                        .addClass(csscls('copy-clipboard'))
-                        .css('cursor', 'pointer')
-                        .on('click', function (event) {
-                            self.onCopyToClipboard(this);
-                            event.stopPropagation();
-                        })
-                        .appendTo(li);
                 }
 
                 var table = $('<table><tr><th colspan="2">Metadata</th></tr></table>').addClass(csscls('params')).appendTo(li);
@@ -129,7 +83,7 @@
                         var $span = $('<span />').addClass('phpdebugbar-text-muted');
 
                         var index = 0;
-                        var $bindings = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function (li, binding) {
+                        var $bindings = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, binding) {
                             var $index = $span.clone().text(index++ + '.');
                             li.append($index, '&nbsp;', binding).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
                         }});
@@ -152,7 +106,7 @@
                         var $name = $('<td />').addClass(csscls('name')).html('Hints ' + $icon);
                         var $value = $('<td />').addClass(csscls('value'));
 
-                        var $hints = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function (li, hint) {
+                        var $hints = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, hint) {
                             li.append(hint).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
                         }});
 
@@ -174,7 +128,7 @@
                         var $value = $('<td />').addClass(csscls('value'));
                         var $span = $('<span />').addClass('phpdebugbar-text-muted');
 
-                        var $backtrace = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function (li, source) {
+                        var $backtrace = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, source) {
                             var $parts = [
                                 $span.clone().text(source.index + '.'),
                                 '&nbsp;',
@@ -210,7 +164,7 @@
                     }
                 }
 
-                li.css('cursor', 'pointer').click(function () {
+                li.css('cursor', 'pointer').click(function() {
                     if (table.is(':visible')) {
                         table.hide();
                     } else {
@@ -220,14 +174,14 @@
             }});
             this.$list.$el.appendTo(this.$el);
 
-            this.bindAttr('data', function (data) {
+            this.bindAttr('data', function(data) {
                 this.$list.set('data', data.statements);
                 this.$status.empty();
                 var stmt;
 
                 // Search for duplicate statements.
                 for (var sql = {}, duplicate = 0, i = 0; i < data.statements.length; i++) {
-                    if (data.statements[i].type === 'query') {
+                    if(data.statements[i].type === 'query') {
                         stmt = data.statements[i].sql;
                         if (data.statements[i].bindings && data.statements[i].bindings.length) {
                             stmt += JSON.stringify(data.statements[i].bindings);
@@ -247,7 +201,7 @@
                         for (i = 0; i < sql[stmt].keys.length; i++) {
                             this.$list.$el.find('.' + csscls('list-item')).eq(sql[stmt].keys[i])
                                 .addClass(csscls('sql-duplicate'))
-                                .addClass(csscls('sql-duplicate-' + duplicate));
+                                .addClass(csscls('sql-duplicate-'+duplicate));
                         }
                     }
                 }

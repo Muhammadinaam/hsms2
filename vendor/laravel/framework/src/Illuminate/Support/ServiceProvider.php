@@ -4,7 +4,6 @@ namespace Illuminate\Support;
 
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\Eloquent\Factory as ModelFactory;
 
 abstract class ServiceProvider
 {
@@ -88,18 +87,17 @@ abstract class ServiceProvider
      */
     protected function loadViewsFrom($path, $namespace)
     {
-        $this->callAfterResolving('view', function ($view) use ($path, $namespace) {
-            if (isset($this->app->config['view']['paths']) &&
-                is_array($this->app->config['view']['paths'])) {
-                foreach ($this->app->config['view']['paths'] as $viewPath) {
-                    if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
-                        $view->addNamespace($namespace, $appPath);
-                    }
+        $view = $this->app['view'];
+
+        if (is_array($this->app->config['view']['paths'])) {
+            foreach ($this->app->config['view']['paths'] as $viewPath) {
+                if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
+                    $view->addNamespace($namespace, $appPath);
                 }
             }
+        }
 
-            $view->addNamespace($namespace, $path);
-        });
+        $view->addNamespace($namespace, $path);
     }
 
     /**
@@ -111,9 +109,7 @@ abstract class ServiceProvider
      */
     protected function loadTranslationsFrom($path, $namespace)
     {
-        $this->callAfterResolving('translator', function ($translator) use ($path, $namespace) {
-            $translator->addNamespace($namespace, $path);
-        });
+        $this->app['translator']->addNamespace($namespace, $path);
     }
 
     /**
@@ -124,55 +120,22 @@ abstract class ServiceProvider
      */
     protected function loadJsonTranslationsFrom($path)
     {
-        $this->callAfterResolving('translator', function ($translator) use ($path) {
-            $translator->addJsonPath($path);
-        });
+        $this->app['translator']->addJsonPath($path);
     }
 
     /**
-     * Register database migration paths.
+     * Register a database migration path.
      *
      * @param  array|string  $paths
      * @return void
      */
     protected function loadMigrationsFrom($paths)
     {
-        $this->callAfterResolving('migrator', function ($migrator) use ($paths) {
+        $this->app->afterResolving('migrator', function ($migrator) use ($paths) {
             foreach ((array) $paths as $path) {
                 $migrator->path($path);
             }
         });
-    }
-
-    /**
-     * Register Eloquent model factory paths.
-     *
-     * @param  array|string  $paths
-     * @return void
-     */
-    protected function loadFactoriesFrom($paths)
-    {
-        $this->callAfterResolving(ModelFactory::class, function ($factory) use ($paths) {
-            foreach ((array) $paths as $path) {
-                $factory->load($path);
-            }
-        });
-    }
-
-    /**
-     * Setup an after resolving listener, or fire immediately if already resolved.
-     *
-     * @param  string  $name
-     * @param  callable  $callback
-     * @return void
-     */
-    protected function callAfterResolving($name, $callback)
-    {
-        $this->app->afterResolving($name, $callback);
-
-        if ($this->app->resolved($name)) {
-            $callback($this->app->make($name), $this->app);
-        }
     }
 
     /**
@@ -227,8 +190,8 @@ abstract class ServiceProvider
     /**
      * Get the paths to publish.
      *
-     * @param  string|null  $provider
-     * @param  string|null  $group
+     * @param  string  $provider
+     * @param  string  $group
      * @return array
      */
     public static function pathsToPublish($provider = null, $group = null)

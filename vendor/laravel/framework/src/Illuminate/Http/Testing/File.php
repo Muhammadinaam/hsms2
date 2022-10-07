@@ -28,13 +28,6 @@ class File extends UploadedFile
     public $sizeToReport;
 
     /**
-     * The MIME type to report.
-     *
-     * @var string|null
-     */
-    public $mimeTypeToReport;
-
-    /**
      * Create a new file instance.
      *
      * @param  string  $name
@@ -113,26 +106,13 @@ class File extends UploadedFile
     }
 
     /**
-     * Set the "MIME type" for the file.
-     *
-     * @param  string  $mimeType
-     * @return $this
-     */
-    public function mimeType($mimeType)
-    {
-        $this->mimeTypeToReport = $mimeType;
-
-        return $this;
-    }
-
-    /**
-     * Get the MIME type of the file.
+     * Get the MIME type for the file.
      *
      * @return string
      */
     public function getMimeType()
     {
-        return $this->mimeTypeToReport ?: MimeType::from($this->name);
+        return MimeType::from($this->name);
     }
 
     /**

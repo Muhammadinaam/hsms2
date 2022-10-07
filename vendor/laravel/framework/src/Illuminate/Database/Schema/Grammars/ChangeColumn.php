@@ -19,7 +19,7 @@ class ChangeColumn
      * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @param  \Illuminate\Support\Fluent  $command
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Connection $connection
      * @return array
      *
      * @throws \RuntimeException
@@ -28,7 +28,7 @@ class ChangeColumn
     {
         if (! $connection->isDoctrineAvailable()) {
             throw new RuntimeException(sprintf(
-                'Changing columns for table "%s" requires Doctrine DBAL. Please install the doctrine/dbal package.',
+                'Changing columns for table "%s" requires Doctrine DBAL; install "doctrine/dbal".',
                 $blueprint->getTable()
             ));
         }
@@ -121,10 +121,9 @@ class ChangeColumn
             $options['length'] = static::calculateDoctrineTextLength($fluent['type']);
         }
 
-        if (static::doesntNeedCharacterOptions($fluent['type'])) {
+        if (in_array($fluent['type'], ['json', 'binary'])) {
             $options['customSchemaOptions'] = [
                 'collation' => '',
-                'charset' => '',
             ];
         }
 
@@ -176,31 +175,6 @@ class ChangeColumn
             default:
                 return 255 + 1;
         }
-    }
-
-    /**
-     * Determine if the given type does not need character / collation options.
-     *
-     * @param  string  $type
-     * @return bool
-     */
-    protected static function doesntNeedCharacterOptions($type)
-    {
-        return in_array($type, [
-            'bigInteger',
-            'binary',
-            'boolean',
-            'date',
-            'decimal',
-            'double',
-            'float',
-            'integer',
-            'json',
-            'mediumInteger',
-            'smallInteger',
-            'time',
-            'tinyInteger',
-        ]);
     }
 
     /**

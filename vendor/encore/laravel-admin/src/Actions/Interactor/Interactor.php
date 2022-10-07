@@ -18,8 +18,7 @@ abstract class Interactor
         'success', 'error', 'warning', 'info', 'question', 'confirm',
         'text', 'email', 'integer', 'ip', 'url', 'password', 'mobile',
         'textarea', 'select', 'multipleSelect', 'checkbox', 'radio',
-        'file', 'image', 'date', 'datetime', 'time', 'hidden', 'multipleImage',
-        'multipleFile', 'modalLarge', 'modalSmall',
+        'file', 'image', 'date', 'datetime', 'time', 'hidden',
     ];
 
     /**

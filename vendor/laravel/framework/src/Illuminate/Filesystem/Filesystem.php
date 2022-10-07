@@ -251,7 +251,7 @@ class Filesystem
     }
 
     /**
-     * Create a symlink to the target file or directory. On Windows, a hard link is created if the target is a file.
+     * Create a hard link to the target file or directory.
      *
      * @param  string  $target
      * @param  string  $link
@@ -404,7 +404,7 @@ class Filesystem
      * Find path names matching a given pattern.
      *
      * @param  string  $pattern
-     * @param  int  $flags
+     * @param  int     $flags
      * @return array
      */
     public function glob($pattern, $flags = 0)
@@ -460,27 +460,12 @@ class Filesystem
     }
 
     /**
-     * Ensure a directory exists.
-     *
-     * @param  string  $path
-     * @param  int  $mode
-     * @param  bool  $recursive
-     * @return void
-     */
-    public function ensureDirectoryExists($path, $mode = 0755, $recursive = true)
-    {
-        if (! $this->isDirectory($path)) {
-            $this->makeDirectory($path, $mode, $recursive);
-        }
-    }
-
-    /**
      * Create a directory.
      *
      * @param  string  $path
-     * @param  int  $mode
-     * @param  bool  $recursive
-     * @param  bool  $force
+     * @param  int     $mode
+     * @param  bool    $recursive
+     * @param  bool    $force
      * @return bool
      */
     public function makeDirectory($path, $mode = 0755, $recursive = false, $force = false)
@@ -567,7 +552,7 @@ class Filesystem
      * The directory itself may be optionally preserved.
      *
      * @param  string  $directory
-     * @param  bool  $preserve
+     * @param  bool    $preserve
      * @return bool
      */
     public function deleteDirectory($directory, $preserve = false)

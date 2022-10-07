@@ -82,12 +82,10 @@ trait InteractsWithExceptionHandling
             }
 
             /**
-             * Report or log an exception.
+             * Report the given exception.
              *
              * @param  \Exception  $e
              * @return void
-             *
-             * @throws \Exception
              */
             public function report(Exception $e)
             {
@@ -106,13 +104,13 @@ trait InteractsWithExceptionHandling
             }
 
             /**
-             * Render an exception into an HTTP response.
+             * Render the given exception.
              *
              * @param  \Illuminate\Http\Request  $request
              * @param  \Exception  $e
-             * @return \Symfony\Component\HttpFoundation\Response
+             * @return mixed
              *
-             * @throws \Exception
+             * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException|\Exception
              */
             public function render($request, Exception $e)
             {
@@ -132,7 +130,7 @@ trait InteractsWithExceptionHandling
             }
 
             /**
-             * Render an exception to the console.
+             * Render the exception for the console.
              *
              * @param  \Symfony\Component\Console\Output\OutputInterface  $output
              * @param  \Exception  $e

@@ -29,20 +29,6 @@ class Actions extends AbstractDisplayer
     protected $resource;
 
     /**
-     * Disable all actions.
-     *
-     * @var bool
-     */
-    protected $disableAll = false;
-
-    /**
-     * diy translate.
-     *
-     * @var array
-     */
-    protected $trans = [];
-
-    /**
      * Append a action.
      *
      * @param $action
@@ -129,18 +115,6 @@ class Actions extends AbstractDisplayer
     }
 
     /**
-     * Disable all actions.
-     *
-     * @return $this
-     */
-    public function disableAll()
-    {
-        $this->disableAll = true;
-
-        return $this;
-    }
-
-    /**
      * Set resource of current resource.
      *
      * @param $resource
@@ -171,10 +145,6 @@ class Actions extends AbstractDisplayer
     {
         if ($callback instanceof \Closure) {
             $callback->call($this, $this);
-        }
-
-        if ($this->disableAll) {
-            return '';
         }
 
         $actions = $this->prepends;
@@ -241,8 +211,6 @@ EOT;
             'cancel'         => trans('admin.cancel'),
         ];
 
-        $trans = array_merge($trans, $this->trans);
-
         $script = <<<SCRIPT
 
 $('.{$this->grid->getGridRowName()}-delete').unbind('click').click(function() {
@@ -289,15 +257,5 @@ $('.{$this->grid->getGridRowName()}-delete').unbind('click').click(function() {
 SCRIPT;
 
         Admin::script($script);
-    }
-
-    /**
-     * diy delete translate.
-     *
-     * @param $tans
-     */
-    public function setTrans($tans)
-    {
-        $this->trans = $tans;
     }
 }

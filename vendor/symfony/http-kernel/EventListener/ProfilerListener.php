@@ -12,10 +12,8 @@
 namespace Symfony\Component\HttpKernel\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
@@ -41,8 +39,11 @@ class ProfilerListener implements EventSubscriberInterface
     protected $parents;
 
     /**
-     * @param bool $onlyException      True if the profiler only collects data when an exception occurs, false otherwise
-     * @param bool $onlyMasterRequests True if the profiler only collects data when the request is a master request, false otherwise
+     * @param Profiler                     $profiler           A Profiler instance
+     * @param RequestStack                 $requestStack       A RequestStack instance
+     * @param RequestMatcherInterface|null $matcher            A RequestMatcher instance
+     * @param bool                         $onlyException      True if the profiler only collects data when an exception occurs, false otherwise
+     * @param bool                         $onlyMasterRequests True if the profiler only collects data when the request is a master request, false otherwise
      */
     public function __construct(Profiler $profiler, RequestStack $requestStack, RequestMatcherInterface $matcher = null, bool $onlyException = false, bool $onlyMasterRequests = false)
     {
@@ -64,7 +65,7 @@ class ProfilerListener implements EventSubscriberInterface
             return;
         }
 
-        $this->exception = $event->getThrowable();
+        $this->exception = $event->getException();
     }
 
     /**
@@ -89,21 +90,8 @@ class ProfilerListener implements EventSubscriberInterface
             return;
         }
 
-        $session = method_exists(Request::class, 'getPreferredFormat') && $request->hasPreviousSession() && $request->hasSession() ? $request->getSession() : null;
-
-        if ($session instanceof Session) {
-            $usageIndexValue = $usageIndexReference = &$session->getUsageIndex();
-            $usageIndexReference = \PHP_INT_MIN;
-        }
-
-        try {
-            if (!$profile = $this->profiler->collect($request, $event->getResponse(), $exception)) {
-                return;
-            }
-        } finally {
-            if ($session instanceof Session) {
-                $usageIndexReference = $usageIndexValue;
-            }
+        if (!$profile = $this->profiler->collect($request, $event->getResponse(), $exception)) {
+            return;
         }
 
         $this->profiles[$request] = $profile;

@@ -34,7 +34,10 @@ class Client extends AbstractBrowser
     private $catchExceptions = true;
 
     /**
-     * @param array $server The server parameters (equivalent of $_SERVER)
+     * @param HttpKernelInterface $kernel    An HttpKernel instance
+     * @param array               $server    The server parameters (equivalent of $_SERVER)
+     * @param History             $history   A History instance to store the browser history
+     * @param CookieJar           $cookieJar A CookieJar instance to store the cookies
      */
     public function __construct(HttpKernelInterface $kernel, array $server = [], History $history = null, CookieJar $cookieJar = null)
     {
@@ -85,7 +88,7 @@ class Client extends AbstractBrowser
 
         $requires = '';
         foreach (get_declared_classes() as $class) {
-            if (str_starts_with($class, 'ComposerAutoloaderInit')) {
+            if (0 === strpos($class, 'ComposerAutoloaderInit')) {
                 $r = new \ReflectionClass($class);
                 $file = \dirname($r->getFileName(), 2).'/autoload.php';
                 if (file_exists($file)) {
@@ -166,7 +169,7 @@ EOF;
                         '',
                         $value->getClientOriginalName(),
                         $value->getClientMimeType(),
-                        \UPLOAD_ERR_INI_SIZE,
+                        UPLOAD_ERR_INI_SIZE,
                         true
                     );
                 } else {

@@ -2,15 +2,12 @@
 
 namespace Doctrine\DBAL\Driver\IBMDB2;
 
-use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
-use Doctrine\DBAL\Driver\IBMDB2\Exception\ConnectionError;
-use Doctrine\DBAL\Driver\IBMDB2\Exception\ConnectionFailed;
-use Doctrine\DBAL\Driver\IBMDB2\Exception\PrepareFailed;
+use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\ParameterType;
-use Doctrine\Deprecations\Deprecation;
 use stdClass;
-
+use const DB2_AUTOCOMMIT_OFF;
+use const DB2_AUTOCOMMIT_ON;
 use function assert;
 use function db2_autocommit;
 use function db2_commit;
@@ -25,24 +22,16 @@ use function db2_pconnect;
 use function db2_prepare;
 use function db2_rollback;
 use function db2_server_info;
-use function error_get_last;
+use function db2_stmt_errormsg;
 use function func_get_args;
 use function is_bool;
 
-use const DB2_AUTOCOMMIT_OFF;
-use const DB2_AUTOCOMMIT_ON;
-
-/**
- * @deprecated Use {@link Connection} instead
- */
-class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
+class DB2Connection implements Connection, ServerInfoAwareConnection
 {
     /** @var resource */
-    private $conn;
+    private $conn = null;
 
     /**
-     * @internal The connection can be only instantiated by its driver.
-     *
      * @param mixed[] $params
      * @param string  $username
      * @param string  $password
@@ -61,7 +50,7 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
         }
 
         if ($conn === false) {
-            throw ConnectionFailed::new();
+            throw new DB2Exception(db2_conn_errormsg());
         }
 
         $this->conn = $conn;
@@ -72,8 +61,8 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
      */
     public function getServerVersion()
     {
+        /** @var stdClass $serverInfo */
         $serverInfo = db2_server_info($this->conn);
-        assert($serverInfo instanceof stdClass);
 
         return $serverInfo->DBMS_VER;
     }
@@ -83,12 +72,6 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
      */
     public function requiresQueryForServerVersion()
     {
-        Deprecation::triggerIfCalledFromOutside(
-            'doctrine/dbal',
-            'https://github.com/doctrine/dbal/pull/4114',
-            'ServerInfoAwareConnection::requiresQueryForServerVersion() is deprecated and removed in DBAL 3.'
-        );
-
         return false;
     }
 
@@ -98,12 +81,11 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
     public function prepare($sql)
     {
         $stmt = @db2_prepare($this->conn, $sql);
-
-        if ($stmt === false) {
-            throw PrepareFailed::new(error_get_last());
+        if (! $stmt) {
+            throw new DB2Exception(db2_stmt_errormsg());
         }
 
-        return new Statement($stmt);
+        return new DB2Statement($stmt);
     }
 
     /**
@@ -122,26 +104,26 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
     /**
      * {@inheritdoc}
      */
-    public function quote($value, $type = ParameterType::STRING)
+    public function quote($input, $type = ParameterType::STRING)
     {
-        $value = db2_escape_string($value);
+        $input = db2_escape_string($input);
 
         if ($type === ParameterType::INTEGER) {
-            return $value;
+            return $input;
         }
 
-        return "'" . $value . "'";
+        return "'" . $input . "'";
     }
 
     /**
      * {@inheritdoc}
      */
-    public function exec($sql)
+    public function exec($statement)
     {
-        $stmt = @db2_exec($this->conn, $sql);
+        $stmt = @db2_exec($this->conn, $statement);
 
         if ($stmt === false) {
-            throw ConnectionError::new($this->conn);
+            throw new DB2Exception(db2_stmt_errormsg());
         }
 
         return db2_num_rows($stmt);
@@ -172,7 +154,7 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
     public function commit()
     {
         if (! db2_commit($this->conn)) {
-            throw ConnectionError::new($this->conn);
+            throw new DB2Exception(db2_conn_errormsg($this->conn));
         }
 
         $result = db2_autocommit($this->conn, DB2_AUTOCOMMIT_ON);
@@ -187,7 +169,7 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
     public function rollBack()
     {
         if (! db2_rollback($this->conn)) {
-            throw ConnectionError::new($this->conn);
+            throw new DB2Exception(db2_conn_errormsg($this->conn));
         }
 
         $result = db2_autocommit($this->conn, DB2_AUTOCOMMIT_ON);
@@ -198,8 +180,6 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated The error information is available via exceptions.
      */
     public function errorCode()
     {
@@ -208,8 +188,6 @@ class DB2Connection implements ConnectionInterface, ServerInfoAwareConnection
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated The error information is available via exceptions.
      */
     public function errorInfo()
     {

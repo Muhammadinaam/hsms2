@@ -61,7 +61,7 @@ class MenuController extends Controller
      */
     public function show($id)
     {
-        return redirect()->route('admin.auth.menu.edit', ['menu' => $id]);
+        return redirect()->route('admin.auth.menu.edit', ['id' => $id]);
     }
 
     /**
@@ -71,27 +71,25 @@ class MenuController extends Controller
     {
         $menuModel = config('admin.database.menu_model');
 
-        $tree = new Tree(new $menuModel());
+        return $menuModel::tree(function (Tree $tree) {
+            $tree->disableCreate();
 
-        $tree->disableCreate();
+            $tree->branch(function ($branch) {
+                $payload = "<i class='fa {$branch['icon']}'></i>&nbsp;<strong>{$branch['title']}</strong>";
 
-        $tree->branch(function ($branch) {
-            $payload = "<i class='fa {$branch['icon']}'></i>&nbsp;<strong>{$branch['title']}</strong>";
+                if (!isset($branch['children'])) {
+                    if (url()->isValidUrl($branch['uri'])) {
+                        $uri = $branch['uri'];
+                    } else {
+                        $uri = admin_url($branch['uri']);
+                    }
 
-            if (!isset($branch['children'])) {
-                if (url()->isValidUrl($branch['uri'])) {
-                    $uri = $branch['uri'];
-                } else {
-                    $uri = admin_url($branch['uri']);
+                    $payload .= "&nbsp;&nbsp;&nbsp;<a href=\"$uri\" class=\"dd-nodrag\">$uri</a>";
                 }
 
-                $payload .= "&nbsp;&nbsp;&nbsp;<a href=\"$uri\" class=\"dd-nodrag\">$uri</a>";
-            }
-
-            return $payload;
+                return $payload;
+            });
         });
-
-        return $tree;
     }
 
     /**

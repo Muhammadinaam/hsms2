@@ -73,10 +73,9 @@ if (!function_exists('measure')) {
      *
      * @param string $label
      * @param \Closure $closure
-     * @return mixed
      */
     function measure($label, \Closure $closure)
     {
-        return debugbar()->measure($label, $closure);
+        debugbar()->measure($label, $closure);
     }
 }

@@ -6,7 +6,7 @@ class UsersTest extends TestCase
 {
     protected $user;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 

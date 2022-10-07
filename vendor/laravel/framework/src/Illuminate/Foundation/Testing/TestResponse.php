@@ -2,10 +2,8 @@
 
 namespace Illuminate\Foundation\Testing;
 
-use ArrayAccess;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\Assert as PHPUnit;
 use Illuminate\Foundation\Testing\Constraints\SeeInOrder;
@@ -14,13 +12,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
-use LogicException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @mixin \Illuminate\Http\Response
  */
-class TestResponse implements ArrayAccess
+class TestResponse
 {
     use Tappable, Macroable {
         __call as macroCall;
@@ -300,8 +297,7 @@ class TestResponse implements ArrayAccess
         $cookieValue = $cookie->getValue();
 
         $actual = $encrypted
-            ? CookieValuePrefix::remove(app('encrypter')->decrypt($cookieValue, $unserialize))
-            : $cookieValue;
+            ? app('encrypter')->decrypt($cookieValue, $unserialize) : $cookieValue;
 
         PHPUnit::assertEquals(
             $value, $actual,
@@ -567,7 +563,7 @@ class TestResponse implements ArrayAccess
      * Assert that the response does not contain the given JSON fragment.
      *
      * @param  array  $data
-     * @param  bool  $exact
+     * @param  bool   $exact
      * @return $this
      */
     public function assertJsonMissing(array $data, $exact = false)
@@ -686,7 +682,7 @@ class TestResponse implements ArrayAccess
      */
     public function assertJsonCount(int $count, $key = null)
     {
-        if (! is_null($key)) {
+        if ($key) {
             PHPUnit::assertCount(
                 $count, data_get($this->json(), $key),
                 "Failed to assert that the response count matched the expected {$count}"
@@ -829,7 +825,7 @@ class TestResponse implements ArrayAccess
     /**
      * Assert that the response view equals the given value.
      *
-     * @param  string  $value
+     * @param  string $value
      * @return $this
      */
     public function assertViewIs($value)
@@ -857,13 +853,13 @@ class TestResponse implements ArrayAccess
         $this->ensureResponseHasView();
 
         if (is_null($value)) {
-            PHPUnit::assertTrue(Arr::has($this->original->gatherData(), $key));
+            PHPUnit::assertArrayHasKey($key, $this->original->gatherData());
         } elseif ($value instanceof Closure) {
-            PHPUnit::assertTrue($value(Arr::get($this->original->gatherData(), $key)));
+            PHPUnit::assertTrue($value($this->original->gatherData()[$key]));
         } elseif ($value instanceof Model) {
-            PHPUnit::assertTrue($value->is(Arr::get($this->original->gatherData(), $key)));
+            PHPUnit::assertTrue($value->is($this->original->gatherData()[$key]));
         } else {
-            PHPUnit::assertEquals($value, Arr::get($this->original->gatherData(), $key));
+            PHPUnit::assertEquals($value, $this->original->gatherData()[$key]);
         }
 
         return $this;
@@ -911,7 +907,7 @@ class TestResponse implements ArrayAccess
     {
         $this->ensureResponseHasView();
 
-        PHPUnit::assertFalse(Arr::has($this->original->gatherData(), $key));
+        PHPUnit::assertArrayNotHasKey($key, $this->original->gatherData());
 
         return $this;
     }
@@ -999,7 +995,7 @@ class TestResponse implements ArrayAccess
 
         if (is_null($value)) {
             PHPUnit::assertTrue(
-                $this->session()->hasOldInput($key),
+                $this->session()->getOldInput($key),
                 "Session is missing expected key [{$key}]."
             );
         } elseif ($value instanceof Closure) {
@@ -1031,7 +1027,7 @@ class TestResponse implements ArrayAccess
             if (is_int($key)) {
                 PHPUnit::assertTrue($errors->has($value), "Session missing error: $value");
             } else {
-                PHPUnit::assertContains(is_bool($value) ? (string) $value : $value, $errors->get($key, $format));
+                PHPUnit::assertContains($value, $errors->get($key, $format));
             }
         }
 
@@ -1171,25 +1167,6 @@ class TestResponse implements ArrayAccess
     }
 
     /**
-     * Dump the session from the response.
-     *
-     * @param  string|array  $keys
-     * @return $this
-     */
-    public function dumpSession($keys = [])
-    {
-        $keys = (array) $keys;
-
-        if (empty($keys)) {
-            dump($this->session()->all());
-        } else {
-            dump($this->session()->only($keys));
-        }
-
-        return $this;
-    }
-
-    /**
      * Get the streamed content from the response.
      *
      * @return string
@@ -1231,55 +1208,6 @@ class TestResponse implements ArrayAccess
     public function __isset($key)
     {
         return isset($this->baseResponse->{$key});
-    }
-
-    /**
-     * Determine if the given offset exists.
-     *
-     * @param  string  $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->json()[$offset]);
-    }
-
-    /**
-     * Get the value for a given offset.
-     *
-     * @param  string  $offset
-     * @return mixed
-     */
-    public function offsetGet($offset)
-    {
-        return $this->json()[$offset];
-    }
-
-    /**
-     * Set the value at the given offset.
-     *
-     * @param  string  $offset
-     * @param  mixed  $value
-     * @return void
-     *
-     * @throws \LogicException
-     */
-    public function offsetSet($offset, $value)
-    {
-        throw new LogicException('Response data may not be mutated using array access.');
-    }
-
-    /**
-     * Unset the value at the given offset.
-     *
-     * @param  string  $offset
-     * @return void
-     *
-     * @throws \LogicException
-     */
-    public function offsetUnset($offset)
-    {
-        throw new LogicException('Response data may not be mutated using array access.');
     }
 
     /**

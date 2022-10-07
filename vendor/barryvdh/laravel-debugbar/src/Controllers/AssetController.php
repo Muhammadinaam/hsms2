@@ -1,6 +1,4 @@
-<?php
-
-namespace Barryvdh\Debugbar\Controllers;
+<?php namespace Barryvdh\Debugbar\Controllers;
 
 use Illuminate\Http\Response;
 
@@ -18,9 +16,7 @@ class AssetController extends BaseController
         $content = $renderer->dumpAssetsToString('js');
 
         $response = new Response(
-            $content,
-            200,
-            [
+            $content, 200, [
                 'Content-Type' => 'text/javascript',
             ]
         );
@@ -40,9 +36,7 @@ class AssetController extends BaseController
         $content = $renderer->dumpAssetsToString('css');
 
         $response = new Response(
-            $content,
-            200,
-            [
+            $content, 200, [
                 'Content-Type' => 'text/css',
             ]
         );

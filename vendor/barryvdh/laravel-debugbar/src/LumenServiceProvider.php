@@ -1,6 +1,4 @@
-<?php
-
-namespace Barryvdh\Debugbar;
+<?php namespace Barryvdh\Debugbar;
 
 use Laravel\Lumen\Application;
 

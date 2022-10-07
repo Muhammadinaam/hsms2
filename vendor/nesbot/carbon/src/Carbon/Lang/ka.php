@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-/*
+/**
  * Authors:
  * - Tornike Razmadze
  * - François B
@@ -22,11 +22,7 @@
  * - JD Isaacks
  * - LONGMAN
  * - Avtandil Kikabidze (akalongman)
- * - Levan Velijanashvili (Stichoza)
  */
-
-use Carbon\CarbonInterface;
-
 return [
     'year' => ':count წელი',
     'y' => ':count წელი',
@@ -118,27 +114,25 @@ return [
     'before' => function ($time) {
         $replacements = [
             // year
-            'წელი' => 'წლით',
+            'წელი' => 'წლის',
             // month
-            'თვე' => 'თვით',
+            'თვე' => 'თვის',
             // week
-            'კვირა' => 'კვირით',
+            'კვირი' => 'კვირის',
             // day
-            'დღე' => 'დღით',
+            'დღე' => 'დღის',
             // hour
-            'საათი' => 'საათით',
+            'საათი' => 'საათის',
             // minute
-            'წუთი' => 'წუთით',
+            'წუთი' => 'წუთის',
             // second
-            'წამი' => 'წამით',
+            'წამი' => 'წამის',
         ];
         $time = strtr($time, array_flip($replacements));
         $time = strtr($time, $replacements);
 
-        return "$time ადრე";
+        return "$time უკან";
     },
-    'diff_now' => 'ახლა',
-    'diff_today' => 'დღეს',
     'diff_yesterday' => 'გუშინ',
     'diff_tomorrow' => 'ხვალ',
     'formats' => [
@@ -152,7 +146,7 @@ return [
     'calendar' => [
         'sameDay' => '[დღეს], LT[-ზე]',
         'nextDay' => '[ხვალ], LT[-ზე]',
-        'nextWeek' => function (CarbonInterface $current, CarbonInterface $other) {
+        'nextWeek' => function (\Carbon\CarbonInterface $current, \Carbon\CarbonInterface $other) {
             return ($current->isSameWeek($other) ? '' : '[შემდეგ] ').'dddd, LT[-ზე]';
         },
         'lastDay' => '[გუშინ], LT[-ზე]',
@@ -172,10 +166,10 @@ return [
 
         return $number.'-ე';
     },
-    'months' => ['იანვარი', 'თებერვალი', 'მარტი', 'აპრილი', 'მაისი', 'ივნისი', 'ივლისი', 'აგვისტო', 'სექტემბერი', 'ოქტომბერი', 'ნოემბერი', 'დეკემბერი'],
-    'months_standalone' => ['იანვარს', 'თებერვალს', 'მარტს', 'აპრილს', 'მაისს', 'ივნისს', 'ივლისს', 'აგვისტოს', 'სექტემბერს', 'ოქტომბერს', 'ნოემბერს', 'დეკემბერს'],
+    'months' => ['იანვარს', 'თებერვალს', 'მარტს', 'აპრილის', 'მაისს', 'ივნისს', 'ივლისს', 'აგვისტს', 'სექტემბერს', 'ოქტომბერს', 'ნოემბერს', 'დეკემბერს'],
+    'months_standalone' => ['იანვარი', 'თებერვალი', 'მარტი', 'აპრილი', 'მაისი', 'ივნისი', 'ივლისი', 'აგვისტო', 'სექტემბერი', 'ოქტომბერი', 'ნოემბერი', 'დეკემბერი'],
     'months_short' => ['იან', 'თებ', 'მარ', 'აპრ', 'მაი', 'ივნ', 'ივლ', 'აგვ', 'სექ', 'ოქტ', 'ნოე', 'დეკ'],
-    'months_regexp' => '/(D[oD]?(\[[^\[\]]*\]|\s)+MMMM?|L{2,4}|l{2,4})/',
+    'months_regexp' => '/D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/',
     'weekdays' => ['კვირას', 'ორშაბათს', 'სამშაბათს', 'ოთხშაბათს', 'ხუთშაბათს', 'პარასკევს', 'შაბათს'],
     'weekdays_standalone' => ['კვირა', 'ორშაბათი', 'სამშაბათი', 'ოთხშაბათი', 'ხუთშაბათი', 'პარასკევი', 'შაბათი'],
     'weekdays_short' => ['კვი', 'ორშ', 'სამ', 'ოთხ', 'ხუთ', 'პარ', 'შაბ'],

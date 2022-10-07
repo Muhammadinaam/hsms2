@@ -2,20 +2,15 @@
 
 namespace Illuminate\Routing;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Routing\ResponseFactory as ResponseFactoryContract;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Contracts\View\Factory as ViewFactoryContract;
 use Illuminate\Routing\Contracts\ControllerDispatcher as ControllerDispatcherContract;
 use Illuminate\Support\ServiceProvider;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Response as NyholmPsrResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
-use Zend\Diactoros\Response as ZendPsrResponse;
-use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response as PsrResponse;
 
 class RoutingServiceProvider extends ServiceProvider
 {
@@ -133,18 +128,7 @@ class RoutingServiceProvider extends ServiceProvider
     protected function registerPsrRequest()
     {
         $this->app->bind(ServerRequestInterface::class, function ($app) {
-            if (class_exists(Psr17Factory::class) && class_exists(PsrHttpFactory::class)) {
-                $psr17Factory = new Psr17Factory;
-
-                return (new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))
-                    ->createRequest($app->make('request'));
-            }
-
-            if (class_exists(ServerRequestFactory::class) && class_exists(DiactorosFactory::class)) {
-                return (new DiactorosFactory)->createRequest($app->make('request'));
-            }
-
-            throw new BindingResolutionException('Unable to resolve PSR request. Please install the symfony/psr-http-message-bridge and nyholm/psr7 packages.');
+            return (new DiactorosFactory)->createRequest($app->make('request'));
         });
     }
 
@@ -156,15 +140,7 @@ class RoutingServiceProvider extends ServiceProvider
     protected function registerPsrResponse()
     {
         $this->app->bind(ResponseInterface::class, function () {
-            if (class_exists(NyholmPsrResponse::class)) {
-                return new NyholmPsrResponse;
-            }
-
-            if (class_exists(ZendPsrResponse::class)) {
-                return new ZendPsrResponse;
-            }
-
-            throw new BindingResolutionException('Unable to resolve PSR response. Please install the nyholm/psr7 package.');
+            return new PsrResponse;
         });
     }
 

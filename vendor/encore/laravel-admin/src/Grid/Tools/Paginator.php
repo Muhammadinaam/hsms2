@@ -13,19 +13,13 @@ class Paginator extends AbstractTool
     protected $paginator = null;
 
     /**
-     * @var bool
-     */
-    protected $perPageSelector = true;
-
-    /**
      * Create a new Paginator instance.
      *
      * @param Grid $grid
      */
-    public function __construct(Grid $grid, $perPageSelector = true)
+    public function __construct(Grid $grid)
     {
         $this->grid = $grid;
-        $this->perPageSelector = $perPageSelector;
 
         $this->initPaginator();
     }
@@ -61,10 +55,6 @@ class Paginator extends AbstractTool
      */
     protected function perPageSelector()
     {
-        if (!$this->perPageSelector) {
-            return;
-        }
-
         return new PerPageSelector($this->grid);
     }
 

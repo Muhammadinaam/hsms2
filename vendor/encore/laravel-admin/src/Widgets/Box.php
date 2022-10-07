@@ -62,7 +62,7 @@ class Box extends Widget implements Renderable
     /**
      * Set box content.
      *
-     * @param string|Renderable $content
+     * @param string $content
      *
      * @return $this
      */
@@ -80,7 +80,7 @@ class Box extends Widget implements Renderable
     /**
      * Set box footer.
      *
-     * @param string|Renderable $footer
+     * @param string $footer
      *
      * @return $this
      */

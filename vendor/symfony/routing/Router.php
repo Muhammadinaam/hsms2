@@ -97,17 +97,19 @@ class Router implements RouterInterface, RequestMatcherInterface
      */
     private $expressionLanguageProviders = [];
 
-    private static $cache = [];
-
     /**
-     * @param mixed $resource The main resource to load
+     * @param LoaderInterface $loader   A LoaderInterface instance
+     * @param mixed           $resource The main resource to load
+     * @param array           $options  An array of options
+     * @param RequestContext  $context  The context
+     * @param LoggerInterface $logger   A logger instance
      */
     public function __construct(LoaderInterface $loader, $resource, array $options = [], RequestContext $context = null, LoggerInterface $logger = null, string $defaultLocale = null)
     {
         $this->loader = $loader;
         $this->resource = $resource;
         $this->logger = $logger;
-        $this->context = $context ?? new RequestContext();
+        $this->context = $context ?: new RequestContext();
         $this->setOptions($options);
         $this->defaultLocale = $defaultLocale;
     }
@@ -126,6 +128,8 @@ class Router implements RouterInterface, RequestMatcherInterface
      *   * resource_type:          Type hint for the main resource (optional)
      *   * strict_requirements:    Configure strict requirement checking for generators
      *                             implementing ConfigurableRequirementsInterface (default is true)
+     *
+     * @param array $options An array of options
      *
      * @throws \InvalidArgumentException When unsupported option is provided
      */
@@ -285,7 +289,7 @@ class Router implements RouterInterface, RequestMatcherInterface
             return $this->matcher;
         }
 
-        $compiled = is_a($this->options['matcher_class'], CompiledUrlMatcher::class, true) && (UrlMatcher::class === $this->options['matcher_base_class'] || RedirectableUrlMatcher::class === $this->options['matcher_base_class']) && is_a($this->options['matcher_dumper_class'], CompiledUrlMatcherDumper::class, true);
+        $compiled = is_a($this->options['matcher_class'], CompiledUrlMatcher::class, true) && (UrlMatcher::class === $this->options['matcher_base_class'] || RedirectableUrlMatcher::class === $this->options['matcher_base_class']);
 
         if (null === $this->options['cache_dir'] || null === $this->options['matcher_cache_class']) {
             $routes = $this->getRouteCollection();
@@ -321,7 +325,7 @@ class Router implements RouterInterface, RequestMatcherInterface
         );
 
         if ($compiled) {
-            return $this->matcher = new $this->options['matcher_class'](self::getCompiledRoutes($cache->getPath()), $this->context);
+            return $this->matcher = new $this->options['matcher_class'](require $cache->getPath(), $this->context);
         }
 
         if (!class_exists($this->options['matcher_cache_class'], false)) {
@@ -342,7 +346,7 @@ class Router implements RouterInterface, RequestMatcherInterface
             return $this->generator;
         }
 
-        $compiled = is_a($this->options['generator_class'], CompiledUrlGenerator::class, true) && UrlGenerator::class === $this->options['generator_base_class'] && is_a($this->options['generator_dumper_class'], CompiledUrlGeneratorDumper::class, true);
+        $compiled = is_a($this->options['generator_class'], CompiledUrlGenerator::class, true) && UrlGenerator::class === $this->options['generator_base_class'];
 
         if (null === $this->options['cache_dir'] || null === $this->options['generator_cache_class']) {
             $routes = $this->getRouteCollection();
@@ -365,7 +369,7 @@ class Router implements RouterInterface, RequestMatcherInterface
             );
 
             if ($compiled) {
-                $this->generator = new $this->options['generator_class'](self::getCompiledRoutes($cache->getPath()), $this->context, $this->logger, $this->defaultLocale);
+                $this->generator = new $this->options['generator_class'](require $cache->getPath(), $this->context, $this->logger, $this->defaultLocale);
             } else {
                 if (!class_exists($this->options['generator_cache_class'], false)) {
                     require_once $cache->getPath();
@@ -392,8 +396,8 @@ class Router implements RouterInterface, RequestMatcherInterface
      */
     protected function getGeneratorDumperInstance()
     {
-        // For BC, fallback to PhpGeneratorDumper (which is the old default value) if the old UrlGenerator is used with the new default CompiledUrlGeneratorDumper
-        if (!is_a($this->options['generator_class'], CompiledUrlGenerator::class, true) && is_a($this->options['generator_dumper_class'], CompiledUrlGeneratorDumper::class, true)) {
+        // For BC, fallback to PhpGeneratorDumper if the UrlGenerator and UrlGeneratorDumper are not consistent with each other
+        if (is_a($this->options['generator_class'], CompiledUrlGenerator::class, true) !== is_a($this->options['generator_dumper_class'], CompiledUrlGeneratorDumper::class, true)) {
             return new PhpGeneratorDumper($this->getRouteCollection());
         }
 
@@ -405,8 +409,8 @@ class Router implements RouterInterface, RequestMatcherInterface
      */
     protected function getMatcherDumperInstance()
     {
-        // For BC, fallback to PhpMatcherDumper (which is the old default value) if the old UrlMatcher is used with the new default CompiledUrlMatcherDumper
-        if (!is_a($this->options['matcher_class'], CompiledUrlMatcher::class, true) && is_a($this->options['matcher_dumper_class'], CompiledUrlMatcherDumper::class, true)) {
+        // For BC, fallback to PhpMatcherDumper if the UrlMatcher and UrlMatcherDumper are not consistent with each other
+        if (is_a($this->options['matcher_class'], CompiledUrlMatcher::class, true) !== is_a($this->options['matcher_dumper_class'], CompiledUrlMatcherDumper::class, true)) {
             return new PhpMatcherDumper($this->getRouteCollection());
         }
 
@@ -416,8 +420,10 @@ class Router implements RouterInterface, RequestMatcherInterface
     /**
      * Provides the ConfigCache factory implementation, falling back to a
      * default implementation if necessary.
+     *
+     * @return ConfigCacheFactoryInterface
      */
-    private function getConfigCacheFactory(): ConfigCacheFactoryInterface
+    private function getConfigCacheFactory()
     {
         if (null === $this->configCacheFactory) {
             $this->configCacheFactory = new ConfigCacheFactory($this->options['debug']);
@@ -426,31 +432,14 @@ class Router implements RouterInterface, RequestMatcherInterface
         return $this->configCacheFactory;
     }
 
-    private function checkDeprecatedOption(string $key)
+    private function checkDeprecatedOption($key)
     {
         switch ($key) {
             case 'generator_base_class':
             case 'generator_cache_class':
             case 'matcher_base_class':
             case 'matcher_cache_class':
-                @trigger_error(sprintf('Option "%s" given to router %s is deprecated since Symfony 4.3.', $key, static::class), \E_USER_DEPRECATED);
+                @trigger_error(sprintf('Option "%s" given to router %s is deprecated since Symfony 4.3.', $key, static::class), E_USER_DEPRECATED);
         }
-    }
-
-    private static function getCompiledRoutes(string $path): array
-    {
-        if ([] === self::$cache && \function_exists('opcache_invalidate') && filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN) && (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) || filter_var(\ini_get('opcache.enable_cli'), \FILTER_VALIDATE_BOOLEAN))) {
-            self::$cache = null;
-        }
-
-        if (null === self::$cache) {
-            return require $path;
-        }
-
-        if (isset(self::$cache[$path])) {
-            return self::$cache[$path];
-        }
-
-        return self::$cache[$path] = require $path;
     }
 }

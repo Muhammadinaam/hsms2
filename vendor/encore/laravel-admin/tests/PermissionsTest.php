@@ -6,7 +6,7 @@ use Encore\Admin\Auth\Database\Role;
 
 class PermissionsTest extends TestCase
 {
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 

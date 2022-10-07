@@ -29,11 +29,10 @@ class Question
     private $validator;
     private $default;
     private $normalizer;
-    private $trimmable = true;
 
     /**
-     * @param string                     $question The question to ask to the user
-     * @param string|bool|int|float|null $default  The default answer to return if the user enters nothing
+     * @param string $question The question to ask to the user
+     * @param mixed  $default  The default answer to return if the user enters nothing
      */
     public function __construct(string $question, $default = null)
     {
@@ -54,7 +53,7 @@ class Question
     /**
      * Returns the default answer.
      *
-     * @return string|bool|int|float|null
+     * @return mixed
      */
     public function getDefault()
     {
@@ -220,11 +219,8 @@ class Question
      */
     public function setMaxAttempts($attempts)
     {
-        if (null !== $attempts) {
-            $attempts = (int) $attempts;
-            if ($attempts < 1) {
-                throw new InvalidArgumentException('Maximum number of attempts must be a positive value.');
-            }
+        if (null !== $attempts && $attempts < 1) {
+            throw new InvalidArgumentException('Maximum number of attempts must be a positive value.');
         }
 
         $this->attempts = $attempts;
@@ -273,20 +269,5 @@ class Question
     protected function isAssoc($array)
     {
         return (bool) \count(array_filter(array_keys($array), 'is_string'));
-    }
-
-    public function isTrimmable(): bool
-    {
-        return $this->trimmable;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setTrimmable(bool $trimmable): self
-    {
-        $this->trimmable = $trimmable;
-
-        return $this;
     }
 }

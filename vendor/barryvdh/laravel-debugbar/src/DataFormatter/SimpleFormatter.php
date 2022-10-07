@@ -60,8 +60,7 @@ class SimpleFormatter extends DataFormatter
             }
 
             if ($deep) {
-                $args = [$indent, implode(sprintf(", \n%s", $indent), $a), str_repeat('  ', $depth - 1)];
-                return sprintf("[\n%s%s\n%s]", ...$args);
+                return sprintf("[\n%s%s\n%s]", $indent, implode(sprintf(", \n%s", $indent), $a), str_repeat('  ', $depth - 1));
             }
 
             $s = sprintf('[%s]', implode(', ', $a));

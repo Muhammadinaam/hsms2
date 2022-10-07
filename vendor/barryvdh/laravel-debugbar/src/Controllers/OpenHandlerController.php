@@ -1,23 +1,19 @@
-<?php
-
-namespace Barryvdh\Debugbar\Controllers;
+<?php namespace Barryvdh\Debugbar\Controllers;
 
 use Barryvdh\Debugbar\Support\Clockwork\Converter;
 use DebugBar\OpenHandler;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class OpenHandlerController extends BaseController
 {
-    public function handle(Request $request)
+
+    public function handle()
     {
         $openHandler = new OpenHandler($this->debugbar);
-        $data = $openHandler->handle($request->input(), false, false);
+        $data = $openHandler->handle(null, false, false);
 
         return new Response(
-            $data,
-            200,
-            [
+            $data, 200, [
                 'Content-Type' => 'application/json'
             ]
         );

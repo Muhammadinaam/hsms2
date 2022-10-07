@@ -9,12 +9,8 @@
  */
 namespace PHPUnit\Framework\Constraint;
 
-use function get_class;
-use function is_object;
-use function sprintf;
 use PHPUnit\Framework\Exception;
 use ReflectionClass;
-use ReflectionException;
 
 /**
  * Constraint that asserts that the class it is evaluated for has a given
@@ -39,7 +35,7 @@ class ClassHasAttribute extends Constraint
      */
     public function toString(): string
     {
-        return sprintf(
+        return \sprintf(
             'has attribute "%s"',
             $this->attributeName
         );
@@ -55,19 +51,17 @@ class ClassHasAttribute extends Constraint
     {
         try {
             return (new ReflectionClass($other))->hasProperty($this->attributeName);
-            // @codeCoverageIgnoreStart
-        } catch (ReflectionException $e) {
+        } catch (\ReflectionException $e) {
             throw new Exception(
                 $e->getMessage(),
                 (int) $e->getCode(),
                 $e
             );
         }
-        // @codeCoverageIgnoreEnd
     }
 
     /**
-     * Returns the description of the failure.
+     * Returns the description of the failure
      *
      * The beginning of failure messages is "Failed asserting that" in most
      * cases. This method should return the second part of that sentence.
@@ -76,10 +70,10 @@ class ClassHasAttribute extends Constraint
      */
     protected function failureDescription($other): string
     {
-        return sprintf(
+        return \sprintf(
             '%sclass "%s" %s',
-            is_object($other) ? 'object of ' : '',
-            is_object($other) ? get_class($other) : $other,
+            \is_object($other) ? 'object of ' : '',
+            \is_object($other) ? \get_class($other) : $other,
             $this->toString()
         );
     }

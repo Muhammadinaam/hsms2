@@ -231,11 +231,11 @@ class QuickCreate implements Renderable
 
     protected function script()
     {
-        $url = $this->parent->resource();
+        $url = request()->url();
 
         $script = <<<SCRIPT
 
-;(function () {
+(function () {
 
     $('.quick-create .create').click(function () {
         $('.quick-create .create-form').show();
@@ -248,7 +248,7 @@ class QuickCreate implements Renderable
     });
     
     $('.quick-create .create-form').submit(function (e) {
-        $(':submit', e.target).button('loading');
+    
         e.preventDefault();
     
         $.ajax({
@@ -268,9 +268,7 @@ class QuickCreate implements Renderable
                     $.admin.toastr.warning(data.message, '', {positionClass:"toast-top-center"})
                 }
             },
-            error: function(XMLHttpRequest, textStatus){
-                $(':submit', e.target).button('reset');
-
+            error:function(XMLHttpRequest, textStatus){
                 if (typeof XMLHttpRequest.responseJSON === 'object') {
                     $.admin.toastr.error(XMLHttpRequest.responseJSON.message, '', {positionClass:"toast-top-center", timeOut: 10000});
                 }

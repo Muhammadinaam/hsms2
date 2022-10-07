@@ -37,7 +37,25 @@ class Date extends Text
         $this->options['locale'] = array_key_exists('locale', $this->options) ? $this->options['locale'] : config('app.locale');
         $this->options['allowInputToggle'] = true;
 
-        $this->script = "$('{$this->getElementClassSelector()}').parent().datetimepicker(".json_encode($this->options).');';
+        $options_with_bottom_position = $this->options;
+        $options_with_bottom_position['widgetPositioning'] = ['vertical' => 'bottom'];
+        $script = "var closestTableCount = $('{$this->getElementClassSelector()}').closest('table').length;";
+        $script .= 
+            'if(closestTableCount != 0) {
+
+                $(\''.$this->getElementClassSelector().'\').parent().datetimepicker('.json_encode($options_with_bottom_position).');
+
+                $(\''.$this->getElementClassSelector().'\').parent().datetimepicker().on(\'dp.show\', function() {
+                    $(this).closest(\'.table-responsive\').css(\'min-height\', \'500px\');
+                }).on(\'dp.hide\', function() {
+                    $(this).closest(\'.table-responsive\').css(\'min-height\', \'100px\');
+                });                
+                
+            } else {
+                $(\''.$this->getElementClassSelector().'\').parent().datetimepicker('.json_encode($this->options).');
+            }';
+        
+        $this->script = $script;
 
         $this->prepend('<i class="fa fa-calendar fa-fw"></i>')
             ->defaultAttribute('style', 'width: 110px');

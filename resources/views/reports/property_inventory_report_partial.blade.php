@@ -28,7 +28,7 @@ $propertyInventory = \DB::table('property_files')
         'holders.name as holder_name',
         'holders.business_name as holder_business_name',
         'sold_by_dealers.name as sold_by_dealer_name',
-        'sold_by_dealers.business_name as sold_by_dealer_business_name'
+        'sold_by_dealers.business_name as sold_by_dealer_business_name',
     )
     ->get();
 

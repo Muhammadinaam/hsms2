@@ -103,7 +103,13 @@ trait InteractsWithInput
 
         $input = $this->all();
 
-        return Arr::hasAny($input, $keys);
+        foreach ($keys as $key) {
+            if (Arr::has($input, $key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -207,28 +213,14 @@ trait InteractsWithInput
      * Retrieve an input item from the request.
      *
      * @param  string|null  $key
-     * @param  mixed  $default
-     * @return mixed
+     * @param  string|array|null  $default
+     * @return string|array|null
      */
     public function input($key = null, $default = null)
     {
         return data_get(
             $this->getInputSource()->all() + $this->query->all(), $key, $default
         );
-    }
-
-    /**
-     * Retrieve input as a boolean value.
-     *
-     * Returns true when value is "1", "true", "on", and "yes". Otherwise, returns false.
-     *
-     * @param  string|null  $key
-     * @param  bool  $default
-     * @return bool
-     */
-    public function boolean($key = null, $default = false)
-    {
-        return filter_var($this->input($key, $default), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

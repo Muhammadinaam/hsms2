@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-/*
+/**
  * Authors:
  * - Sashko Todorov
  * - Josh Soref
@@ -19,9 +19,6 @@
  * - JD Isaacks
  * - Tomi Atanasoski
  */
-
-use Carbon\CarbonInterface;
-
 return [
     'year' => ':count година|:count години',
     'a_year' => 'година|:count години',
@@ -48,13 +45,6 @@ return [
     'from_now' => 'после :time',
     'after' => 'по :time',
     'before' => 'пред :time',
-    'diff_now' => 'сега',
-    'diff_today' => 'Денес',
-    'diff_today_regexp' => 'Денес(?:\\s+во)?',
-    'diff_yesterday' => 'вчера',
-    'diff_yesterday_regexp' => 'Вчера(?:\\s+во)?',
-    'diff_tomorrow' => 'утре',
-    'diff_tomorrow_regexp' => 'Утре(?:\\s+во)?',
     'formats' => [
         'LT' => 'H:mm',
         'LTS' => 'H:mm:ss',
@@ -68,7 +58,7 @@ return [
         'nextDay' => '[Утре во] LT',
         'nextWeek' => '[Во] dddd [во] LT',
         'lastDay' => '[Вчера во] LT',
-        'lastWeek' => function (CarbonInterface $date) {
+        'lastWeek' => function (\Carbon\CarbonInterface $date) {
             switch ($date->dayOfWeek) {
                 case 0:
                 case 3:

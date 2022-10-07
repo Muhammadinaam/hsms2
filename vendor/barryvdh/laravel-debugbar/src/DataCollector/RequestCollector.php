@@ -30,7 +30,7 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
      * Create a new SymfonyRequestCollector
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \Symfony\Component\HttpFoundation\Request $response
      * @param \Symfony\Component\HttpFoundation\Session\SessionInterface $session
      */
     public function __construct($request, $response, $session = null, $currentRequestId = null)
@@ -116,11 +116,8 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
         }
 
         foreach ($data['request_server'] as $key => $value) {
-            if (
-                Str::is('*_KEY', $key) || Str::is('*_PASSWORD', $key)
-                    || Str::is('*_SECRET', $key) || Str::is('*_PW', $key)
-                    || Str::is('*_TOKEN', $key) || Str::is('*_PASS', $key)
-            ) {
+            if (Str::is('*_KEY', $key) || Str::is('*_PASSWORD', $key)
+                    || Str::is('*_SECRET', $key) || Str::is('*_PW', $key)) {
                 $data['request_server'][$key] = '******';
             }
         }
@@ -132,7 +129,7 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
         if (isset($data['request_server']['PHP_AUTH_PW'])) {
             $data['request_server']['PHP_AUTH_PW'] = '******';
         }
-        ;
+       ;
 
         foreach ($data as $key => $var) {
             if (!is_string($data[$key])) {
@@ -140,6 +137,7 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
             } else {
                 $data[$key] = e($data[$key]);
             }
+
         }
 
         $htmlData = [];
@@ -149,7 +147,7 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
             ])->type('debugbar');
             Telescope::$entriesQueue[] = $entry;
             $url = route('debugbar.telescope', [$entry->uuid]);
-            $htmlData['telescope'] = '<a href="' . $url . '" target="_blank">View in Telescope</a>';
+            $htmlData['telescope'] = '<a href="'.$url.'" target="_blank">View in Telescope</a>';
         }
 
         return $htmlData + $data;
@@ -174,10 +172,10 @@ class RequestCollector extends DataCollector implements DataCollectorInterface, 
             }
 
             $cookie .= '; expires=' . substr(
-                \DateTime::createFromFormat('U', $expires, new \DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'),
-                0,
-                -5
-            );
+                    \DateTime::createFromFormat('U', $expires, new \DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'),
+                    0,
+                    -5
+                );
         }
 
         if ($domain) {

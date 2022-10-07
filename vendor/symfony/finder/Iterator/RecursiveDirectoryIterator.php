@@ -58,24 +58,19 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
      *
      * @return SplFileInfo File information
      */
-    #[\ReturnTypeWillChange]
     public function current()
     {
         // the logic here avoids redoing the same work in all iterations
 
         if (null === $subPathname = $this->subPath) {
-            $subPathname = $this->subPath = $this->getSubPath();
+            $subPathname = $this->subPath = (string) $this->getSubPath();
         }
         if ('' !== $subPathname) {
             $subPathname .= $this->directorySeparator;
         }
         $subPathname .= $this->getFilename();
 
-        if ('/' !== $basePath = $this->rootPath) {
-            $basePath .= $this->directorySeparator;
-        }
-
-        return new SplFileInfo($basePath.$subPathname, $this->subPath, $subPathname);
+        return new SplFileInfo($this->rootPath.$this->directorySeparator.$subPathname, $this->subPath, $subPathname);
     }
 
     /**
@@ -83,7 +78,6 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
      *
      * @throws AccessDeniedException
      */
-    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         try {
@@ -111,10 +105,7 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
 
     /**
      * Do nothing for non rewindable stream.
-     *
-     * @return void
      */
-    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if (false === $this->isRewindable()) {

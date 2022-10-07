@@ -33,7 +33,7 @@ class FunctionExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctionTranslators(): array
+    public function getFunctionTranslators()
     {
         return [
             'nth-child' => [$this, 'translateNthChild'],
@@ -51,9 +51,9 @@ class FunctionExtension extends AbstractExtension
     public function translateNthChild(XPathExpr $xpath, FunctionNode $function, bool $last = false, bool $addNameTest = true): XPathExpr
     {
         try {
-            [$a, $b] = Parser::parseSeries($function->getArguments());
+            list($a, $b) = Parser::parseSeries($function->getArguments());
         } catch (SyntaxErrorException $e) {
-            throw new ExpressionErrorException(sprintf('Invalid series: "%s".', implode('", "', $function->getArguments())), 0, $e);
+            throw new ExpressionErrorException(sprintf('Invalid series: %s', implode(', ', $function->getArguments())), 0, $e);
         }
 
         $xpath->addStarPrefix();
@@ -164,7 +164,7 @@ class FunctionExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'function';
     }

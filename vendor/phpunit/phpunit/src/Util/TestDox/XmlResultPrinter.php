@@ -9,9 +9,6 @@
  */
 namespace PHPUnit\Util\TestDox;
 
-use function array_filter;
-use function get_class;
-use function implode;
 use DOMDocument;
 use DOMElement;
 use PHPUnit\Framework\AssertionFailedError;
@@ -23,8 +20,6 @@ use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
 use PHPUnit\Util\Printer;
 use ReflectionClass;
-use ReflectionException;
-use Throwable;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -47,7 +42,7 @@ final class XmlResultPrinter extends Printer implements TestListener
     private $prettifier;
 
     /**
-     * @var null|Throwable
+     * @var null|\Throwable
      */
     private $exception;
 
@@ -82,7 +77,7 @@ final class XmlResultPrinter extends Printer implements TestListener
     /**
      * An error occurred.
      */
-    public function addError(Test $test, Throwable $t, float $time): void
+    public function addError(Test $test, \Throwable $t, float $time): void
     {
         $this->exception = $t;
     }
@@ -105,21 +100,21 @@ final class XmlResultPrinter extends Printer implements TestListener
     /**
      * Incomplete test.
      */
-    public function addIncompleteTest(Test $test, Throwable $t, float $time): void
+    public function addIncompleteTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
     /**
      * Risky test.
      */
-    public function addRiskyTest(Test $test, Throwable $t, float $time): void
+    public function addRiskyTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
     /**
      * Skipped test.
      */
-    public function addSkippedTest(Test $test, Throwable $t, float $time): void
+    public function addSkippedTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
@@ -156,24 +151,23 @@ final class XmlResultPrinter extends Printer implements TestListener
             return;
         }
 
-        $groups = array_filter(
+        $groups = \array_filter(
             $test->getGroups(),
-            static function ($group)
-            {
+            static function ($group) {
                 return !($group === 'small' || $group === 'medium' || $group === 'large');
             }
         );
 
         $testNode = $this->document->createElement('test');
 
-        $testNode->setAttribute('className', get_class($test));
+        $testNode->setAttribute('className', \get_class($test));
         $testNode->setAttribute('methodName', $test->getName());
-        $testNode->setAttribute('prettifiedClassName', $this->prettifier->prettifyTestClass(get_class($test)));
+        $testNode->setAttribute('prettifiedClassName', $this->prettifier->prettifyTestClass(\get_class($test)));
         $testNode->setAttribute('prettifiedMethodName', $this->prettifier->prettifyTestCase($test));
         $testNode->setAttribute('status', (string) $test->getStatus());
         $testNode->setAttribute('time', (string) $time);
         $testNode->setAttribute('size', (string) $test->getSize());
-        $testNode->setAttribute('groups', implode(',', $groups));
+        $testNode->setAttribute('groups', \implode(',', $groups));
 
         foreach ($groups as $group) {
             $groupNode = $this->document->createElement('group');
@@ -209,7 +203,7 @@ final class XmlResultPrinter extends Printer implements TestListener
             $testNode->appendChild($testDoubleNode);
         }
 
-        $inlineAnnotations = \PHPUnit\Util\Test::getInlineAnnotations(get_class($test), $test->getName(false));
+        $inlineAnnotations = \PHPUnit\Util\Test::getInlineAnnotations(\get_class($test), $test->getName(false));
 
         if (isset($inlineAnnotations['given'], $inlineAnnotations['when'], $inlineAnnotations['then'])) {
             $testNode->setAttribute('given', $inlineAnnotations['given']['value']);
@@ -229,15 +223,13 @@ final class XmlResultPrinter extends Printer implements TestListener
 
             try {
                 $file = (new ReflectionClass($test))->getFileName();
-                // @codeCoverageIgnoreStart
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
                 throw new Exception(
                     $e->getMessage(),
                     (int) $e->getCode(),
                     $e
                 );
             }
-            // @codeCoverageIgnoreEnd
 
             foreach ($steps as $step) {
                 if (isset($step['file']) && $step['file'] === $file) {

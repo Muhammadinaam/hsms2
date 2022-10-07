@@ -1,6 +1,4 @@
-<?php
-
-namespace Barryvdh\Debugbar\Controllers;
+<?php namespace Barryvdh\Debugbar\Controllers;
 
 use Illuminate\Http\Response;
 
@@ -25,4 +23,5 @@ class CacheController extends BaseController
 
         return response()->json(compact('success'));
     }
+
 }

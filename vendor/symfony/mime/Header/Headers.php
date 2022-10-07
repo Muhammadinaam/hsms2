@@ -13,15 +13,18 @@ namespace Symfony\Component\Mime\Header;
 
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Exception\LogicException;
+use Symfony\Component\Mime\NamedAddress;
 
 /**
  * A collection of headers.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @experimental in 4.3
  */
 final class Headers
 {
-    private const UNIQUE_HEADERS = [
+    private static $uniqueHeaders = [
         'date', 'from', 'sender', 'reply-to', 'to', 'cc', 'bcc',
         'message-id', 'in-reply-to', 'references', 'subject',
     ];
@@ -59,21 +62,21 @@ final class Headers
     }
 
     /**
-     * @param array<Address|string> $addresses
+     * @param (NamedAddress|Address|string)[] $addresses
      *
      * @return $this
      */
-    public function addMailboxListHeader(string $name, array $addresses): self
+    public function addMailboxListHeader(string $name, array $addresses)
     {
         return $this->add(new MailboxListHeader($name, Address::createArray($addresses)));
     }
 
     /**
-     * @param Address|string $address
+     * @param NamedAddress|Address|string $address
      *
      * @return $this
      */
-    public function addMailboxHeader(string $name, $address): self
+    public function addMailboxHeader(string $name, $address)
     {
         return $this->add(new MailboxHeader($name, Address::create($address)));
     }
@@ -83,7 +86,7 @@ final class Headers
      *
      * @return $this
      */
-    public function addIdHeader(string $name, $ids): self
+    public function addIdHeader(string $name, $ids)
     {
         return $this->add(new IdentificationHeader($name, $ids));
     }
@@ -93,7 +96,7 @@ final class Headers
      *
      * @return $this
      */
-    public function addPathHeader(string $name, $path): self
+    public function addPathHeader(string $name, $path)
     {
         return $this->add(new PathHeader($name, $path instanceof Address ? $path : new Address($path)));
     }
@@ -101,7 +104,7 @@ final class Headers
     /**
      * @return $this
      */
-    public function addDateHeader(string $name, \DateTimeInterface $dateTime): self
+    public function addDateHeader(string $name, \DateTimeInterface $dateTime)
     {
         return $this->add(new DateHeader($name, $dateTime));
     }
@@ -109,7 +112,7 @@ final class Headers
     /**
      * @return $this
      */
-    public function addTextHeader(string $name, string $value): self
+    public function addTextHeader(string $name, string $value)
     {
         return $this->add(new UnstructuredHeader($name, $value));
     }
@@ -117,7 +120,7 @@ final class Headers
     /**
      * @return $this
      */
-    public function addParameterizedHeader(string $name, string $value, array $params = []): self
+    public function addParameterizedHeader(string $name, string $value, array $params = [])
     {
         return $this->add(new ParameterizedHeader($name, $value, $params));
     }
@@ -130,7 +133,7 @@ final class Headers
     /**
      * @return $this
      */
-    public function add(HeaderInterface $header): self
+    public function add(HeaderInterface $header)
     {
         static $map = [
             'date' => DateHeader::class,
@@ -141,8 +144,8 @@ final class Headers
             'cc' => MailboxListHeader::class,
             'bcc' => MailboxListHeader::class,
             'message-id' => IdentificationHeader::class,
-            'in-reply-to' => UnstructuredHeader::class, // `In-Reply-To` and `References` are less strict than RFC 2822 (3.6.4) to allow users entering the original email's ...
-            'references' => UnstructuredHeader::class, // ... `Message-ID`, even if that is no valid `msg-id`
+            'in-reply-to' => IdentificationHeader::class,
+            'references' => IdentificationHeader::class,
             'return-path' => PathHeader::class,
         ];
 
@@ -153,7 +156,7 @@ final class Headers
             throw new LogicException(sprintf('The "%s" header must be an instance of "%s" (got "%s").', $header->getName(), $map[$name], \get_class($header)));
         }
 
-        if (\in_array($name, self::UNIQUE_HEADERS, true) && isset($this->headers[$name]) && \count($this->headers[$name]) > 0) {
+        if (\in_array($name, self::$uniqueHeaders, true) && isset($this->headers[$name]) && \count($this->headers[$name]) > 0) {
             throw new LogicException(sprintf('Impossible to set header "%s" as it\'s already defined and must be unique.', $header->getName()));
         }
 
@@ -201,7 +204,7 @@ final class Headers
 
     public static function isUniqueHeader(string $name): bool
     {
-        return \in_array(strtolower($name), self::UNIQUE_HEADERS, true);
+        return \in_array($name, self::$uniqueHeaders, true);
     }
 
     public function toString(): string
@@ -229,7 +232,7 @@ final class Headers
     /**
      * @internal
      */
-    public function getHeaderBody(string $name)
+    public function getHeaderBody($name)
     {
         return $this->has($name) ? $this->get($name)->getBody() : null;
     }
@@ -266,7 +269,7 @@ final class Headers
     /**
      * @internal
      */
-    public function setHeaderParameter(string $name, string $parameter, ?string $value): void
+    public function setHeaderParameter(string $name, string $parameter, $value): void
     {
         if (!$this->has($name)) {
             throw new LogicException(sprintf('Unable to set parameter "%s" on header "%s" as the header is not defined.', $parameter, $name));

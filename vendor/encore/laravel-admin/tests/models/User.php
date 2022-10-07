@@ -10,8 +10,6 @@ class User extends Model
 
     protected $appends = ['full_name', 'position'];
 
-    protected $casts = ['data' => 'array'];
-
     public function profile()
     {
         return $this->hasOne(Profile::class, 'user_id');

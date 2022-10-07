@@ -9,24 +9,30 @@ use Doctrine\DBAL\Types\Types;
  *
  * Note: Should not be used with versions prior to 10.2.7.
  */
-class MariaDb1027Platform extends MySqlPlatform
+final class MariaDb1027Platform extends MySqlPlatform
 {
     /**
      * {@inheritdoc}
      *
      * @link https://mariadb.com/kb/en/library/json-data-type/
      */
-    public function getJsonTypeDeclarationSQL(array $column): string
+    public function getJsonTypeDeclarationSQL(array $field) : string
     {
         return 'LONGTEXT';
     }
 
-    protected function getReservedKeywordsClass(): string
+    /**
+     * {@inheritdoc}
+     */
+    protected function getReservedKeywordsClass() : string
     {
         return Keywords\MariaDb102Keywords::class;
     }
 
-    protected function initializeDoctrineTypeMappings(): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function initializeDoctrineTypeMappings() : void
     {
         parent::initializeDoctrineTypeMappings();
 

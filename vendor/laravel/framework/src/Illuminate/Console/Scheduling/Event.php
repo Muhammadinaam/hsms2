@@ -13,7 +13,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Traits\Macroable;
-use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Process\Process;
 
 class Event
@@ -158,7 +157,7 @@ class Event
      *
      * @param  \Illuminate\Console\Scheduling\EventMutex  $mutex
      * @param  string  $command
-     * @param  \DateTimeZone|string|null  $timezone
+     * @param  \DateTimeZone|string|null $timezone
      * @return void
      */
     public function __construct(EventMutex $mutex, $command, $timezone = null)
@@ -260,20 +259,6 @@ class Event
         foreach ($this->afterCallbacks as $callback) {
             $container->call($callback);
         }
-    }
-
-    /**
-     * Call all of the "after" callbacks for the event.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @param  int  $exitCode
-     * @return void
-     */
-    public function callAfterCallbacksWithExitCode(Container $container, $exitCode)
-    {
-        $this->exitCode = (int) $exitCode;
-
-        $this->callAfterCallbacks($container);
     }
 
     /**
@@ -577,7 +562,7 @@ class Event
         return function (Container $container, HttpClient $http) use ($url) {
             try {
                 $http->get($url);
-            } catch (ClientExceptionInterface | TransferException $e) {
+            } catch (TransferException $e) {
                 $container->make(ExceptionHandler::class)->report($e);
             }
         };

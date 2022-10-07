@@ -59,10 +59,6 @@ class Between extends AbstractFilter
      */
     public function condition($inputs)
     {
-        if ($this->ignore) {
-            return;
-        }
-
         if (!Arr::has($inputs, $this->column)) {
             return;
         }

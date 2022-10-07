@@ -76,8 +76,7 @@
                     <th>File Number</th>
                     <th>Block</th>
                     <th>Plot Size</th>
-                    <th>Street No.</th>
-                    <th>Plot No.</th>
+                    <th>Plot Number</th>
                     <th>Collection (Receipts)</th>
                     <th>Rebate</th>
                     <th>Status</th>
@@ -90,7 +89,6 @@
                     <td class="text-center">{{$dealer_file->file_number}}</td>
                     <td class="text-center">{{ $dealer_file->block != null ? $dealer_file->block->name : ''}}</td>
                     <td class="text-center">{{$dealer_file->marlas}}</td>
-                    <td class="text-center">{{$dealer_file->street_number}}</td>
                     <td class="text-center">{{$dealer_file->property_number}}</td>
                     <td class="text-center">{{$dealer_file->total_installment_receipts}}</td>
                     <td class="text-center">{{$dealer_file->booking != null ? $dealer_file->booking->dealer_commission_amount : '-'}}</td>

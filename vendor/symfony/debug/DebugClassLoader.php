@@ -13,8 +13,6 @@ namespace Symfony\Component\Debug;
 
 use PHPUnit\Framework\MockObject\Matcher\StatelessInvocation;
 
-@trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.4, use "%s" instead.', DebugClassLoader::class, \Symfony\Component\ErrorHandler\DebugClassLoader::class), \E_USER_DEPRECATED);
-
 /**
  * Autoloader checking if the class is really defined in the file found.
  *
@@ -26,8 +24,6 @@ use PHPUnit\Framework\MockObject\Matcher\StatelessInvocation;
  * @author Christophe Coevoet <stof@notk.org>
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Guilhem Niot <guilhem.niot@gmail.com>
- *
- * @deprecated since Symfony 4.4, use Symfony\Component\ErrorHandler\DebugClassLoader instead.
  */
 class DebugClassLoader
 {
@@ -64,7 +60,7 @@ class DebugClassLoader
             } elseif (substr($test, -\strlen($file)) === $file) {
                 // filesystem is case insensitive and realpath() normalizes the case of characters
                 self::$caseCheck = 1;
-            } elseif (false !== stripos(\PHP_OS, 'darwin')) {
+            } elseif (false !== stripos(PHP_OS, 'darwin')) {
                 // on MacOSX, HFS+ is case insensitive but realpath() doesn't normalize the case of characters
                 self::$caseCheck = 2;
             } else {
@@ -90,8 +86,8 @@ class DebugClassLoader
     public static function enable()
     {
         // Ensures we don't hit https://bugs.php.net/42098
-        class_exists(\Symfony\Component\Debug\ErrorHandler::class);
-        class_exists(\Psr\Log\LogLevel::class);
+        class_exists('Symfony\Component\Debug\ErrorHandler');
+        class_exists('Psr\Log\LogLevel');
 
         if (!\is_array($functions = spl_autoload_functions())) {
             return;
@@ -149,7 +145,7 @@ class DebugClassLoader
      */
     public function loadClass($class)
     {
-        $e = error_reporting(error_reporting() | \E_PARSE | \E_ERROR | \E_CORE_ERROR | \E_COMPILE_ERROR);
+        $e = error_reporting(error_reporting() | E_PARSE | E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR);
 
         try {
             if ($this->isFinder && !isset($this->loaded[$class])) {
@@ -174,7 +170,7 @@ class DebugClassLoader
         $this->checkClass($class, $file);
     }
 
-    private function checkClass(string $class, string $file = null)
+    private function checkClass($class, $file = null)
     {
         $exists = null === $file || class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false);
 
@@ -201,7 +197,7 @@ class DebugClassLoader
             $deprecations = $this->checkAnnotations($refl, $name);
 
             foreach ($deprecations as $message) {
-                @trigger_error($message, \E_USER_DEPRECATED);
+                @trigger_error($message, E_USER_DEPRECATED);
             }
         }
 
@@ -242,7 +238,7 @@ class DebugClassLoader
                 }
             }
 
-            if ($refl->isInterface() && false !== strpos($doc, 'method') && preg_match_all('#\n \* @method\s+(static\s+)?+(?:[\w\|&\[\]\\\]+\s+)?(\w+(?:\s*\([^\)]*\))?)+(.+?([[:punct:]]\s*)?)?(?=\r?\n \*(?: @|/$|\r?\n))#', $doc, $notice, \PREG_SET_ORDER)) {
+            if ($refl->isInterface() && false !== strpos($doc, 'method') && preg_match_all('#\n \* @method\s+(static\s+)?+(?:[\w\|&\[\]\\\]+\s+)?(\w+(?:\s*\([^\)]*\))?)+(.+?([[:punct:]]\s*)?)?(?=\r?\n \*(?: @|/$|\r?\n))#', $doc, $notice, PREG_SET_ORDER)) {
                 foreach ($notice as $method) {
                     $static = '' !== $method[1];
                     $name = $method[2];
@@ -262,7 +258,7 @@ class DebugClassLoader
         }
 
         $parent = get_parent_class($class);
-        $parentAndOwnInterfaces = $this->getOwnInterfaces($class, $parent ?: null);
+        $parentAndOwnInterfaces = $this->getOwnInterfaces($class, $parent);
         if ($parent) {
             $parentAndOwnInterfaces[$parent] = $parent;
 
@@ -300,7 +296,7 @@ class DebugClassLoader
                     $hasCall = $refl->hasMethod('__call');
                     $hasStaticCall = $refl->hasMethod('__callStatic');
                     foreach (self::$method[$use] as $method) {
-                        [$interface, $name, $static, $description] = $method;
+                        list($interface, $name, $static, $description) = $method;
                         if ($static ? $hasStaticCall : $hasCall) {
                             continue;
                         }
@@ -335,12 +331,12 @@ class DebugClassLoader
             }
 
             if ($parent && isset(self::$finalMethods[$parent][$method->name])) {
-                [$declaringClass, $message] = self::$finalMethods[$parent][$method->name];
+                list($declaringClass, $message) = self::$finalMethods[$parent][$method->name];
                 $deprecations[] = sprintf('The "%s::%s()" method is considered final%s. It may change without further notice as of its next major version. You should not extend it from "%s".', $declaringClass, $method->name, $message, $class);
             }
 
             if (isset(self::$internalMethods[$class][$method->name])) {
-                [$declaringClass, $message] = self::$internalMethods[$class][$method->name];
+                list($declaringClass, $message) = self::$internalMethods[$class][$method->name];
                 if (strncmp($ns, $declaringClass, $len)) {
                     $deprecations[] = sprintf('The "%s::%s()" method is considered internal%s. It may change without further notice. You should not extend it from "%s".', $declaringClass, $method->name, $message, $class);
                 }
@@ -379,7 +375,7 @@ class DebugClassLoader
             if ($finalOrInternal || $method->isConstructor() || false === strpos($doc, '@param') || StatelessInvocation::class === $class) {
                 continue;
             }
-            if (!preg_match_all('#\n\s+\* @param +((?(?!callable *\().*?|callable *\(.*\).*?))(?<= )\$([a-zA-Z0-9_\x7f-\xff]++)#', $doc, $matches, \PREG_SET_ORDER)) {
+            if (!preg_match_all('#\n\s+\* @param +((?(?!callable *\().*?|callable *\(.*\).*?))(?<= )\$([a-zA-Z0-9_\x7f-\xff]++)#', $doc, $matches, PREG_SET_ORDER)) {
                 continue;
             }
             if (!isset(self::$annotatedParameters[$class][$method->name])) {
@@ -388,10 +384,10 @@ class DebugClassLoader
                     $definedParameters[$parameter->name] = true;
                 }
             }
-            foreach ($matches as [, $parameterType, $parameterName]) {
+            foreach ($matches as list(, $parameterType, $parameterName)) {
                 if (!isset($definedParameters[$parameterName])) {
                     $parameterType = trim($parameterType);
-                    self::$annotatedParameters[$class][$method->name][$parameterName] = sprintf('The "%%s::%s()" method will require a new "%s$%s" argument in the next major version of its %s "%s", not defining it is deprecated.', $method->name, $parameterType ? $parameterType.' ' : '', $parameterName, interface_exists($class) ? 'interface' : 'parent class', $method->class);
+                    self::$annotatedParameters[$class][$method->name][$parameterName] = sprintf('The "%%s::%s()" method will require a new "%s$%s" argument in the next major version of its parent class "%s", not defining it is deprecated.', $method->name, $parameterType ? $parameterType.' ' : '', $parameterName, $method->class);
                 }
             }
         }
@@ -444,7 +440,7 @@ class DebugClassLoader
     /**
      * `realpath` on MacOSX doesn't normalize the case of characters.
      */
-    private function darwinRealpath(string $real): string
+    private function darwinRealpath($real)
     {
         $i = 1 + strrpos($real, '/');
         $file = substr($real, $i);
@@ -459,11 +455,7 @@ class DebugClassLoader
                 $real = self::$darwinCache[$kDir][0];
             } else {
                 $dir = getcwd();
-
-                if (!@chdir($real)) {
-                    return $real.$file;
-                }
-
+                chdir($real);
                 $real = getcwd().'/';
                 chdir($dir);
 
@@ -515,9 +507,12 @@ class DebugClassLoader
     /**
      * `class_implements` includes interfaces from the parents so we have to manually exclude them.
      *
+     * @param string       $class
+     * @param string|false $parent
+     *
      * @return string[]
      */
-    private function getOwnInterfaces(string $class, ?string $parent): array
+    private function getOwnInterfaces($class, $parent)
     {
         $ownInterfaces = class_implements($class, false);
 

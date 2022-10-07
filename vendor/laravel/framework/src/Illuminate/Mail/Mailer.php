@@ -10,8 +10,6 @@ use Illuminate\Contracts\Queue\Factory as QueueContract;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Mail\Events\MessageSending;
-use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
@@ -331,7 +329,7 @@ class Mailer implements MailerContract, MailQueueContract
         if (isset($plain)) {
             $method = isset($view) ? 'addPart' : 'setBody';
 
-            $message->$method($this->renderView($plain, $data) ?: ' ', 'text/plain');
+            $message->$method($this->renderView($plain, $data), 'text/plain');
         }
 
         if (isset($raw)) {
@@ -482,8 +480,6 @@ class Mailer implements MailerContract, MailQueueContract
      */
     protected function sendSwiftMessage($message)
     {
-        $this->failedRecipients = [];
-
         try {
             return $this->swift->send($message, $this->failedRecipients);
         } finally {
@@ -505,7 +501,7 @@ class Mailer implements MailerContract, MailQueueContract
         }
 
         return $this->events->until(
-            new MessageSending($message, $data)
+            new Events\MessageSending($message, $data)
         ) !== false;
     }
 
@@ -520,7 +516,7 @@ class Mailer implements MailerContract, MailQueueContract
     {
         if ($this->events) {
             $this->events->dispatch(
-                new MessageSent($message->getSwiftMessage(), $data)
+                new Events\MessageSent($message->getSwiftMessage(), $data)
             );
         }
     }

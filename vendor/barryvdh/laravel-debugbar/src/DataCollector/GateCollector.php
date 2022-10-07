@@ -4,7 +4,6 @@ namespace Barryvdh\Debugbar\DataCollector;
 
 use Barryvdh\Debugbar\DataFormatter\SimpleFormatter;
 use DebugBar\DataCollector\MessagesCollector;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -22,12 +21,12 @@ class GateCollector extends MessagesCollector
     {
         parent::__construct('gate');
         $this->setDataFormatter(new SimpleFormatter());
-        $gate->after(function ($user, $ability, $result, $arguments = []) {
+        $gate->after(function ($user = null, $ability, $result, $arguments = []) {
             $this->addCheck($user, $ability, $result, $arguments);
         });
     }
 
-    public function addCheck($user, $ability, $result, $arguments = [])
+    public function addCheck($user = null, $ability, $result, $arguments = [])
     {
         $userKey = 'user';
         $userId = null;
@@ -38,11 +37,6 @@ class GateCollector extends MessagesCollector
         }
 
         $label = $result ? 'success' : 'error';
-
-        // Response::allowed() was added in Laravel 6.x
-        if ($result instanceof Response && method_exists($result, 'allowed')) {
-            $label = $result->allowed() ? 'success' : 'error';
-        }
 
         $this->addMessage([
             'ability' => $ability,

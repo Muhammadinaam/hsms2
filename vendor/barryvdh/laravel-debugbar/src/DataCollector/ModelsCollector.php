@@ -2,64 +2,53 @@
 
 namespace Barryvdh\Debugbar\DataCollector;
 
-use DebugBar\DataCollector\DataCollector;
-use DebugBar\DataCollector\DataCollectorInterface;
-use DebugBar\DataCollector\Renderable;
+use Barryvdh\Debugbar\DataFormatter\SimpleFormatter;
+use DebugBar\DataCollector\MessagesCollector;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Str;
 
 /**
  * Collector for Models.
  */
-class ModelsCollector extends DataCollector implements DataCollectorInterface, Renderable
+class ModelsCollector extends MessagesCollector
 {
     public $models = [];
-    public $count = 0;
 
     /**
      * @param Dispatcher $events
      */
     public function __construct(Dispatcher $events)
     {
-        $events->listen('eloquent.retrieved:*', function ($event, $models) {
-            foreach (array_filter($models) as $model) {
-                $class = get_class($model);
-                $this->models[$class] = ($this->models[$class] ?? 0) + 1;
-                $this->count++;
+        parent::__construct('models');
+        $this->setDataFormatter(new SimpleFormatter());
+
+        $events->listen('eloquent.*', function ($event, $models) {
+            if (Str::contains($event, 'eloquent.retrieved')) {
+                foreach (array_filter($models) as $model) {
+                    $class = get_class($model);
+                    $this->models[$class] = ($this->models[$class] ?? 0) + 1;
+                }
             }
         });
     }
 
     public function collect()
     {
-        ksort($this->models, SORT_NUMERIC);
+        foreach ($this->models as $type => $count) {
+            $this->addMessage($count, $type);
+        }
 
-        return ['data' => array_reverse($this->models), 'count' => $this->count];
+        return [
+            'count' => array_sum($this->models),
+            'messages' => $this->getMessages(),
+        ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
-    {
-        return 'models';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getWidgets()
     {
-        return [
-            "models" => [
-                "icon" => "cubes",
-                "widget" => "PhpDebugBar.Widgets.HtmlVariableListWidget",
-                "map" => "models.data",
-                "default" => "{}"
-            ],
-            'models:badge' => [
-                'map' => 'models.count',
-                'default' => 0
-            ]
-        ];
+        $widgets = parent::getWidgets();
+        $widgets['models']['icon'] = 'cubes';
+
+        return $widgets;
     }
 }

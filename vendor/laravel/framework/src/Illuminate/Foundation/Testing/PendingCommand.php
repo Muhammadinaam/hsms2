@@ -9,7 +9,6 @@ use Mockery\Exception\NoMatchingExpectationException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\Output;
 
 class PendingCommand
 {
@@ -131,10 +130,10 @@ class PendingCommand
     {
         $this->hasExecuted = true;
 
-        $mock = $this->mockConsoleOutput();
+        $this->mockConsoleOutput();
 
         try {
-            $exitCode = $this->app[Kernel::class]->call($this->command, $this->parameters, $mock);
+            $exitCode = $this->app[Kernel::class]->call($this->command, $this->parameters);
         } catch (NoMatchingExpectationException $e) {
             if ($e->getMethodName() === 'askQuestion') {
                 $this->test->fail('Unexpected question "'.$e->getActualArguments()[0]->getQuestion().'" was asked.');
@@ -156,7 +155,7 @@ class PendingCommand
     /**
      * Mock the application's console output.
      *
-     * @return \Mockery\MockInterface
+     * @return void
      */
     protected function mockConsoleOutput()
     {
@@ -181,8 +180,6 @@ class PendingCommand
         $this->app->bind(OutputStyle::class, function () use ($mock) {
             return $mock;
         });
-
-        return $mock;
     }
 
     /**

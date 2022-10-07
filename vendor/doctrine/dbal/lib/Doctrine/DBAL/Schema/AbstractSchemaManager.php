@@ -4,14 +4,12 @@ namespace Doctrine\DBAL\Schema;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Event\SchemaColumnDefinitionEventArgs;
 use Doctrine\DBAL\Event\SchemaIndexDefinitionEventArgs;
 use Doctrine\DBAL\Events;
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\Deprecations\Deprecation;
 use Throwable;
-
 use function array_filter;
 use function array_intersect;
 use function array_map;
@@ -20,8 +18,8 @@ use function assert;
 use function call_user_func_array;
 use function count;
 use function func_get_args;
+use function is_array;
 use function is_callable;
-use function is_string;
 use function preg_match;
 use function str_replace;
 use function strtolower;
@@ -103,7 +101,7 @@ abstract class AbstractSchemaManager
     {
         $sql = $this->_platform->getListDatabasesSQL();
 
-        $databases = $this->_conn->fetchAllAssociative($sql);
+        $databases = $this->_conn->fetchAll($sql);
 
         return $this->_getPortableDatabasesList($databases);
     }
@@ -117,7 +115,7 @@ abstract class AbstractSchemaManager
     {
         $sql = $this->_platform->getListNamespacesSQL();
 
-        $namespaces = $this->_conn->fetchAllAssociative($sql);
+        $namespaces = $this->_conn->fetchAll($sql);
 
         return $this->getPortableNamespacesList($namespaces);
     }
@@ -134,10 +132,9 @@ abstract class AbstractSchemaManager
         if ($database === null) {
             $database = $this->_conn->getDatabase();
         }
-
         $sql = $this->_platform->getListSequencesSQL($database);
 
-        $sequences = $this->_conn->fetchAllAssociative($sql);
+        $sequences = $this->_conn->fetchAll($sql);
 
         return $this->filterAssetNames($this->_getPortableSequencesList($sequences));
     }
@@ -146,7 +143,7 @@ abstract class AbstractSchemaManager
      * Lists the columns for a given table.
      *
      * In contrast to other libraries and to the old version of Doctrine,
-     * this column definition does try to contain the 'primary' column for
+     * this column definition does try to contain the 'primary' field for
      * the reason that it is not portable across different RDBMS. Use
      * {@see listTableIndexes($tableName)} to retrieve the primary key
      * of a table. Where a RDBMS specifies more details, these are held
@@ -165,7 +162,7 @@ abstract class AbstractSchemaManager
 
         $sql = $this->_platform->getListTableColumnsSQL($table, $database);
 
-        $tableColumns = $this->_conn->fetchAllAssociative($sql);
+        $tableColumns = $this->_conn->fetchAll($sql);
 
         return $this->_getPortableTableColumnList($table, $database, $tableColumns);
     }
@@ -183,7 +180,7 @@ abstract class AbstractSchemaManager
     {
         $sql = $this->_platform->getListTableIndexesSQL($table, $this->_conn->getDatabase());
 
-        $tableIndexes = $this->_conn->fetchAllAssociative($sql);
+        $tableIndexes = $this->_conn->fetchAll($sql);
 
         return $this->_getPortableTableIndexesList($tableIndexes, $table);
     }
@@ -193,24 +190,15 @@ abstract class AbstractSchemaManager
      *
      * The usage of a string $tableNames is deprecated. Pass a one-element array instead.
      *
-     * @param string|string[] $names
+     * @param string|string[] $tableNames
      *
      * @return bool
      */
-    public function tablesExist($names)
+    public function tablesExist($tableNames)
     {
-        if (is_string($names)) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/issues/3580',
-                'The usage of a string $tableNames in AbstractSchemaManager::tablesExist is deprecated. ' .
-                'Pass a one-element array instead.'
-            );
-        }
+        $tableNames = array_map('strtolower', (array) $tableNames);
 
-        $names = array_map('strtolower', (array) $names);
-
-        return count($names) === count(array_intersect($names, array_map('strtolower', $this->listTableNames())));
+        return count($tableNames) === count(array_intersect($tableNames, array_map('strtolower', $this->listTableNames())));
     }
 
     /**
@@ -222,7 +210,7 @@ abstract class AbstractSchemaManager
     {
         $sql = $this->_platform->getListTablesSQL();
 
-        $tables     = $this->_conn->fetchAllAssociative($sql);
+        $tables     = $this->_conn->fetchAll($sql);
         $tableNames = $this->_getPortableTablesList($tables);
 
         return $this->filterAssetNames($tableNames);
@@ -274,21 +262,20 @@ abstract class AbstractSchemaManager
     }
 
     /**
-     * @param string $name
+     * @param string $tableName
      *
      * @return Table
      */
-    public function listTableDetails($name)
+    public function listTableDetails($tableName)
     {
-        $columns     = $this->listTableColumns($name);
+        $columns     = $this->listTableColumns($tableName);
         $foreignKeys = [];
         if ($this->_platform->supportsForeignKeyConstraints()) {
-            $foreignKeys = $this->listTableForeignKeys($name);
+            $foreignKeys = $this->listTableForeignKeys($tableName);
         }
+        $indexes = $this->listTableIndexes($tableName);
 
-        $indexes = $this->listTableIndexes($name);
-
-        return new Table($name, $columns, $indexes, $foreignKeys);
+        return new Table($tableName, $columns, $indexes, $foreignKeys);
     }
 
     /**
@@ -300,7 +287,7 @@ abstract class AbstractSchemaManager
     {
         $database = $this->_conn->getDatabase();
         $sql      = $this->_platform->getListViewsSQL($database);
-        $views    = $this->_conn->fetchAllAssociative($sql);
+        $views    = $this->_conn->fetchAll($sql);
 
         return $this->_getPortableViewsList($views);
     }
@@ -318,9 +305,8 @@ abstract class AbstractSchemaManager
         if ($database === null) {
             $database = $this->_conn->getDatabase();
         }
-
         $sql              = $this->_platform->getListTableForeignKeysSQL($table, $database);
-        $tableForeignKeys = $this->_conn->fetchAllAssociative($sql);
+        $tableForeignKeys = $this->_conn->fetchAll($sql);
 
         return $this->_getPortableTableForeignKeysList($tableForeignKeys);
     }
@@ -344,13 +330,13 @@ abstract class AbstractSchemaManager
     /**
      * Drops the given table.
      *
-     * @param string $name The name of the table to drop.
+     * @param string $tableName The name of the table to drop.
      *
      * @return void
      */
-    public function dropTable($name)
+    public function dropTable($tableName)
     {
-        $this->_execSql($this->_platform->getDropTableSQL($name));
+        $this->_execSql($this->_platform->getDropTableSQL($tableName));
     }
 
     /**
@@ -440,7 +426,7 @@ abstract class AbstractSchemaManager
      */
     public function createTable(Table $table)
     {
-        $createFlags = AbstractPlatform::CREATE_INDEXES | AbstractPlatform::CREATE_FOREIGNKEYS;
+        $createFlags = AbstractPlatform::CREATE_INDEXES|AbstractPlatform::CREATE_FOREIGNKEYS;
         $this->_execSql($this->_platform->getCreateTableSQL($table, $createFlags));
     }
 
@@ -539,8 +525,7 @@ abstract class AbstractSchemaManager
     /**
      * Drops and creates a new foreign key.
      *
-     * @param ForeignKeyConstraint $foreignKey An associative array that defines properties
-     *                                         of the foreign key to be created.
+     * @param ForeignKeyConstraint $foreignKey An associative array that defines properties of the foreign key to be created.
      * @param Table|string         $table      The name of the table on which the foreign key is to be created.
      *
      * @return void
@@ -608,7 +593,12 @@ abstract class AbstractSchemaManager
      */
     public function alterTable(TableDiff $tableDiff)
     {
-        foreach ($this->_platform->getAlterTableSQL($tableDiff) as $ddlQuery) {
+        $queries = $this->_platform->getAlterTableSQL($tableDiff);
+        if (! is_array($queries) || ! count($queries)) {
+            return;
+        }
+
+        foreach ($queries as $ddlQuery) {
             $this->_execSql($ddlQuery);
         }
     }
@@ -781,11 +771,11 @@ abstract class AbstractSchemaManager
      *
      * @return Sequence
      *
-     * @throws Exception
+     * @throws DBALException
      */
     protected function _getPortableSequenceDefinition($sequence)
     {
-        throw Exception::notSupported('Sequences');
+        throw DBALException::notSupported('Sequences');
     }
 
     /**
@@ -843,20 +833,19 @@ abstract class AbstractSchemaManager
     /**
      * Aggregates and groups the index results according to the required data result.
      *
-     * @param mixed[][]   $tableIndexes
+     * @param mixed[][]   $tableIndexRows
      * @param string|null $tableName
      *
      * @return Index[]
      */
-    protected function _getPortableTableIndexesList($tableIndexes, $tableName = null)
+    protected function _getPortableTableIndexesList($tableIndexRows, $tableName = null)
     {
         $result = [];
-        foreach ($tableIndexes as $tableIndex) {
+        foreach ($tableIndexRows as $tableIndex) {
             $indexName = $keyName = $tableIndex['key_name'];
             if ($tableIndex['primary']) {
                 $keyName = 'primary';
             }
-
             $keyName = strtolower($keyName);
 
             if (! isset($result[$keyName])) {
@@ -898,14 +887,7 @@ abstract class AbstractSchemaManager
             }
 
             if (! $defaultPrevented) {
-                $index = new Index(
-                    $data['name'],
-                    $data['columns'],
-                    $data['unique'],
-                    $data['primary'],
-                    $data['flags'],
-                    $data['options']
-                );
+                $index = new Index($data['name'], $data['columns'], $data['unique'], $data['primary'], $data['flags'], $data['options']);
             }
 
             if (! $index) {
@@ -1046,7 +1028,7 @@ abstract class AbstractSchemaManager
     protected function _execSql($sql)
     {
         foreach ((array) $sql as $query) {
-            $this->_conn->executeStatement($query);
+            $this->_conn->executeUpdate($query);
         }
     }
 
@@ -1093,11 +1075,9 @@ abstract class AbstractSchemaManager
         if (! isset($params['defaultTableOptions'])) {
             $params['defaultTableOptions'] = [];
         }
-
         if (! isset($params['defaultTableOptions']['charset']) && isset($params['charset'])) {
             $params['defaultTableOptions']['charset'] = $params['charset'];
         }
-
         $schemaConfig->setDefaultTableOptions($params['defaultTableOptions']);
 
         return $schemaConfig;

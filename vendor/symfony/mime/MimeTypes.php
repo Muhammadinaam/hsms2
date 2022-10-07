@@ -33,6 +33,8 @@ use Symfony\Component\Mime\Exception\LogicException;
  *     $guesser->registerGuesser(new FileinfoMimeTypeGuesser('/path/to/magic/file'));
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @experimental in 4.3
  */
 final class MimeTypes implements MimeTypesInterface
 {
@@ -51,7 +53,7 @@ final class MimeTypes implements MimeTypesInterface
             $this->extensions[$mimeType] = $extensions;
 
             foreach ($extensions as $extension) {
-                $this->mimeTypes[$extension][] = $mimeType;
+                $this->mimeTypes[$extension] = $mimeType;
             }
         }
         $this->registerGuesser(new FileBinaryMimeTypeGuesser());
@@ -87,7 +89,7 @@ final class MimeTypes implements MimeTypesInterface
             $extensions = $this->extensions[$mimeType] ?? $this->extensions[$lcMimeType = strtolower($mimeType)] ?? null;
         }
 
-        return $extensions ?? self::MAP[$mimeType] ?? self::MAP[$lcMimeType ?? strtolower($mimeType)] ?? [];
+        return $extensions ?? self::$map[$mimeType] ?? self::$map[$lcMimeType ?? strtolower($mimeType)] ?? [];
     }
 
     /**
@@ -99,7 +101,7 @@ final class MimeTypes implements MimeTypesInterface
             $mimeTypes = $this->mimeTypes[$ext] ?? $this->mimeTypes[$lcExt = strtolower($ext)] ?? null;
         }
 
-        return $mimeTypes ?? self::REVERSE_MAP[$ext] ?? self::REVERSE_MAP[$lcExt ?? strtolower($ext)] ?? [];
+        return $mimeTypes ?? self::$reverseMap[$ext] ?? self::$reverseMap[$lcExt ?? strtolower($ext)] ?? [];
     }
 
     /**
@@ -137,7 +139,7 @@ final class MimeTypes implements MimeTypesInterface
         }
 
         if (!$this->isGuesserSupported()) {
-            throw new LogicException('Unable to guess the MIME type as no guessers are available (have you enabled the php_fileinfo extension?).');
+            throw new LogicException('Unable to guess the MIME type as no guessers are available (have you enable the php_fileinfo extension?).');
         }
 
         return null;
@@ -150,7 +152,7 @@ final class MimeTypes implements MimeTypesInterface
      *
      * @see Resources/bin/update_mime_types.php
      */
-    private const MAP = [
+    private static $map = [
         'application/acrobat' => ['pdf'],
         'application/andrew-inset' => ['ez'],
         'application/annodex' => ['anx'],
@@ -166,7 +168,6 @@ final class MimeTypes implements MimeTypesInterface
         'application/cdmi-queue' => ['cdmiq'],
         'application/cdr' => ['cdr'],
         'application/coreldraw' => ['cdr'],
-        'application/csv' => ['csv'],
         'application/cu-seeme' => ['cu'],
         'application/davmount+xml' => ['davmount'],
         'application/dbase' => ['dbf'],
@@ -1114,7 +1115,7 @@ final class MimeTypes implements MimeTypesInterface
         'audio/mp2' => ['mp2'],
         'audio/mp3' => ['mp3', 'mpga'],
         'audio/mp4' => ['m4a', 'mp4a', 'f4a'],
-        'audio/mpeg' => ['mp3', 'mpga', 'mp2', 'mp2a', 'm2a', 'm3a'],
+        'audio/mpeg' => ['mpga', 'mp2', 'mp2a', 'mp3', 'm2a', 'm3a'],
         'audio/mpegurl' => ['m3u', 'm3u8', 'vlc'],
         'audio/ogg' => ['oga', 'ogg', 'spx', 'opus'],
         'audio/prs.sid' => ['sid', 'psid'],
@@ -1252,7 +1253,6 @@ final class MimeTypes implements MimeTypesInterface
         'image/psd' => ['psd'],
         'image/rle' => ['rle'],
         'image/sgi' => ['sgi'],
-        'image/svg' => ['svg'],
         'image/svg+xml' => ['svg', 'svgz'],
         'image/svg+xml-compressed' => ['svgz'],
         'image/tiff' => ['tiff', 'tif'],
@@ -1611,7 +1611,7 @@ final class MimeTypes implements MimeTypesInterface
         'zz-application/zz-winassoc-xls' => ['xls', 'xlc', 'xll', 'xlm', 'xlw', 'xla', 'xlt', 'xld'],
     ];
 
-    private const REVERSE_MAP = [
+    private static $reverseMap = [
         '32x' => ['application/x-genesis-32x-rom'],
         '3dml' => ['text/vnd.in3d.3dml'],
         '3ds' => ['image/x-3ds'],
@@ -1818,7 +1818,7 @@ final class MimeTypes implements MimeTypesInterface
         'csp' => ['application/vnd.commonspace'],
         'css' => ['text/css'],
         'cst' => ['application/x-director'],
-        'csv' => ['text/csv', 'text/x-comma-separated-values', 'text/x-csv', 'application/csv'],
+        'csv' => ['text/csv', 'text/x-comma-separated-values', 'text/x-csv'],
         'csvs' => ['text/csv-schema'],
         'cu' => ['application/cu-seeme'],
         'cue' => ['application/x-cue'],
@@ -2810,7 +2810,7 @@ final class MimeTypes implements MimeTypesInterface
         'sv4crc' => ['application/x-sv4crc'],
         'svc' => ['application/vnd.dvb.service'],
         'svd' => ['application/vnd.svd'],
-        'svg' => ['image/svg+xml', 'image/svg'],
+        'svg' => ['image/svg+xml'],
         'svgz' => ['image/svg+xml', 'image/svg+xml-compressed'],
         'svh' => ['text/x-svhdr'],
         'swa' => ['application/x-director'],

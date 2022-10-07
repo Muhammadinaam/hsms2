@@ -77,24 +77,13 @@ class HasInDatabase extends Constraint
     {
         $query = $this->database->table($table);
 
-        $similarResults = $query->where(
-            array_key_first($this->data),
-            $this->data[array_key_first($this->data)]
-        )->limit($this->show)->get();
+        $results = $query->limit($this->show)->get();
 
-        if ($similarResults->isNotEmpty()) {
-            $description = 'Found similar results: '.json_encode($similarResults, JSON_PRETTY_PRINT);
-        } else {
-            $query = $this->database->table($table);
-
-            $results = $query->limit($this->show)->get();
-
-            if ($results->isEmpty()) {
-                return 'The table is empty.';
-            }
-
-            $description = 'Found: '.json_encode($results, JSON_PRETTY_PRINT);
+        if ($results->isEmpty()) {
+            return 'The table is empty';
         }
+
+        $description = 'Found: '.json_encode($results, JSON_PRETTY_PRINT);
 
         if ($query->count() > $this->show) {
             $description .= sprintf(' and %s others', $query->count() - $this->show);

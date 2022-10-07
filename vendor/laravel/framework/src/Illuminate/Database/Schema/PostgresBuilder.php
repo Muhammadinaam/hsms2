@@ -77,8 +77,6 @@ class PostgresBuilder extends Builder
 
     /**
      * Drop all types from the database.
-     *
-     * @return void
      */
     public function dropAllTypes()
     {
@@ -116,7 +114,7 @@ class PostgresBuilder extends Builder
      *
      * @return array
      */
-    public function getAllViews()
+    protected function getAllViews()
     {
         return $this->connection->select(
             $this->grammar->compileGetAllViews((array) $this->connection->getConfig('schema'))
@@ -128,7 +126,7 @@ class PostgresBuilder extends Builder
      *
      * @return array
      */
-    public function getAllTypes()
+    protected function getAllTypes()
     {
         return $this->connection->select(
             $this->grammar->compileGetAllTypes()

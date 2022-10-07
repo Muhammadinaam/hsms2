@@ -38,17 +38,13 @@ class BladeSourceMapCompiler extends BladeCompiler
 
     public function compileString($value)
     {
-        try {
-            $value = $this->addEchoLineNumbers($value);
+        $value = $this->addEchoLineNumbers($value);
 
-            $value = $this->addStatementLineNumbers($value);
+        $value = $this->addStatementLineNumbers($value);
 
-            $value = parent::compileString($value);
+        $value = parent::compileString($value);
 
-            return $this->trimEmptyLines($value);
-        } catch (\Exception $e) {
-            return $value;
-        }
+        return $this->trimEmptyLines($value);
     }
 
     protected function addEchoLineNumbers(string $value)
@@ -57,9 +53,7 @@ class BladeSourceMapCompiler extends BladeCompiler
 
         if (preg_match_all($pattern, $value, $matches, PREG_OFFSET_CAPTURE)) {
             foreach (array_reverse($matches[0]) as $match) {
-                $position = mb_strlen(substr($value, 0, $match[1]));
-
-                $value = $this->insertLineNumberAtPosition($position, $value);
+                $value = $this->insertLineNumberAtPosition($match[1], $value);
             }
         }
 
@@ -77,9 +71,7 @@ class BladeSourceMapCompiler extends BladeCompiler
 
         if ($shouldInsertLineNumbers) {
             foreach (array_reverse($matches[0]) as $match) {
-                $position = mb_strlen(substr($value, 0, $match[1]));
-
-                $value = $this->insertLineNumberAtPosition($position, $value);
+                $value = $this->insertLineNumberAtPosition($match[1], $value);
             }
         }
 

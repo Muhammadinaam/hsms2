@@ -3,7 +3,6 @@
 namespace Encore\Admin\Form\Field;
 
 use Encore\Admin\Form;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -88,11 +87,6 @@ trait UploadField
         'pdf'    => '/^(pdf)$/i',
         'flash'  => '/^(swf)$/i',
     ];
-
-    /**
-     * @var string
-     */
-    protected $pathColumn;
 
     /**
      * Initialize the storage instance.
@@ -379,20 +373,6 @@ trait UploadField
     }
 
     /**
-     * Set path column in has-many related model.
-     *
-     * @param string $column
-     *
-     * @return $this
-     */
-    public function pathColumn($column = 'path')
-    {
-        $this->pathColumn = $column;
-
-        return $this;
-    }
-
-    /**
      * Upload file and delete original file.
      *
      * @param UploadedFile $file
@@ -433,15 +413,11 @@ trait UploadField
      */
     public function objectUrl($path)
     {
-        if ($this->pathColumn && is_array($path)) {
-            $path = Arr::get($path, $this->pathColumn);
-        }
-
-        if (URL::isValidUrl($path)) {
+        if (URL::isValidUrl($path)) { 
             return $path;
         }
 
-        if ($this->storage) {
+        if ($this->storage) { 
             return $this->storage->url($path);
         }
 
@@ -497,7 +473,7 @@ trait UploadField
             $this->destroyThumbnail();
         }
 
-        if (!empty($this->original) && $this->storage->exists($this->original)) {
+        if ($this->storage->exists($this->original)) {
             $this->storage->delete($this->original);
         }
     }

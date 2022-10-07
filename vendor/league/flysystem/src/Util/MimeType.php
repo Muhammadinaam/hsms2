@@ -102,8 +102,6 @@ class MimeType
         'txt' => 'text/plain',
         'text' => 'text/plain',
         'log' => 'text/plain',
-        'markdown' => 'text/markdown',
-        'md' => 'text/markdown',
         'rtx' => 'text/richtext',
         'rtf' => 'text/rtf',
         'xml' => 'application/xml',
@@ -122,7 +120,7 @@ class MimeType
         'docm' => 'application/vnd.ms-word.template.macroEnabled.12',
         'dotm' => 'application/vnd.ms-word.template.macroEnabled.12',
         'dot' => 'application/msword',
-        'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
         'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12',
@@ -187,8 +185,6 @@ class MimeType
         'odm' => 'application/vnd.oasis.opendocument.text-master',
         'odb' => 'application/vnd.oasis.opendocument.database',
         'ott' => 'application/vnd.oasis.opendocument.text-template',
-        'webp' => 'image/webp',
-        'ico' => 'image/x-icon',
     ];
 
     /**

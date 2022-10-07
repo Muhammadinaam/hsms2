@@ -1,5 +1,4 @@
 <?php
-
 namespace Barryvdh\Debugbar\DataCollector;
 
 use DebugBar\DataCollector\TimeDataCollector;
@@ -23,7 +22,7 @@ class CacheCollector extends TimeDataCollector
         KeyForgotten::class => 'forgotten',
     ];
 
-    public function __construct($requestStartTime, $collectValues)
+    public function __construct($requestStartTime = null, $collectValues)
     {
         parent::__construct();
 

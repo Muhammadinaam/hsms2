@@ -20,12 +20,11 @@ use Symfony\Component\Mime\Header\Headers;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @experimental in 4.3
  */
 class TextPart extends AbstractPart
 {
-    /** @internal */
-    protected $_headers;
-
     private static $encoders = [];
 
     private $body;
@@ -38,10 +37,8 @@ class TextPart extends AbstractPart
     /**
      * @param resource|string $body
      */
-    public function __construct($body, ?string $charset = 'utf-8', string $subtype = 'plain', string $encoding = null)
+    public function __construct($body, ?string $charset = 'utf-8', $subtype = 'plain', string $encoding = null)
     {
-        unset($this->_headers);
-
         parent::__construct();
 
         if (!\is_string($body) && !\is_resource($body)) {
@@ -134,7 +131,7 @@ class TextPart extends AbstractPart
         if ($this->charset) {
             $headers->setHeaderParameter('Content-Type', 'charset', $this->charset);
         }
-        if ($this->name && 'form-data' !== $this->disposition) {
+        if ($this->name) {
             $headers->setHeaderParameter('Content-Type', 'name', $this->name);
         }
         $headers->setHeaderBody('Text', 'Content-Transfer-Encoding', $this->encoding);
@@ -147,19 +144,6 @@ class TextPart extends AbstractPart
         }
 
         return $headers;
-    }
-
-    public function asDebugString(): string
-    {
-        $str = parent::asDebugString();
-        if (null !== $this->charset) {
-            $str .= ' charset: '.$this->charset;
-        }
-        if (null !== $this->disposition) {
-            $str .= ' disposition: '.$this->disposition;
-        }
-
-        return $str;
     }
 
     private function getEncoder(): ContentEncoderInterface
@@ -184,9 +168,6 @@ class TextPart extends AbstractPart
         return 'quoted-printable';
     }
 
-    /**
-     * @return array
-     */
     public function __sleep()
     {
         // convert resources to strings for serialization

@@ -5,7 +5,7 @@ use Encore\Admin\Auth\Database\Menu;
 
 class MenuTest extends TestCase
 {
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class MenuTest extends TestCase
 
     public function testShowPage()
     {
-        $this->visit('admin/auth/menu/1/edit')
+        $this->visit('admin/auth/menu/1')
             ->seePageIs('admin/auth/menu/1/edit');
     }
 
