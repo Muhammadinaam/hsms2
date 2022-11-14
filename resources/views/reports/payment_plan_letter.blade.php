@@ -34,7 +34,7 @@
 <p class="text-center">{{$message}}</p>
 @endif
 
-<h3>Customer Profile (Payment Plan)</h3>
+<h3>Customer Ledger</h3>
 
 @if(isset($property_file))
 <h4>File Number: {{$property_file->file_number}}</h4>
@@ -78,6 +78,8 @@
                     </tr>
                     <tr>
                         <td>Contact:</td><td>{{$property_file->current_holder != null ? $property_file->current_holder->phone : ''}}</td>
+                        
+                        <td>Street No:</td><td>{{$property_file->streetNo}}</td>
                         <td>Plot Size:</td><td>{{$property_file->marlas}}</td>
                     </tr>
                     <tr>

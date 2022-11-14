@@ -31,6 +31,7 @@ class PropertyFileController extends AdminController
         $grid->column('phase.name', __('Phase'));
         
         $grid->column('file_number', __('File number'));
+        $grid->column('streetNo', __('StreetNo'));
         $grid->column('block.name', __('Block'));
         $grid->column('property_number', __('Property number'));
         $grid->column('marlas', __('Marlas'));
@@ -65,6 +66,7 @@ class PropertyFileController extends AdminController
 
             $filter->like('block.name', 'Block');
             $filter->like('property_number', 'Property Number');
+            $filter->like('streetNo', 'Street No');
             $filter->like('marlas', 'Size');
             $filter->like('holder.name', 'Holder Name');
             $filter->like('dealer.name', 'Dealer Name');
@@ -181,13 +183,15 @@ class PropertyFileController extends AdminController
             ->creationRules(['required', "unique:property_files"])
             ->updateRules(['required', "unique:property_files,file_number,{{id}}"]);
 
+        $form->text('streetNo', __('Street No'))
+            ->creationRules(['required', "unique:property_files"])
+            ->updateRules(['required', "unique:property_files,file_number,{{id}}"]);
+
         $marlas_options = [];
         foreach (\App\PropertyMarla::all() as $propertyMarla) {
             $marlas_options[$propertyMarla->marlas] = $propertyMarla->marlas;
         }
-        $form->select('marlas', __('Marlas'))
-            ->options($marlas_options)
-            ->rules('required');
+        $form->select('marlas', __('Marlas'));
 
         \App\Helpers\SelectHelper::buildAjaxSelect(
             $form, 

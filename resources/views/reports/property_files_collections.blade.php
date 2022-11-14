@@ -16,6 +16,7 @@
                     <th>File Number</th>
                     <th>Block</th>
                     <th>Property No.</th>
+                    {{-- <th>Street No</th> --}}
                     <th>Plot Size</th>
                     <th>Property Type</th>
                     <th>Booking Date</th>
@@ -37,6 +38,7 @@
                     <td class="text-center">{{$row->file_number}}</td>
                     <td>{{$row->block}}</td>
                     <td class="text-center">{{$row->property_number}}</td>
+                    {{-- <td class="text-center">{{$row->streetNo}}</td> --}}
                     <td class="text-center">{{$row->marlas}}</td>
                     <td class="text-center">{{$row->property_type}}</td>
                     <td class="text-center">{{\Carbon\Carbon::parse($row->date)->format('d-M-Y')}}</td>
